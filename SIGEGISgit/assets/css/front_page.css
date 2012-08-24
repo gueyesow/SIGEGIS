@@ -1,0 +1,36 @@
+body{ font: 62.5% "Trebuchet MS", sans-serif; margin: 0;background: url("../../assets/images/bg.png");}
+.bouton:hover{cursor:pointer;}
+table{border-collapse: collapse;}
+body,#wrapper{margin: 0;}
+a{margin:5px;font-size:16px;color:blue;}
+a:visited{color:blue;}
+table tr td label{color: brown;font-size: 13px;}
+#header-wrap {
+    background: url(../../assets/images/header-bg.png) repeat-x left -10px;
+    width: 100%;
+    height: 50px;border:1px solid;
+    /*z-index: 99999;
+    position: fixed;/
+    top: 0;
+    left: 0;*/
+}
+#header-wrap ul li  {float:left;list-style: none;}
+#header-wrap ul li a{color:#ffffff;font-weight: bold;text-decoration: none;margin-right: 15px;}
+
+
+/*------------------------------------------*/
+#container{margin-left:8px;}
+
+#corps{border:1px dotted gray;background: lightgray;padding: 15px;width:650px;margin-top: 50px;}
+#content #boutons{width: 100%;}
+
+.bg {width:280px;}
+
+#footer{background: lightgray; text-align: center; font-weight: bold;border:1px solid gray;margin-top: 58px;}
+#button1{background: url("../../assets/images/VOIR_PR.png") no-repeat;height: 108px;width: 190px;}
+#button2{background: url("../../assets/images/VOIR_LG.png") no-repeat;height: 108px;width: 190px;}
+#button3{background: url("../../assets/images/VOIR_LC.png") no-repeat;height: 108px;width: 190px;}
+#button4{background: url("../../assets/images/ANA_PR.png") no-repeat;height: 108px;width: 190px;}
+#button5{background: url("../../assets/images/ANA_LG.png") no-repeat;height: 108px;width: 190px;}
+#button6{background: url("../../assets/images/ANA_LC.png") no-repeat;height: 108px;width: 190px;}
+#tableau{width:100%;}		
