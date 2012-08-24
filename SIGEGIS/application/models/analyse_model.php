@@ -1,6 +1,10 @@
 <?php
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+/**
+ * 
+ * @author Amadou SOW && Abdou Khadre GUEYE DESS 2ITIC 2011-2012
+ *
+ */
 class Analyse_model extends CI_Model{
 	
 public function getHistoAnalyse($balise){
