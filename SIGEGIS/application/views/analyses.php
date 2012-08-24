@@ -127,7 +127,7 @@
 				</td>
 				<td>
 				<input id="MoveRightCandidat" type="button" value=" &gt;&gt; " class="move" />
-				<input id="MoveLeftCandidat" type="button" value=" &lt;&lt;" class="move"/>
+				<input id="MoveLeftCandidat" type="button" value=" &lt;&lt; " class="move"/>
 				</td>
 				<td>
 				
