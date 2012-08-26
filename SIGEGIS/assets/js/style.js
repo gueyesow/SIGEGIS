@@ -1,4 +1,4 @@
-$("input[id=valider]").button();
+$("input[id=valider],input[id=validerLocalite]").button();
 $("#myRadio").buttonset();
 
 $('#menu-css li a').hover(   

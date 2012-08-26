@@ -32,6 +32,7 @@ $.extend({
 	var $centres = $('#centres');
 	var $sources = $('#sources');
 	var $elections = $('#elections');
+	var paramLoc="";
 	var $tours = $('#tours');
 	var mode = "";
 	var types_election=["presidentielle","legislative","locale","regionale","municipale","rurale"];

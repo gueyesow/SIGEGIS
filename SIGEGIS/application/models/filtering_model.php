@@ -143,11 +143,77 @@ class Filtering_model extends CI_Model{
 			}
 			echo json_encode($candidatures);
 		}
-		else{
-			//return FALSE;
+		else // AUCUN RESULTAT (CANDIDAT) 
+		{
 			$candidatures[''] = "Aucun";
 			echo json_encode($candidatures);
 		}
+		} return FALSE;
+	}
+	
+	function getCandidatsLocalite(){
+		$localites = NULL;
+		$localites=$_GET["localites"];	// "R1,R2,R3"
+	
+		if($localites != NULL){
+			$arrayLocalites=explode(",",$localites);
+		}
+	
+		if ( !empty($_GET['param']) AND !empty($_GET["localites"]) AND !empty($_GET["niveau"])) {
+			$requete="";
+			$requete="SELECT rp.idCandidature, nomCandidat
+			FROM resultatspresidentielles rp
+			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+			LEFT JOIN source ON rp.idSource = source.idSource
+			LEFT JOIN election ON rp.idElection = election.idElection
+			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+	
+			if ($_GET["niveau"]=="dep" OR $_GET["niveau"]=="reg" OR $_GET["niveau"]=="pays")
+				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
+				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
+			if ($_GET["niveau"]=="reg" OR $_GET["niveau"]=="pays")
+				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+			if ($_GET["niveau"]=="pays")
+				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+			$parametres=$_GET['param'];
+			$params=explode(",",$parametres);
+			$v=0;
+				
+			//$colonnesBDD=array("rp.idSource","election.tour",$parametres3);
+			$colonnesBDD=array("rp.idSource","election.tour","YEAR(election.dateElection)","election.typeElection");
+	
+			for($i=0;$i<sizeof($params);$i++) {
+				if($v++)$requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+				else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
+			}
+			
+			if ($_GET["niveau"]=="cen") $parametres3="centre.idCentre";
+			elseif ($_GET["niveau"]=="dep") $parametres3="departement.idDepartement";
+			elseif ($_GET["niveau"]=="reg") $parametres3="region.idRegion";
+			elseif ($_GET["niveau"]=="pays") $parametres3="pays.idPays";
+			
+			for($i=0;$i<sizeof($arrayLocalites);$i++) {
+				if(!$i) $requete.=" AND ($parametres3 ='".$arrayLocalites[$i]."'";
+				else $requete.="OR $parametres3 ='".$arrayLocalites[$i]."'";
+			}		
+	
+			$requete.=") GROUP BY rp.idCandidature";
+	
+			$query=$this->db->query($requete);
+	
+			$candidatures = array();
+	
+			if($query->result()){
+				foreach ($query->result() as $candidature) {
+					$candidatures[$candidature->idCandidature] = $candidature->nomCandidat;
+				}
+				echo json_encode($candidatures);
+			}
+			else // AUCUN RESULTAT (CANDIDAT)
+			{
+				$candidatures[''] = "Aucun";
+				echo json_encode($candidatures);
+			}
 		} return FALSE;
 	}
 	

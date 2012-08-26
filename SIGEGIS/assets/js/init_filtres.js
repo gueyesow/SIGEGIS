@@ -118,8 +118,10 @@
 						dataType: 'json',      
 						success: function(json) {
 							$regions.empty();
+							if ($("select[name*=ana_localite2]").val() === "region") $("#choixMultipleLocalitesA").empty();
 							$.each(json, function(index, value) {         
-								$regions.append('<option value="'+ index +'">'+ value +'</option>');     
+								$regions.append('<option value="'+ index +'">'+ value +'</option>');
+								if ($("select[name*=ana_localite2]").val() === "region") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
 							});
 							$regions.change();         
 						}           
@@ -138,8 +140,10 @@
 						success: function(json) 
 						{
 							$departements.empty();
+							if ($("select[name*=ana_localite2]").val() === "departement") $("#choixMultipleLocalitesA").empty();
 							$.each(json, function(index, value) {         
-							$departements.append('<option value="'+ index +'">'+ value +'</option>');     
+							$departements.append('<option value="'+ index +'">'+ value +'</option>');
+							if ($("select[name*=ana_localite2]").val() === "departement") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
 							});
 							$departements.change();         
 						}           
@@ -176,8 +180,10 @@
 						dataType: 'json',      
 						success: function(json) {      
 							$centres.empty();
+							if ($("select[name*=ana_localite2]").val() === "centre") $("#choixMultipleLocalitesA").empty();
 							$.each(json, function(index, value) {         
-								$centres.append('<option value="'+ index +'">'+ value +'</option>');     
+								$centres.append('<option value="'+ index +'">'+ value +'</option>');
+								if ($("select[name*=ana_localite2]").val() === "centre") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
 							});
 							$centres.change(); // // Permet de specifier un changement (:selected)         
 						}           

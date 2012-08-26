@@ -80,7 +80,12 @@ class Main_controller extends CI_Controller {
 	public function getPieAnalyse(){
 		echo $this->modele_analyse->getPieAnalyse("chartdiv2");
 	}
-	
+	public function getHistoAnalyseLocalite(){
+		echo $this->modele_analyse->getHistoAnalyseLocalite("chartdiv1");
+	}
+	public function getPieAnalyseLocalite(){
+		echo $this->modele_analyse->getPieAnalyseLocalite("chartdiv2");
+	}
 	public function getPie(){
 		echo $this->mon_modele->getPie("chartdiv2");
 	}
@@ -92,7 +97,9 @@ class Main_controller extends CI_Controller {
 	public function getGridAnalyse(){
 		$this->modele_analyse->tableau();
 	}
-	
+	public function getGridAnalyseLocalite(){
+		$this->modele_analyse->tableauLocalite();
+	}
 	public function getCandidats(){
 		$this->mon_filtre->getCandidats();
 	}
@@ -135,6 +142,9 @@ class Main_controller extends CI_Controller {
 		
 	public function getCandidatsAnnee(){
 		$this->mon_filtre->getCandidatsAnnee();
+	}
+	public function getCandidatsLocalite(){
+		$this->mon_filtre->getCandidatsLocalite();
 	}
 	public function getDecoupages(){
 		$this->mon_filtre->getDecoupages();
