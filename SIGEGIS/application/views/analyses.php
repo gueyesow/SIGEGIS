@@ -73,7 +73,7 @@
 	<div class="zone_des_options">	
 		<div id="accordion">
 		<form method="post" action="">
-			<!--div>
+			<div>
 				<h3><a href="#">Analyser suivant la localité</a></h3>			
 				<fieldset>
 				<b>Choisir la localité</b><br>
@@ -134,7 +134,7 @@
 				</table>						
 				<input id="valider" type="button" value="Valider" style="float: right;"/>							
 				</fieldset>				
-			</div-->
+			</div>
 			<div>
 				<h3><a href="#">Analyser suivant l'année</a></h3>
 				<fieldset>

@@ -179,7 +179,6 @@ class Filtering_model extends CI_Model{
 			$params=explode(",",$parametres);
 			$v=0;
 				
-			//$colonnesBDD=array("rp.idSource","election.tour",$parametres3);
 			$colonnesBDD=array("rp.idSource","election.tour","YEAR(election.dateElection)","election.typeElection");
 	
 			for($i=0;$i<sizeof($params);$i++) {
