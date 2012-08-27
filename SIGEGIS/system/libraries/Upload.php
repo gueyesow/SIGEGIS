@@ -80,32 +80,32 @@ class CI_Upload {
 	public function initialize($config = array())
 	{
 		$defaults = array(
-							'max_size'			=> 0,
-							'max_width'			=> 0,
-							'max_height'		=> 0,
-							'max_filename'		=> 0,
-							'allowed_types'		=> "",
-							'file_temp'			=> "",
-							'file_name'			=> "",
-							'orig_name'			=> "",
-							'file_type'			=> "",
-							'file_size'			=> "",
-							'file_ext'			=> "",
-							'upload_path'		=> "",
-							'overwrite'			=> FALSE,
-							'encrypt_name'		=> FALSE,
-							'is_image'			=> FALSE,
-							'image_width'		=> '',
-							'image_height'		=> '',
-							'image_type'		=> '',
-							'image_size_str'	=> '',
-							'error_msg'			=> array(),
-							'mimes'				=> array(),
-							'remove_spaces'		=> TRUE,
-							'xss_clean'			=> FALSE,
-							'temp_prefix'		=> "temp_file_",
-							'client_name'		=> ''
-						);
+				'max_size'			=> 0,
+				'max_width'			=> 0,
+				'max_height'		=> 0,
+				'max_filename'		=> 0,
+				'allowed_types'		=> "",
+				'file_temp'			=> "",
+				'file_name'			=> "",
+				'orig_name'			=> "",
+				'file_type'			=> "",
+				'file_size'			=> "",
+				'file_ext'			=> "",
+				'upload_path'		=> "",
+				'overwrite'			=> FALSE,
+				'encrypt_name'		=> FALSE,
+				'is_image'			=> FALSE,
+				'image_width'		=> '',
+				'image_height'		=> '',
+				'image_type'		=> '',
+				'image_size_str'	=> '',
+				'error_msg'			=> array(),
+				'mimes'				=> array(),
+				'remove_spaces'		=> TRUE,
+				'xss_clean'			=> FALSE,
+				'temp_prefix'		=> "temp_file_",
+				'client_name'		=> ''
+		);
 
 
 		foreach ($defaults as $key => $val)
@@ -143,7 +143,7 @@ class CI_Upload {
 	public function do_upload($field = 'userfile')
 	{
 
-	// Is $_FILES[$field] set? If not, no reason to continue.
+		// Is $_FILES[$field] set? If not, no reason to continue.
 		if ( ! isset($_FILES[$field]))
 		{
 			$this->set_error('upload_no_file_selected');
@@ -186,7 +186,7 @@ class CI_Upload {
 					$this->set_error('upload_stopped_by_extension');
 					break;
 				default :   $this->set_error('upload_no_file_selected');
-					break;
+				break;
 			}
 
 			return FALSE;
@@ -272,10 +272,10 @@ class CI_Upload {
 
 		/*
 		 * Validate the file name
-		 * This function appends an number onto the end of
-		 * the file if one with the same name already exists.
-		 * If it returns false there was a problem.
-		 */
+		* This function appends an number onto the end of
+		* the file if one with the same name already exists.
+		* If it returns false there was a problem.
+		*/
 		$this->orig_name = $this->file_name;
 
 		if ($this->overwrite == FALSE)
@@ -290,10 +290,10 @@ class CI_Upload {
 
 		/*
 		 * Run the file through the XSS hacking filter
-		 * This helps prevent malicious code from being
-		 * embedded within a file.  Scripts can easily
-		 * be disguised as images or other file types.
-		 */
+		* This helps prevent malicious code from being
+		* embedded within a file.  Scripts can easily
+		* be disguised as images or other file types.
+		*/
 		if ($this->xss_clean)
 		{
 			if ($this->do_xss_clean() === FALSE)
@@ -305,11 +305,11 @@ class CI_Upload {
 
 		/*
 		 * Move the file to the final destination
-		 * To deal with different server configurations
-		 * we'll attempt to use copy() first.  If that fails
-		 * we'll use move_uploaded_file().  One of the two should
-		 * reliably work in most environments
-		 */
+		* To deal with different server configurations
+		* we'll attempt to use copy() first.  If that fails
+		* we'll use move_uploaded_file().  One of the two should
+		* reliably work in most environments
+		*/
 		if ( ! @copy($this->file_temp, $this->upload_path.$this->file_name))
 		{
 			if ( ! @move_uploaded_file($this->file_temp, $this->upload_path.$this->file_name))
@@ -321,10 +321,10 @@ class CI_Upload {
 
 		/*
 		 * Set the finalized image dimensions
-		 * This sets the image width/height (assuming the
-		 * file was an image).  We use this information
-		 * in the "data" function.
-		 */
+		* This sets the image width/height (assuming the
+				* file was an image).  We use this information
+		* in the "data" function.
+		*/
 		$this->set_image_properties($this->upload_path.$this->file_name);
 
 		return TRUE;
@@ -343,21 +343,21 @@ class CI_Upload {
 	public function data()
 	{
 		return array (
-						'file_name'			=> $this->file_name,
-						'file_type'			=> $this->file_type,
-						'file_path'			=> $this->upload_path,
-						'full_path'			=> $this->upload_path.$this->file_name,
-						'raw_name'			=> str_replace($this->file_ext, '', $this->file_name),
-						'orig_name'			=> $this->orig_name,
-						'client_name'		=> $this->client_name,
-						'file_ext'			=> $this->file_ext,
-						'file_size'			=> $this->file_size,
-						'is_image'			=> $this->is_image(),
-						'image_width'		=> $this->image_width,
-						'image_height'		=> $this->image_height,
-						'image_type'		=> $this->image_type,
-						'image_size_str'	=> $this->image_size_str,
-					);
+				'file_name'			=> $this->file_name,
+				'file_type'			=> $this->file_type,
+				'file_path'			=> $this->upload_path,
+				'full_path'			=> $this->upload_path.$this->file_name,
+				'raw_name'			=> str_replace($this->file_ext, '', $this->file_name),
+				'orig_name'			=> $this->orig_name,
+				'client_name'		=> $this->client_name,
+				'file_ext'			=> $this->file_ext,
+				'file_size'			=> $this->file_size,
+				'is_image'			=> $this->is_image(),
+				'image_width'		=> $this->image_width,
+				'image_height'		=> $this->image_height,
+				'image_type'		=> $this->image_type,
+				'image_size_str'	=> $this->image_size_str,
+		);
 	}
 
 	// --------------------------------------------------------------------
@@ -566,10 +566,10 @@ class CI_Upload {
 		}
 
 		$img_mimes = array(
-							'image/gif',
-							'image/jpeg',
-							'image/png',
-						);
+				'image/gif',
+				'image/jpeg',
+				'image/png',
+		);
 
 		return (in_array($this->file_type, $img_mimes, TRUE)) ? TRUE : FALSE;
 	}
@@ -628,7 +628,7 @@ class CI_Upload {
 		}
 		elseif ($mime == $this->file_type)
 		{
-				return TRUE;
+			return TRUE;
 		}
 
 		return FALSE;
@@ -751,33 +751,33 @@ class CI_Upload {
 	public function clean_file_name($filename)
 	{
 		$bad = array(
-						"<!--",
-						"-->",
-						"'",
-						"<",
-						">",
-						'"',
-						'&',
-						'$',
-						'=',
-						';',
-						'?',
-						'/',
-						"%20",
-						"%22",
-						"%3c",		// <
-						"%253c",	// <
-						"%3e",		// >
-						"%0e",		// >
-						"%28",		// (
-						"%29",		// )
-						"%2528",	// (
-						"%26",		// &
-						"%24",		// $
-						"%3f",		// ?
-						"%3b",		// ;
-						"%3d"		// =
-					);
+				"<!--",
+				"-->",
+				"'",
+				"<",
+				">",
+				'"',
+				'&',
+				'$',
+				'=',
+				';',
+				'?',
+				'/',
+				"%20",
+				"%22",
+				"%3c",		// <
+				"%253c",	// <
+				"%3e",		// >
+				"%0e",		// >
+				"%28",		// (
+				"%29",		// )
+				"%2528",	// (
+				"%26",		// &
+				"%24",		// $
+				"%3f",		// ?
+				"%3b",		// ;
+				"%3d"		// =
+		);
 
 		$filename = str_replace($bad, '', $filename);
 
@@ -1028,8 +1028,8 @@ class CI_Upload {
 
 				/* According to the comments section of the PHP manual page,
 				 * it is possible that this function returns an empty string
-				 * for some files (e.g. if they don't exist in the magic MIME database)
-				 */
+				* for some files (e.g. if they don't exist in the magic MIME database)
+				*/
 				if (strlen($file_type) > 1)
 				{
 					$this->file_type = $file_type;
@@ -1047,11 +1047,11 @@ class CI_Upload {
 
 		/* This is an ugly hack, but UNIX-type systems provide a native way to detect the file type,
 		 * which is still more secure than depending on the value of $_FILES[$field]['type'].
-		 *
-		 * Notes:
-		 *	- a 'W' in the substr() expression bellow, would mean that we're using Windows
-		 *	- many system admins would disable the exec() function due to security concerns, hence the function_exists() check
-		 */
+		*
+		* Notes:
+		*	- a 'W' in the substr() expression bellow, would mean that we're using Windows
+		*	- many system admins would disable the exec() function due to security concerns, hence the function_exists() check
+		*/
 		if (DIRECTORY_SEPARATOR !== '\\' && function_exists('exec'))
 		{
 			$output = array();

@@ -50,7 +50,7 @@ if ( ! function_exists('site_url'))
 
 /**
  * Base URL
- * 
+ *
  * Create a local URL based on your basepath.
  * Segments can be passed in as a string or an array, same as site_url
  * or a URL to a file can be passed in, e.g. to an image file.
@@ -340,7 +340,8 @@ if ( ! function_exists('safe_mailto'))
 		$x = array_reverse($x);
 		ob_start();
 
-	?><script type="text/javascript">
+		?>
+<script type="text/javascript">
 	//<![CDATA[
 	var l=new Array();
 	<?php
@@ -351,11 +352,12 @@ if ( ! function_exists('safe_mailto'))
 	if (l[i].substring(0, 1) == '|') document.write("&#"+unescape(l[i].substring(1))+";");
 	else document.write(unescape(l[i]));}
 	//]]>
-	</script><?php
+	</script>
+<?php
 
-		$buffer = ob_get_contents();
-		ob_end_clean();
-		return $buffer;
+$buffer = ob_get_contents();
+ob_end_clean();
+return $buffer;
 	}
 }
 
@@ -395,14 +397,14 @@ if ( ! function_exists('auto_link'))
 					}
 
 					$str = str_replace($matches['0'][$i],
-										$matches['1'][$i].'<a href="http'.
-										$matches['4'][$i].'://'.
-										$matches['5'][$i].
-										$matches['6'][$i].'"'.$pop.'>http'.
-										$matches['4'][$i].'://'.
-										$matches['5'][$i].
-										$matches['6'][$i].'</a>'.
-										$period, $str);
+							$matches['1'][$i].'<a href="http'.
+							$matches['4'][$i].'://'.
+							$matches['5'][$i].
+							$matches['6'][$i].'"'.$pop.'>http'.
+							$matches['4'][$i].'://'.
+							$matches['5'][$i].
+							$matches['6'][$i].'</a>'.
+							$period, $str);
 				}
 			}
 		}
@@ -490,15 +492,15 @@ if ( ! function_exists('url_title'))
 		}
 
 		$trans = array(
-						'&\#\d+?;'				=> '',
-						'&\S+?;'				=> '',
-						'\s+'					=> $replace,
-						'[^a-z0-9\-\._]'		=> '',
-						$replace.'+'			=> $replace,
-						$replace.'$'			=> $replace,
-						'^'.$replace			=> $replace,
-						'\.+$'					=> ''
-					);
+				'&\#\d+?;'				=> '',
+				'&\S+?;'				=> '',
+				'\s+'					=> $replace,
+				'[^a-z0-9\-\._]'		=> '',
+				$replace.'+'			=> $replace,
+				$replace.'$'			=> $replace,
+				'^'.$replace			=> $replace,
+				'\.+$'					=> ''
+		);
 
 		$str = strip_tags($str);
 
@@ -542,9 +544,9 @@ if ( ! function_exists('redirect'))
 		switch($method)
 		{
 			case 'refresh'	: header("Refresh:0;url=".$uri);
-				break;
+			break;
 			default			: header("Location: ".$uri, TRUE, $http_response_code);
-				break;
+			break;
 		}
 		exit;
 	}

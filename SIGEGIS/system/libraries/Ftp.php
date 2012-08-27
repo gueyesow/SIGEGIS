@@ -597,20 +597,20 @@ class CI_FTP {
 	function _settype($ext)
 	{
 		$text_types = array(
-							'txt',
-							'text',
-							'php',
-							'phps',
-							'php4',
-							'js',
-							'css',
-							'htm',
-							'html',
-							'phtml',
-							'shtml',
-							'log',
-							'xml'
-							);
+				'txt',
+				'text',
+				'php',
+				'phps',
+				'php4',
+				'js',
+				'css',
+				'htm',
+				'html',
+				'phtml',
+				'shtml',
+				'log',
+				'xml'
+		);
 
 
 		return (in_array($ext, $text_types)) ? 'ascii' : 'binary';

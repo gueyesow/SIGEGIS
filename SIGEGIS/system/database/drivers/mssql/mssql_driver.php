@@ -268,9 +268,9 @@ class CI_DB_mssql_driver extends CI_DB {
 		if ($like === TRUE)
 		{
 			$str = str_replace(
-				array($this->_like_escape_chr, '%', '_'),
-				array($this->_like_escape_chr.$this->_like_escape_chr, $this->_like_escape_chr.'%', $this->_like_escape_chr.'_'),
-				$str
+					array($this->_like_escape_chr, '%', '_'),
+					array($this->_like_escape_chr.$this->_like_escape_chr, $this->_like_escape_chr.'%', $this->_like_escape_chr.'_'),
+					$str
 			);
 		}
 
@@ -293,13 +293,13 @@ class CI_DB_mssql_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	* Insert ID
-	*
-	* Returns the last id created in the Identity column.
-	*
-	* @access public
-	* @return integer
-	*/
+	 * Insert ID
+	 *
+	 * Returns the last id created in the Identity column.
+	 *
+	 * @access public
+	 * @return integer
+	 */
 	function insert_id()
 	{
 		$ver = self::_parse_major_version($this->version());
@@ -312,15 +312,15 @@ class CI_DB_mssql_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	* Parse major version
-	*
-	* Grabs the major version number from the
-	* database server version string passed in.
-	*
-	* @access private
-	* @param string $version
-	* @return int16 major version number
-	*/
+	 * Parse major version
+	 *
+	 * Grabs the major version number from the
+	 * database server version string passed in.
+	 *
+	 * @access private
+	 * @param string $version
+	 * @return int16 major version number
+	 */
 	function _parse_major_version($version)
 	{
 		preg_match('/([0-9]+)\.([0-9]+)\.([0-9]+)/', $version, $ver_info);
@@ -330,11 +330,11 @@ class CI_DB_mssql_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	* Version number query string
-	*
-	* @access public
-	* @return string
-	*/
+	 * Version number query string
+	 *
+	 * @access public
+	 * @return string
+	 */
 	function _version()
 	{
 		return "SELECT @@VERSION AS ver";

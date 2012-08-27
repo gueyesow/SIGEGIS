@@ -106,8 +106,8 @@ if ( ! function_exists('create_captcha'))
 		// Do we have a "word" yet?
 		// -----------------------------------
 
-	   if ($word == '')
-	   {
+		if ($word == '')
+		{
 			$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 			$str = '';
@@ -117,7 +117,7 @@ if ( ! function_exists('create_captcha'))
 			}
 
 			$word = $str;
-	   }
+		}
 
 		// -----------------------------------
 		// Determine angle and position

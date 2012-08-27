@@ -39,14 +39,14 @@ class CI_Unit_test {
 	{
 		// These are the default items visible when a test is run.
 		$this->_test_items_visible = array (
-							'test_name',
-							'test_datatype',
-							'res_datatype',
-							'result',
-							'file',
-							'line',
-							'notes'
-						);
+				'test_name',
+				'test_datatype',
+				'res_datatype',
+				'result',
+				'file',
+				'line',
+				'notes'
+		);
 
 		log_message('debug', "Unit Testing Class Initialized");
 	}
@@ -109,14 +109,14 @@ class CI_Unit_test {
 		$back = $this->_backtrace();
 
 		$report[] = array (
-							'test_name'			=> $test_name,
-							'test_datatype'		=> gettype($test),
-							'res_datatype'		=> $extype,
-							'result'			=> ($result === TRUE) ? 'passed' : 'failed',
-							'file'				=> $back['file'],
-							'line'				=> $back['line'],
-							'notes'				=> $notes
-						);
+				'test_name'			=> $test_name,
+				'test_datatype'		=> gettype($test),
+				'res_datatype'		=> $extype,
+				'result'			=> ($result === TRUE) ? 'passed' : 'failed',
+				'file'				=> $back['file'],
+				'line'				=> $back['line'],
+				'notes'				=> $notes
+		);
 
 		$this->results[] = $report;
 

@@ -69,16 +69,16 @@ class CI_Security {
 	 * @access protected
 	 */
 	protected $_never_allowed_str = array(
-					'document.cookie'	=> '[removed]',
-					'document.write'	=> '[removed]',
-					'.parentNode'		=> '[removed]',
-					'.innerHTML'		=> '[removed]',
-					'window.location'	=> '[removed]',
-					'-moz-binding'		=> '[removed]',
-					'<!--'				=> '&lt;!--',
-					'-->'				=> '--&gt;',
-					'<![CDATA['			=> '&lt;![CDATA[',
-					'<comment>'			=> '&lt;comment&gt;'
+			'document.cookie'	=> '[removed]',
+			'document.write'	=> '[removed]',
+			'.parentNode'		=> '[removed]',
+			'.innerHTML'		=> '[removed]',
+			'window.location'	=> '[removed]',
+			'-moz-binding'		=> '[removed]',
+			'<!--'				=> '&lt;!--',
+			'-->'				=> '--&gt;',
+			'<![CDATA['			=> '&lt;![CDATA[',
+			'<comment>'			=> '&lt;comment&gt;'
 	);
 
 	/* never allowed, regex replacement */
@@ -89,10 +89,10 @@ class CI_Security {
 	 * @access protected
 	 */
 	protected $_never_allowed_regex = array(
-					"javascript\s*:"			=> '[removed]',
-					"expression\s*(\(|&\#40;)"	=> '[removed]', // CSS and IE
-					"vbscript\s*:"				=> '[removed]', // IE, surprise!
-					"Redirect\s+302"			=> '[removed]'
+			"javascript\s*:"			=> '[removed]',
+			"expression\s*(\(|&\#40;)"	=> '[removed]', // CSS and IE
+			"vbscript\s*:"				=> '[removed]', // IE, surprise!
+			"Redirect\s+302"			=> '[removed]'
 	);
 
 	/**
@@ -264,8 +264,8 @@ class CI_Security {
 	{
 		/*
 		 * Is the string an array?
-		 *
-		 */
+		*
+		*/
 		if (is_array($str))
 		{
 			while (list($key) = each($str))
@@ -278,7 +278,7 @@ class CI_Security {
 
 		/*
 		 * Remove Invisible Characters
-		 */
+		*/
 		$str = remove_invisible_characters($str);
 
 		// Validate Entities in URLs
@@ -286,24 +286,24 @@ class CI_Security {
 
 		/*
 		 * URL Decode
-		 *
-		 * Just in case stuff like this is submitted:
-		 *
-		 * <a href="http://%77%77%77%2E%67%6F%6F%67%6C%65%2E%63%6F%6D">Google</a>
-		 *
-		 * Note: Use rawurldecode() so it does not remove plus signs
-		 *
-		 */
+		*
+		* Just in case stuff like this is submitted:
+		*
+		* <a href="http://%77%77%77%2E%67%6F%6F%67%6C%65%2E%63%6F%6D">Google</a>
+		*
+		* Note: Use rawurldecode() so it does not remove plus signs
+		*
+		*/
 		$str = rawurldecode($str);
 
 		/*
 		 * Convert character entities to ASCII
-		 *
-		 * This permits our tests below to work reliably.
-		 * We only convert entities that are within tags since
-		 * these are the ones that will pose security problems.
-		 *
-		 */
+		*
+		* This permits our tests below to work reliably.
+		* We only convert entities that are within tags since
+		* these are the ones that will pose security problems.
+		*
+		*/
 
 		$str = preg_replace_callback("/[a-z]+=([\'\"]).*?\\1/si", array($this, '_convert_attribute'), $str);
 
@@ -311,17 +311,17 @@ class CI_Security {
 
 		/*
 		 * Remove Invisible Characters Again!
-		 */
+		*/
 		$str = remove_invisible_characters($str);
 
 		/*
 		 * Convert all tabs to spaces
-		 *
-		 * This prevents strings like this: ja	vascript
-		 * NOTE: we deal with spaces between characters later.
-		 * NOTE: preg_replace was found to be amazingly slow here on
-		 * large blocks of data, so we use str_replace.
-		 */
+		*
+		* This prevents strings like this: ja	vascript
+		* NOTE: we deal with spaces between characters later.
+		* NOTE: preg_replace was found to be amazingly slow here on
+		* large blocks of data, so we use str_replace.
+		*/
 
 		if (strpos($str, "\t") !== FALSE)
 		{
@@ -330,7 +330,7 @@ class CI_Security {
 
 		/*
 		 * Capture converted string for later comparison
-		 */
+		*/
 		$converted_string = $str;
 
 		// Remove Strings that are never allowed
@@ -338,13 +338,13 @@ class CI_Security {
 
 		/*
 		 * Makes PHP tags safe
-		 *
-		 * Note: XML tags are inadvertently replaced too:
-		 *
-		 * <?xml
-		 *
-		 * But it doesn't seem to pose a problem.
-		 */
+		*
+		* Note: XML tags are inadvertently replaced too:
+		*
+		* <?xml
+		*
+		* But it doesn't seem to pose a problem.
+		*/
 		if ($is_image === TRUE)
 		{
 			// Images have a tendency to have the PHP short opening and
@@ -359,14 +359,14 @@ class CI_Security {
 
 		/*
 		 * Compact any exploded words
-		 *
-		 * This corrects words like:  j a v a s c r i p t
-		 * These words are compacted back to their correct state.
-		 */
+		*
+		* This corrects words like:  j a v a s c r i p t
+		* These words are compacted back to their correct state.
+		*/
 		$words = array(
 				'javascript', 'expression', 'vbscript', 'script',
 				'applet', 'alert', 'document', 'write', 'cookie', 'window'
-			);
+		);
 
 		foreach ($words as $word)
 		{
@@ -384,10 +384,10 @@ class CI_Security {
 
 		/*
 		 * Remove disallowed Javascript in links or img tags
-		 * We used to do some version comparisons and use of stripos for PHP5,
-		 * but it is dog slow compared to these simplified non-capturing
-		 * preg_match(), especially if the pattern exists in the string
-		 */
+		* We used to do some version comparisons and use of stripos for PHP5,
+		* but it is dog slow compared to these simplified non-capturing
+		* preg_match(), especially if the pattern exists in the string
+		*/
 		do
 		{
 			$original = $str;
@@ -416,28 +416,28 @@ class CI_Security {
 
 		/*
 		 * Sanitize naughty HTML elements
-		 *
-		 * If a tag containing any of the words in the list
-		 * below is found, the tag gets converted to entities.
-		 *
-		 * So this: <blink>
-		 * Becomes: &lt;blink&gt;
-		 */
+		*
+		* If a tag containing any of the words in the list
+		* below is found, the tag gets converted to entities.
+		*
+		* So this: <blink>
+		* Becomes: &lt;blink&gt;
+		*/
 		$naughty = 'alert|applet|audio|basefont|base|behavior|bgsound|blink|body|embed|expression|form|frameset|frame|head|html|ilayer|iframe|input|isindex|layer|link|meta|object|plaintext|style|script|textarea|title|video|xml|xss';
 		$str = preg_replace_callback('#<(/*\s*)('.$naughty.')([^><]*)([><]*)#is', array($this, '_sanitize_naughty_html'), $str);
 
 		/*
 		 * Sanitize naughty scripting elements
-		 *
-		 * Similar to above, only instead of looking for
-		 * tags it looks for PHP and JavaScript commands
-		 * that are disallowed.  Rather than removing the
-		 * code, it simply converts the parenthesis to entities
-		 * rendering the code un-executable.
-		 *
-		 * For example:	eval('some code')
-		 * Becomes:		eval&#40;'some code'&#41;
-		 */
+		*
+		* Similar to above, only instead of looking for
+		* tags it looks for PHP and JavaScript commands
+		* that are disallowed.  Rather than removing the
+		* code, it simply converts the parenthesis to entities
+		* rendering the code un-executable.
+		*
+		* For example:	eval('some code')
+		* Becomes:		eval&#40;'some code'&#41;
+		*/
 		$str = preg_replace('#(alert|cmd|passthru|eval|exec|expression|system|fopen|fsockopen|file|file_get_contents|readfile|unlink)(\s*)\((.*?)\)#si', "\\1\\2&#40;\\3&#41;", $str);
 
 
@@ -448,13 +448,13 @@ class CI_Security {
 
 		/*
 		 * Images are Handled in a Special Way
-		 * - Essentially, we want to know that after all of the character
-		 * conversion is done whether any unwanted, likely XSS, code was found.
-		 * If not, we return TRUE, as the image is clean.
-		 * However, if the string post-conversion does not matched the
-		 * string post-removal of XSS, then it fails, as there was unwanted XSS
-		 * code found and removed/changed during processing.
-		 */
+		* - Essentially, we want to know that after all of the character
+		* conversion is done whether any unwanted, likely XSS, code was found.
+		* If not, we return TRUE, as the image is clean.
+		* However, if the string post-conversion does not matched the
+		* string post-removal of XSS, then it fails, as there was unwanted XSS
+		* code found and removed/changed during processing.
+		*/
 
 		if ($is_image === TRUE)
 		{
@@ -524,38 +524,38 @@ class CI_Security {
 	public function sanitize_filename($str, $relative_path = FALSE)
 	{
 		$bad = array(
-						"../",
-						"<!--",
-						"-->",
-						"<",
-						">",
-						"'",
-						'"',
-						'&',
-						'$',
-						'#',
-						'{',
-						'}',
-						'[',
-						']',
-						'=',
-						';',
-						'?',
-						"%20",
-						"%22",
-						"%3c",		// <
-						"%253c",	// <
-						"%3e",		// >
-						"%0e",		// >
-						"%28",		// (
-						"%29",		// )
-						"%2528",	// (
-						"%26",		// &
-						"%24",		// $
-						"%3f",		// ?
-						"%3b",		// ;
-						"%3d"		// =
-					);
+				"../",
+				"<!--",
+				"-->",
+				"<",
+				">",
+				"'",
+				'"',
+				'&',
+				'$',
+				'#',
+				'{',
+				'}',
+				'[',
+				']',
+				'=',
+				';',
+				'?',
+				"%20",
+				"%22",
+				"%3c",		// <
+				"%253c",	// <
+				"%3e",		// >
+				"%0e",		// >
+				"%28",		// (
+				"%29",		// )
+				"%2528",	// (
+				"%26",		// &
+				"%24",		// $
+				"%3f",		// ?
+				"%3b",		// ;
+				"%3d"		// =
+		);
 
 		if ( ! $relative_path)
 		{
@@ -587,19 +587,19 @@ class CI_Security {
 
 	/*
 	 * Remove Evil HTML Attributes (like evenhandlers and style)
-	 *
-	 * It removes the evil attribute and either:
-	 * 	- Everything up until a space
-	 *		For example, everything between the pipes:
-	 *		<a |style=document.write('hello');alert('world');| class=link>
-	 * 	- Everything inside the quotes
-	 *		For example, everything between the pipes:
-	 *		<a |style="document.write('hello'); alert('world');"| class="link">
-	 *
-	 * @param string $str The string to check
-	 * @param boolean $is_image TRUE if this is an image
-	 * @return string The string with the evil attributes removed
-	 */
+	*
+	* It removes the evil attribute and either:
+	* 	- Everything up until a space
+	*		For example, everything between the pipes:
+	*		<a |style=document.write('hello');alert('world');| class=link>
+	* 	- Everything inside the quotes
+	*		For example, everything between the pipes:
+	*		<a |style="document.write('hello'); alert('world');"| class="link">
+	*
+	* @param string $str The string to check
+	* @param boolean $is_image TRUE if this is an image
+	* @return string The string with the evil attributes removed
+	*/
 	protected function _remove_evil_attributes($str, $is_image)
 	{
 		// All javascript event handlers (e.g. onload, onclick, onmouseover), style, and xmlns
@@ -608,24 +608,24 @@ class CI_Security {
 		if ($is_image === TRUE)
 		{
 			/*
-			 * Adobe Photoshop puts XML metadata into JFIF images, 
-			 * including namespacing, so we have to allow this for images.
-			 */
+			 * Adobe Photoshop puts XML metadata into JFIF images,
+			* including namespacing, so we have to allow this for images.
+			*/
 			unset($evil_attributes[array_search('xmlns', $evil_attributes)]);
 		}
-		
+
 		do {
 			$count = 0;
 			$attribs = array();
-			
+				
 			// find occurrences of illegal attribute strings without quotes
 			preg_match_all("/(".implode('|', $evil_attributes).")\s*=\s*([^\s]*)/is",  $str, $matches, PREG_SET_ORDER);
-			
+				
 			foreach ($matches as $attr)
 			{
 				$attribs[] = preg_quote($attr[0], '/');
 			}
-			
+				
 			// find occurrences of illegal attribute strings with quotes (042 and 047 are octal quotes)
 			preg_match_all("/(".implode('|', $evil_attributes).")\s*=\s*(\042|\047)([^\\2]*?)(\\2)/is",  $str, $matches, PREG_SET_ORDER);
 
@@ -639,9 +639,9 @@ class CI_Security {
 			{
 				$str = preg_replace("/<(\/?[^><]+?)([^A-Za-z\-])(".implode('|', $attribs).")([\s><])([><]*)/i", '<$1$2$4$5', $str, -1, $count);
 			}
-			
+				
 		} while ($count);
-		
+
 		return $str;
 	}
 
@@ -662,7 +662,7 @@ class CI_Security {
 
 		// encode captured opening or closing brace to prevent recursive vectors
 		$str .= str_replace(array('>', '<'), array('&gt;', '&lt;'),
-							$matches[4]);
+				$matches[4]);
 
 		return $str;
 	}
@@ -776,32 +776,32 @@ class CI_Security {
 	{
 		/*
 		 * Protect GET variables in URLs
-		 */
+		*/
 
-		 // 901119URL5918AMP18930PROTECT8198
+		// 901119URL5918AMP18930PROTECT8198
 
 		$str = preg_replace('|\&([a-z\_0-9\-]+)\=([a-z\_0-9\-]+)|i', $this->xss_hash()."\\1=\\2", $str);
 
 		/*
 		 * Validate standard character entities
-		 *
-		 * Add a semicolon if missing.  We do this to enable
-		 * the conversion of entities to ASCII later.
-		 *
-		 */
+		*
+		* Add a semicolon if missing.  We do this to enable
+		* the conversion of entities to ASCII later.
+		*
+		*/
 		$str = preg_replace('#(&\#?[0-9a-z]{2,})([\x00-\x20])*;?#i', "\\1;\\2", $str);
 
 		/*
 		 * Validate UTF16 two byte encoding (x00)
-		 *
-		 * Just as above, adds a semicolon if missing.
-		 *
-		 */
+		*
+		* Just as above, adds a semicolon if missing.
+		*
+		*/
 		$str = preg_replace('#(&\#x?)([0-9A-F]+);?#i',"\\1\\2;",$str);
 
 		/*
 		 * Un-Protect GET variables in URLs
-		 */
+		*/
 		$str = str_replace($this->xss_hash(), '&', $str);
 
 		return $str;
@@ -848,7 +848,7 @@ class CI_Security {
 			// each page load since a page could contain embedded
 			// sub-pages causing this feature to fail
 			if (isset($_COOKIE[$this->_csrf_cookie_name]) &&
-				$_COOKIE[$this->_csrf_cookie_name] != '')
+					$_COOKIE[$this->_csrf_cookie_name] != '')
 			{
 				return $this->_csrf_hash = $_COOKIE[$this->_csrf_cookie_name];
 			}

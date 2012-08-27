@@ -76,36 +76,36 @@ class CI_Xmlrpc {
 
 		// Types for info sent back and forth
 		$this->xmlrpcTypes = array(
-			$this->xmlrpcI4	 		=> '1',
-			$this->xmlrpcInt		=> '1',
-			$this->xmlrpcBoolean	=> '1',
-			$this->xmlrpcString		=> '1',
-			$this->xmlrpcDouble		=> '1',
-			$this->xmlrpcDateTime	=> '1',
-			$this->xmlrpcBase64		=> '1',
-			$this->xmlrpcArray		=> '2',
-			$this->xmlrpcStruct		=> '3'
-			);
+				$this->xmlrpcI4	 		=> '1',
+				$this->xmlrpcInt		=> '1',
+				$this->xmlrpcBoolean	=> '1',
+				$this->xmlrpcString		=> '1',
+				$this->xmlrpcDouble		=> '1',
+				$this->xmlrpcDateTime	=> '1',
+				$this->xmlrpcBase64		=> '1',
+				$this->xmlrpcArray		=> '2',
+				$this->xmlrpcStruct		=> '3'
+		);
 
 		// Array of Valid Parents for Various XML-RPC elements
 		$this->valid_parents = array('BOOLEAN'			=> array('VALUE'),
-									 'I4'				=> array('VALUE'),
-									 'INT'				=> array('VALUE'),
-									 'STRING'			=> array('VALUE'),
-									 'DOUBLE'			=> array('VALUE'),
-									 'DATETIME.ISO8601'	=> array('VALUE'),
-									 'BASE64'			=> array('VALUE'),
-									 'ARRAY'			=> array('VALUE'),
-									 'STRUCT'			=> array('VALUE'),
-									 'PARAM'			=> array('PARAMS'),
-									 'METHODNAME'		=> array('METHODCALL'),
-									 'PARAMS'			=> array('METHODCALL', 'METHODRESPONSE'),
-									 'MEMBER'			=> array('STRUCT'),
-									 'NAME'				=> array('MEMBER'),
-									 'DATA'				=> array('ARRAY'),
-									 'FAULT'			=> array('METHODRESPONSE'),
-									 'VALUE'			=> array('MEMBER', 'DATA', 'PARAM', 'FAULT')
-									 );
+				'I4'				=> array('VALUE'),
+				'INT'				=> array('VALUE'),
+				'STRING'			=> array('VALUE'),
+				'DOUBLE'			=> array('VALUE'),
+				'DATETIME.ISO8601'	=> array('VALUE'),
+				'BASE64'			=> array('VALUE'),
+				'ARRAY'			=> array('VALUE'),
+				'STRUCT'			=> array('VALUE'),
+				'PARAM'			=> array('PARAMS'),
+				'METHODNAME'		=> array('METHODCALL'),
+				'PARAMS'			=> array('METHODCALL', 'METHODRESPONSE'),
+				'MEMBER'			=> array('STRUCT'),
+				'NAME'				=> array('MEMBER'),
+				'DATA'				=> array('ARRAY'),
+				'FAULT'			=> array('METHODRESPONSE'),
+				'VALUE'			=> array('MEMBER', 'DATA', 'PARAM', 'FAULT')
+		);
 
 
 		// XML-RPC Responses
@@ -477,19 +477,19 @@ class XML_RPC_Response
 		if ($this->errno)
 		{
 			$result .= '<fault>
-	<value>
-		<struct>
+			<value>
+			<struct>
 			<member>
-				<name>faultCode</name>
-				<value><int>' . $this->errno . '</int></value>
+			<name>faultCode</name>
+			<value><int>' . $this->errno . '</int></value>
 			</member>
 			<member>
-				<name>faultString</name>
-				<value><string>' . $this->errstr . '</string></value>
+			<name>faultString</name>
+			<value><string>' . $this->errstr . '</string></value>
 			</member>
-		</struct>
-	</value>
-</fault>';
+			</struct>
+			</value>
+			</fault>';
 		}
 		else
 		{
@@ -504,7 +504,7 @@ class XML_RPC_Response
 	function decode($array=FALSE)
 	{
 		$CI =& get_instance();
-		
+
 		if ($array !== FALSE && is_array($array))
 		{
 			while (list($key) = each($array))
@@ -877,25 +877,25 @@ class XML_RPC_Message extends CI_Xmlrpc
 				// Creates array for child elements
 
 				$cur_val = array('value' => array(),
-								 'type'	 => $name);
+				'type'	 => $name);
 
 				array_unshift($this->xh[$the_parser]['valuestack'], $cur_val);
-			break;
+				break;
 			case 'METHODNAME':
 			case 'NAME':
 				$this->xh[$the_parser]['ac'] = '';
-			break;
+				break;
 			case 'FAULT':
 				$this->xh[$the_parser]['isf'] = 1;
-			break;
+				break;
 			case 'PARAM':
 				$this->xh[$the_parser]['value'] = NULL;
-			break;
+				break;
 			case 'VALUE':
 				$this->xh[$the_parser]['vt'] = 'value';
 				$this->xh[$the_parser]['ac'] = '';
 				$this->xh[$the_parser]['lv'] = 1;
-			break;
+				break;
 			case 'I4':
 			case 'INT':
 			case 'STRING':
@@ -912,24 +912,24 @@ class XML_RPC_Message extends CI_Xmlrpc
 				}
 
 				$this->xh[$the_parser]['ac'] = '';
-			break;
+				break;
 			case 'MEMBER':
 				// Set name of <member> to nothing to prevent errors later if no <name> is found
 				$this->xh[$the_parser]['valuestack'][0]['name'] = '';
 
 				// Set NULL value to check to see if value passed for this param/member
 				$this->xh[$the_parser]['value'] = NULL;
-			break;
+				break;
 			case 'DATA':
 			case 'METHODCALL':
 			case 'METHODRESPONSE':
 			case 'PARAMS':
 				// valid elements that add little to processing
-			break;
+				break;
 			default:
 				/// An Invalid Element is Found, so we have trouble
 				$this->xh[$the_parser]['isf'] = 2;
-				$this->xh[$the_parser]['isf_reason'] = "Invalid XML-RPC element found: $name";
+			$this->xh[$the_parser]['isf_reason'] = "Invalid XML-RPC element found: $name";
 			break;
 		}
 
@@ -963,10 +963,10 @@ class XML_RPC_Message extends CI_Xmlrpc
 				$cur_val = array_shift($this->xh[$the_parser]['valuestack']);
 				$this->xh[$the_parser]['value'] = ( ! isset($cur_val['values'])) ? array() : $cur_val['values'];
 				$this->xh[$the_parser]['vt']	= strtolower($name);
-			break;
+				break;
 			case 'NAME':
 				$this->xh[$the_parser]['valuestack'][0]['name'] = $this->xh[$the_parser]['ac'];
-			break;
+				break;
 			case 'BOOLEAN':
 			case 'I4':
 			case 'INT':
@@ -1029,7 +1029,7 @@ class XML_RPC_Message extends CI_Xmlrpc
 				}
 				$this->xh[$the_parser]['ac'] = '';
 				$this->xh[$the_parser]['lv'] = 3; // indicate we've found a value
-			break;
+				break;
 			case 'VALUE':
 				// This if() detects if no scalar was inside <VALUE></VALUE>
 				if ($this->xh[$the_parser]['vt']=='value')
@@ -1051,7 +1051,7 @@ class XML_RPC_Message extends CI_Xmlrpc
 					// Struct
 					$this->xh[$the_parser]['value'] = $temp;
 				}
-			break;
+				break;
 			case 'MEMBER':
 				$this->xh[$the_parser]['ac']='';
 
@@ -1060,28 +1060,28 @@ class XML_RPC_Message extends CI_Xmlrpc
 				{
 					$this->xh[$the_parser]['valuestack'][0]['values'][$this->xh[$the_parser]['valuestack'][0]['name']] = $this->xh[$the_parser]['value'];
 				}
-			break;
+				break;
 			case 'DATA':
 				$this->xh[$the_parser]['ac']='';
-			break;
+				break;
 			case 'PARAM':
 				if ($this->xh[$the_parser]['value'])
 				{
 					$this->xh[$the_parser]['params'][] = $this->xh[$the_parser]['value'];
 				}
-			break;
+				break;
 			case 'METHODNAME':
 				$this->xh[$the_parser]['method'] = ltrim($this->xh[$the_parser]['ac']);
-			break;
+				break;
 			case 'PARAMS':
 			case 'FAULT':
 			case 'METHODCALL':
 			case 'METHORESPONSE':
 				// We're all good kids with nuthin' to do
-			break;
+				break;
 			default:
 				// End of an Invalid Element.  Taken care of during the opening tag though
-			break;
+				break;
 		}
 	}
 
@@ -1111,12 +1111,14 @@ class XML_RPC_Message extends CI_Xmlrpc
 	}
 
 
-	function addParam($par) { $this->params[]=$par; }
+	function addParam($par) {
+		$this->params[]=$par;
+	}
 
 	function output_parameters($array=FALSE)
 	{
 		$CI =& get_instance();
-		
+
 		if ($array !== FALSE && is_array($array))
 		{
 			while (list($key) = each($array))
@@ -1338,7 +1340,7 @@ class XML_RPC_Values extends CI_Xmlrpc
 					$rs .= "</member>\n";
 				}
 				$rs .= '</struct>';
-			break;
+				break;
 			case 2:
 				// array
 				$rs .= "<array>\n<data>\n";
@@ -1354,19 +1356,19 @@ class XML_RPC_Values extends CI_Xmlrpc
 				{
 					case $this->xmlrpcBase64:
 						$rs .= "<{$typ}>" . base64_encode((string)$val) . "</{$typ}>\n";
-					break;
+						break;
 					case $this->xmlrpcBoolean:
 						$rs .= "<{$typ}>" . ((bool)$val ? '1' : '0') . "</{$typ}>\n";
-					break;
+						break;
 					case $this->xmlrpcString:
 						$rs .= "<{$typ}>" . htmlspecialchars((string)$val). "</{$typ}>\n";
-					break;
+						break;
 					default:
 						$rs .= "<{$typ}>{$val}</{$typ}>\n";
 					break;
 				}
 			default:
-			break;
+				break;
 		}
 		return $rs;
 	}

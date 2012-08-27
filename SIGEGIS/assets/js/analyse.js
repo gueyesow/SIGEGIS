@@ -97,7 +97,7 @@ $(document).ready(function() {
 	    viewrecords: true,
 	    gridview: true,
 	}).navGrid("#pager",{edit:true,add:true,del:true});
-
+	
 			
 	$('#menu-css a').each(function(){
 		if($(this).text()!=$('#menu-css a:first').text())

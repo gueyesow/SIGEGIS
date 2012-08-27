@@ -96,12 +96,12 @@ class CI_DB_mysql_forge extends CI_DB_forge {
 							case 'float':
 							case 'numeric':
 								$sql .= '('.implode(',', $attributes['CONSTRAINT']).')';
-							break;
+								break;
 
 							case 'enum':
 							case 'set':
 								$sql .= '("'.implode('","', $attributes['CONSTRAINT']).'")';
-							break;
+								break;
 
 							default:
 								$sql .= '('.$attributes['CONSTRAINT'].')';

@@ -308,16 +308,16 @@ class CI_URI {
 
 	// --------------------------------------------------------------------
 	/**
-	 * Re-index Segments
-	 *
-	 * This function re-indexes the $this->segment array so that it
-	 * starts at 1 rather than 0.  Doing so makes it simpler to
-	 * use functions like $this->uri->segment(n) since there is
-	 * a 1:1 relationship between the segment array and the actual segments.
-	 *
-	 * @access	private
-	 * @return	void
-	 */
+	* Re-index Segments
+	*
+	* This function re-indexes the $this->segment array so that it
+	* starts at 1 rather than 0.  Doing so makes it simpler to
+	* use functions like $this->uri->segment(n) since there is
+	* a 1:1 relationship between the segment array and the actual segments.
+	*
+	* @access	private
+	* @return	void
+	*/
 	function _reindex_segments()
 	{
 		array_unshift($this->segments, NULL);

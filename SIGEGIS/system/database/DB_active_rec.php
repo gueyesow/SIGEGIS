@@ -58,7 +58,7 @@ class CI_DB_active_record extends CI_DB_driver {
 	var $ar_cache_having		= array();
 	var $ar_cache_orderby		= array();
 	var $ar_cache_set			= array();
-	
+
 	var $ar_no_escape 			= array();
 	var $ar_cache_no_escape     = array();
 
@@ -426,7 +426,7 @@ class CI_DB_active_record extends CI_DB_driver {
 
 					$v = ' '.$this->escape($v);
 				}
-				
+
 				if ( ! $this->_has_operator($k))
 				{
 					$k .= ' = ';
@@ -1908,17 +1908,17 @@ class CI_DB_active_record extends CI_DB_driver {
 	public function flush_cache()
 	{
 		$this->_reset_run(array(
-			'ar_cache_select'		=> array(),
-			'ar_cache_from'			=> array(),
-			'ar_cache_join'			=> array(),
-			'ar_cache_where'		=> array(),
-			'ar_cache_like'			=> array(),
-			'ar_cache_groupby'		=> array(),
-			'ar_cache_having'		=> array(),
-			'ar_cache_orderby'		=> array(),
-			'ar_cache_set'			=> array(),
-			'ar_cache_exists'		=> array(),
-			'ar_cache_no_escape'	=> array()
+				'ar_cache_select'		=> array(),
+				'ar_cache_from'			=> array(),
+				'ar_cache_join'			=> array(),
+				'ar_cache_where'		=> array(),
+				'ar_cache_like'			=> array(),
+				'ar_cache_groupby'		=> array(),
+				'ar_cache_having'		=> array(),
+				'ar_cache_orderby'		=> array(),
+				'ar_cache_set'			=> array(),
+				'ar_cache_exists'		=> array(),
+				'ar_cache_no_escape'	=> array()
 		));
 	}
 
@@ -1991,21 +1991,21 @@ class CI_DB_active_record extends CI_DB_driver {
 	protected function _reset_select()
 	{
 		$ar_reset_items = array(
-			'ar_select'			=> array(),
-			'ar_from'			=> array(),
-			'ar_join'			=> array(),
-			'ar_where'			=> array(),
-			'ar_like'			=> array(),
-			'ar_groupby'		=> array(),
-			'ar_having'			=> array(),
-			'ar_orderby'		=> array(),
-			'ar_wherein'		=> array(),
-			'ar_aliased_tables'	=> array(),
-			'ar_no_escape'		=> array(),
-			'ar_distinct'		=> FALSE,
-			'ar_limit'			=> FALSE,
-			'ar_offset'			=> FALSE,
-			'ar_order'			=> FALSE,
+				'ar_select'			=> array(),
+				'ar_from'			=> array(),
+				'ar_join'			=> array(),
+				'ar_where'			=> array(),
+				'ar_like'			=> array(),
+				'ar_groupby'		=> array(),
+				'ar_having'			=> array(),
+				'ar_orderby'		=> array(),
+				'ar_wherein'		=> array(),
+				'ar_aliased_tables'	=> array(),
+				'ar_no_escape'		=> array(),
+				'ar_distinct'		=> FALSE,
+				'ar_limit'			=> FALSE,
+				'ar_offset'			=> FALSE,
+				'ar_order'			=> FALSE,
 		);
 
 		$this->_reset_run($ar_reset_items);
@@ -2023,14 +2023,14 @@ class CI_DB_active_record extends CI_DB_driver {
 	protected function _reset_write()
 	{
 		$ar_reset_items = array(
-			'ar_set'		=> array(),
-			'ar_from'		=> array(),
-			'ar_where'		=> array(),
-			'ar_like'		=> array(),
-			'ar_orderby'	=> array(),
-			'ar_keys'		=> array(),
-			'ar_limit'		=> FALSE,
-			'ar_order'		=> FALSE
+				'ar_set'		=> array(),
+				'ar_from'		=> array(),
+				'ar_where'		=> array(),
+				'ar_like'		=> array(),
+				'ar_orderby'	=> array(),
+				'ar_keys'		=> array(),
+				'ar_limit'		=> FALSE,
+				'ar_order'		=> FALSE
 		);
 
 		$this->_reset_run($ar_reset_items);

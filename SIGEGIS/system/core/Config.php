@@ -102,8 +102,8 @@ class CI_Config {
 		foreach ($this->_config_paths as $path)
 		{
 			$check_locations = defined('ENVIRONMENT')
-				? array(ENVIRONMENT.'/'.$file, $file)
-				: array($file);
+			? array(ENVIRONMENT.'/'.$file, $file)
+			: array($file);
 
 			foreach ($check_locations as $location)
 			{
@@ -316,7 +316,7 @@ class CI_Config {
 				$uri = $str;
 			}
 		}
-	    return $uri;
+		return $uri;
 	}
 
 	// --------------------------------------------------------------------

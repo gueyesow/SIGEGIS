@@ -34,7 +34,8 @@
 			else if($.getUrlVar("niveau")==="reg") {niveau="régionaux";}
 			else if($.getUrlVar("niveau")==="pays") {niveau="par pays";}
 			else niveau="globaux";
-			$("#titre").append("Résultats "+niveau+" de l'élection "+titres[type]+" de "+$elections.val());						
+			
+			if (! $("#ana_decoupage").length) $("#titre").append("Résultats "+niveau+" de l'élection "+titres[type]+" de "+$elections.val());						
 		}       
 	});
 	
@@ -52,7 +53,7 @@
 								$tours.append('<option value="'+ index +'">'+ value +'</option>');							
 							});         							
 							$tours.change();
-							$("#titre").text("Résultats "+niveau+" de l'élection "+titres[type]+" de "+$elections.val());
+							if (! $("#ana_decoupage").length) $("#titre").text("Résultats "+niveau+" de l'élection "+titres[type]+" de "+$elections.val());
 							$('#menu-css a').each(function(){
 								
 								if( !$.getUrlVar("year") ){			

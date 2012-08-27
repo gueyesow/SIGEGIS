@@ -322,12 +322,12 @@ class CI_DB_driver {
 				// Log and display errors
 				log_message('error', 'Query error: '.$error_msg);
 				return $this->display_error(
-										array(
-												'Error Number: '.$error_no,
-												$error_msg,
-												$sql
-											)
-										);
+						array(
+								'Error Number: '.$error_no,
+								$error_msg,
+								$sql
+						)
+				);
 			}
 
 			return FALSE;
@@ -437,7 +437,7 @@ class CI_DB_driver {
 	 * Simple Query
 	 * This is a simplified version of the query() function.  Internally
 	 * we only use it when running transaction commands since they do
-	 * not require all the features of the main query() function.
+	 	* not require all the features of the main query() function.
 	 *
 	 * @access	public
 	 * @param	string	the sql query

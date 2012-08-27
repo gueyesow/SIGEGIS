@@ -129,7 +129,7 @@ if ( ! function_exists('ascii_to_entities'))
 			{
 				/*
 					If the $temp array has a value but we have moved on, then it seems only
-					fair that we output that entity and restart $temp before continuing. -Paul
+				fair that we output that entity and restart $temp before continuing. -Paul
 				*/
 				if (count($temp) == 1)
 				{
@@ -211,8 +211,8 @@ if ( ! function_exists('entities_to_ascii'))
 		if ($all)
 		{
 			$str = str_replace(array("&amp;", "&lt;", "&gt;", "&quot;", "&apos;", "&#45;"),
-								array("&","<",">","\"", "'", "-"),
-								$str);
+					array("&","<",">","\"", "'", "-"),
+					$str);
 		}
 
 		return $str;
@@ -290,7 +290,7 @@ if ( ! function_exists('highlight_code'))
 		// break the string out of PHP, and thus, thwart the highlighting.
 
 		$str = str_replace(array('<?', '?>', '<%', '%>', '\\', '</script>'),
-							array('phptagopen', 'phptagclose', 'asptagopen', 'asptagclose', 'backslashtmp', 'scriptclose'), $str);
+				array('phptagopen', 'phptagclose', 'asptagopen', 'asptagclose', 'backslashtmp', 'scriptclose'), $str);
 
 		// The highlight_string function requires that the text be surrounded
 		// by PHP tags, which we will remove later
@@ -315,7 +315,7 @@ if ( ! function_exists('highlight_code'))
 
 		// Replace our markers back to PHP tags.
 		$str = str_replace(array('phptagopen', 'phptagclose', 'asptagopen', 'asptagclose', 'backslashtmp', 'scriptclose'),
-							array('&lt;?', '?&gt;', '&lt;%', '%&gt;', '\\', '&lt;/script&gt;'), $str);
+				array('&lt;?', '?&gt;', '&lt;%', '%&gt;', '\\', '&lt;/script&gt;'), $str);
 
 		return $str;
 	}

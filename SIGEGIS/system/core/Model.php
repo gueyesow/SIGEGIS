@@ -25,7 +25,7 @@
  * @link		http://codeigniter.com/user_guide/libraries/config.html
  */
 class CI_Model {
-	
+
 	/**
 	 * Constructor
 	 *

@@ -74,13 +74,13 @@ class CI_Trackback {
 			switch ($item)
 			{
 				case 'ping_url'	: $$item = $this->extract_urls($tb_data[$item]);
-					break;
+				break;
 				case 'excerpt'	: $$item = $this->limit_characters($this->convert_xml(strip_tags(stripslashes($tb_data[$item]))));
-					break;
+				break;
 				case 'url'		: $$item = str_replace('&#45;', '-', $this->convert_xml(strip_tags(stripslashes($tb_data[$item]))));
-					break;
+				break;
 				default			: $$item = $this->convert_xml(strip_tags(stripslashes($tb_data[$item])));
-					break;
+				break;
 			}
 
 			// Convert High ASCII Characters
@@ -409,8 +409,8 @@ class CI_Trackback {
 		$str = preg_replace("/&(\w+);/",  "$temp\\1;", $str);
 
 		$str = str_replace(array("&","<",">","\"", "'", "-"),
-							array("&amp;", "&lt;", "&gt;", "&quot;", "&#39;", "&#45;"),
-							$str);
+				array("&amp;", "&lt;", "&gt;", "&quot;", "&#39;", "&#45;"),
+				$str);
 
 		$str = preg_replace("/$temp(\d+);/","&#\\1;",$str);
 		$str = preg_replace("/$temp(\w+);/","&\\1;", $str);

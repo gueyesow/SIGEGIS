@@ -89,12 +89,12 @@ class CI_DB_cubrid_utility extends CI_DB_utility {
 
 	// --------------------------------------------------------------------
 	/**
-	 * CUBRID Export
-	 *
-	 * @access	private
-	 * @param	array	Preferences
-	 * @return	mixed
-	 */
+	* CUBRID Export
+	*
+	* @access	private
+	* @param	array	Preferences
+	* @return	mixed
+	*/
 	function _backup($params = array())
 	{
 		// No SQL based support in CUBRID as of version 8.4.0. Database or

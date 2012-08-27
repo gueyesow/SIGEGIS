@@ -47,8 +47,8 @@ class CI_Email {
 	var	$priority		= "3";		// Default priority (1 - 5)
 	var	$newline		= "\n";		// Default newline. "\r\n" or "\n" (Use "\r\n" to comply with RFC 822)
 	var $crlf			= "\n";		// The RFC 2045 compliant CRLF for quoted-printable is "\r\n".  Apparently some servers,
-									// even on the receiving end think they need to muck with CRLFs, so using "\n", while
-									// distasteful, is the only thing that seems to work for all environments.
+	// even on the receiving end think they need to muck with CRLFs, so using "\n", while
+	// distasteful, is the only thing that seems to work for all environments.
 	var $send_multipart	= TRUE;		// TRUE/FALSE - Yahoo does not like multipart alternative, so this is an override.  Set to FALSE for Yahoo.
 	var	$bcc_batch_mode	= FALSE;	// TRUE/FALSE  Turns on/off Bcc batch feature
 	var	$bcc_batch_size	= 200;		// If bcc_batch_mode = TRUE, sets max number of Bccs in each batch
@@ -276,11 +276,11 @@ class CI_Email {
 		{
 			case 'smtp'		:
 				$this->_recipients = $to;
-			break;
+				break;
 			case 'sendmail'	:
 			case 'mail'		:
 				$this->_recipients = implode(", ", $to);
-			break;
+				break;
 		}
 
 		return $this;
@@ -383,10 +383,10 @@ class CI_Email {
 		$this->_body = rtrim(str_replace("\r", "", $body));
 
 		/* strip slashes only if magic quotes is ON
-		   if we do it with magic quotes OFF, it strips real, user-inputted chars.
+		 if we do it with magic quotes OFF, it strips real, user-inputted chars.
 
-		   NOTE: In PHP 5.4 get_magic_quotes_gpc() will always return 0 and
-			 it will probably not exist in future versions at all.
+		NOTE: In PHP 5.4 get_magic_quotes_gpc() will always return 0 and
+		it will probably not exist in future versions at all.
 		*/
 		if ( ! is_php('5.4') && get_magic_quotes_gpc())
 		{
@@ -1042,7 +1042,7 @@ class CI_Email {
 
 				return;
 
-			break;
+				break;
 			case 'html' :
 
 				if ($this->send_multipart === FALSE)
@@ -1085,7 +1085,7 @@ class CI_Email {
 
 				return;
 
-			break;
+				break;
 			case 'plain-attach' :
 
 				$hdr .= "Content-Type: multipart/".$this->multipart."; boundary=\"" . $this->_atc_boundary."\"" . $this->newline . $this->newline;
@@ -1103,7 +1103,7 @@ class CI_Email {
 
 				$body .= $this->_body . $this->newline . $this->newline;
 
-			break;
+				break;
 			case 'html-attach' :
 
 				$hdr .= "Content-Type: multipart/".$this->multipart."; boundary=\"" . $this->_atc_boundary."\"" . $this->newline . $this->newline;
@@ -1129,7 +1129,7 @@ class CI_Email {
 				$body .= $this->_prep_quoted_printable($this->_body) . $this->newline . $this->newline;
 				$body .= "--" . $this->_alt_boundary . "--" . $this->newline . $this->newline;
 
-			break;
+				break;
 		}
 
 		$attachment = array();
@@ -1363,8 +1363,8 @@ class CI_Email {
 		}
 
 		if (( ! isset($this->_recipients) AND ! isset($this->_headers['To']))  AND
-			( ! isset($this->_bcc_array) AND ! isset($this->_headers['Bcc'])) AND
-			( ! isset($this->_headers['Cc'])))
+				( ! isset($this->_bcc_array) AND ! isset($this->_headers['Bcc'])) AND
+				( ! isset($this->_headers['Cc'])))
 		{
 			$this->_set_error_message('lang:email_no_recipients');
 			return FALSE;
@@ -1495,28 +1495,28 @@ class CI_Email {
 		{
 			case 'mail'	:
 
-					if ( ! $this->_send_with_mail())
-					{
-						$this->_set_error_message('lang:email_send_failure_phpmail');
-						return FALSE;
-					}
-			break;
+				if ( ! $this->_send_with_mail())
+				{
+					$this->_set_error_message('lang:email_send_failure_phpmail');
+					return FALSE;
+				}
+				break;
 			case 'sendmail'	:
 
-					if ( ! $this->_send_with_sendmail())
-					{
-						$this->_set_error_message('lang:email_send_failure_sendmail');
-						return FALSE;
-					}
-			break;
+				if ( ! $this->_send_with_sendmail())
+				{
+					$this->_set_error_message('lang:email_send_failure_sendmail');
+					return FALSE;
+				}
+				break;
 			case 'smtp'	:
 
-					if ( ! $this->_send_with_smtp())
-					{
-						$this->_set_error_message('lang:email_send_failure_smtp');
-						return FALSE;
-					}
-			break;
+				if ( ! $this->_send_with_smtp())
+				{
+					$this->_set_error_message('lang:email_send_failure_smtp');
+					return FALSE;
+				}
+				break;
 
 		}
 
@@ -1683,10 +1683,10 @@ class CI_Email {
 		if ($this->smtp_crypto == 'ssl')
 			$ssl = 'ssl://';
 		$this->_smtp_connect = fsockopen($ssl.$this->smtp_host,
-										$this->smtp_port,
-										$errno,
-										$errstr,
-										$this->smtp_timeout);
+				$this->smtp_port,
+				$errno,
+				$errstr,
+				$this->smtp_timeout);
 
 		if ( ! is_resource($this->_smtp_connect))
 		{
@@ -1722,43 +1722,43 @@ class CI_Email {
 		{
 			case 'hello' :
 
-					if ($this->_smtp_auth OR $this->_get_encoding() == '8bit')
-						$this->_send_data('EHLO '.$this->_get_hostname());
-					else
-						$this->_send_data('HELO '.$this->_get_hostname());
+				if ($this->_smtp_auth OR $this->_get_encoding() == '8bit')
+					$this->_send_data('EHLO '.$this->_get_hostname());
+				else
+					$this->_send_data('HELO '.$this->_get_hostname());
 
-						$resp = 250;
-			break;
+				$resp = 250;
+				break;
 			case 'starttls'	:
 
-						$this->_send_data('STARTTLS');
+				$this->_send_data('STARTTLS');
 
-						$resp = 220;
-			break;
+				$resp = 220;
+				break;
 			case 'from' :
 
-						$this->_send_data('MAIL FROM:<'.$data.'>');
+				$this->_send_data('MAIL FROM:<'.$data.'>');
 
-						$resp = 250;
-			break;
+				$resp = 250;
+				break;
 			case 'to'	:
 
-						$this->_send_data('RCPT TO:<'.$data.'>');
+				$this->_send_data('RCPT TO:<'.$data.'>');
 
-						$resp = 250;
-			break;
+				$resp = 250;
+				break;
 			case 'data'	:
 
-						$this->_send_data('DATA');
+				$this->_send_data('DATA');
 
-						$resp = 354;
-			break;
+				$resp = 354;
+				break;
 			case 'quit'	:
 
-						$this->_send_data('QUIT');
+				$this->_send_data('QUIT');
 
-						$resp = 221;
-			break;
+				$resp = 221;
+				break;
 		}
 
 		$reply = $this->_get_smtp_data();
@@ -1994,93 +1994,93 @@ class CI_Email {
 	protected function _mime_types($ext = "")
 	{
 		$mimes = array(	'hqx'	=>	'application/mac-binhex40',
-						'cpt'	=>	'application/mac-compactpro',
-						'doc'	=>	'application/msword',
-						'bin'	=>	'application/macbinary',
-						'dms'	=>	'application/octet-stream',
-						'lha'	=>	'application/octet-stream',
-						'lzh'	=>	'application/octet-stream',
-						'exe'	=>	'application/octet-stream',
-						'class'	=>	'application/octet-stream',
-						'psd'	=>	'application/octet-stream',
-						'so'	=>	'application/octet-stream',
-						'sea'	=>	'application/octet-stream',
-						'dll'	=>	'application/octet-stream',
-						'oda'	=>	'application/oda',
-						'pdf'	=>	'application/pdf',
-						'ai'	=>	'application/postscript',
-						'eps'	=>	'application/postscript',
-						'ps'	=>	'application/postscript',
-						'smi'	=>	'application/smil',
-						'smil'	=>	'application/smil',
-						'mif'	=>	'application/vnd.mif',
-						'xls'	=>	'application/vnd.ms-excel',
-						'ppt'	=>	'application/vnd.ms-powerpoint',
-						'wbxml'	=>	'application/vnd.wap.wbxml',
-						'wmlc'	=>	'application/vnd.wap.wmlc',
-						'dcr'	=>	'application/x-director',
-						'dir'	=>	'application/x-director',
-						'dxr'	=>	'application/x-director',
-						'dvi'	=>	'application/x-dvi',
-						'gtar'	=>	'application/x-gtar',
-						'php'	=>	'application/x-httpd-php',
-						'php4'	=>	'application/x-httpd-php',
-						'php3'	=>	'application/x-httpd-php',
-						'phtml'	=>	'application/x-httpd-php',
-						'phps'	=>	'application/x-httpd-php-source',
-						'js'	=>	'application/x-javascript',
-						'swf'	=>	'application/x-shockwave-flash',
-						'sit'	=>	'application/x-stuffit',
-						'tar'	=>	'application/x-tar',
-						'tgz'	=>	'application/x-tar',
-						'xhtml'	=>	'application/xhtml+xml',
-						'xht'	=>	'application/xhtml+xml',
-						'zip'	=>	'application/zip',
-						'mid'	=>	'audio/midi',
-						'midi'	=>	'audio/midi',
-						'mpga'	=>	'audio/mpeg',
-						'mp2'	=>	'audio/mpeg',
-						'mp3'	=>	'audio/mpeg',
-						'aif'	=>	'audio/x-aiff',
-						'aiff'	=>	'audio/x-aiff',
-						'aifc'	=>	'audio/x-aiff',
-						'ram'	=>	'audio/x-pn-realaudio',
-						'rm'	=>	'audio/x-pn-realaudio',
-						'rpm'	=>	'audio/x-pn-realaudio-plugin',
-						'ra'	=>	'audio/x-realaudio',
-						'rv'	=>	'video/vnd.rn-realvideo',
-						'wav'	=>	'audio/x-wav',
-						'bmp'	=>	'image/bmp',
-						'gif'	=>	'image/gif',
-						'jpeg'	=>	'image/jpeg',
-						'jpg'	=>	'image/jpeg',
-						'jpe'	=>	'image/jpeg',
-						'png'	=>	'image/png',
-						'tiff'	=>	'image/tiff',
-						'tif'	=>	'image/tiff',
-						'css'	=>	'text/css',
-						'html'	=>	'text/html',
-						'htm'	=>	'text/html',
-						'shtml'	=>	'text/html',
-						'txt'	=>	'text/plain',
-						'text'	=>	'text/plain',
-						'log'	=>	'text/plain',
-						'rtx'	=>	'text/richtext',
-						'rtf'	=>	'text/rtf',
-						'xml'	=>	'text/xml',
-						'xsl'	=>	'text/xml',
-						'mpeg'	=>	'video/mpeg',
-						'mpg'	=>	'video/mpeg',
-						'mpe'	=>	'video/mpeg',
-						'qt'	=>	'video/quicktime',
-						'mov'	=>	'video/quicktime',
-						'avi'	=>	'video/x-msvideo',
-						'movie'	=>	'video/x-sgi-movie',
-						'doc'	=>	'application/msword',
-						'word'	=>	'application/msword',
-						'xl'	=>	'application/excel',
-						'eml'	=>	'message/rfc822'
-					);
+				'cpt'	=>	'application/mac-compactpro',
+				'doc'	=>	'application/msword',
+				'bin'	=>	'application/macbinary',
+				'dms'	=>	'application/octet-stream',
+				'lha'	=>	'application/octet-stream',
+				'lzh'	=>	'application/octet-stream',
+				'exe'	=>	'application/octet-stream',
+				'class'	=>	'application/octet-stream',
+				'psd'	=>	'application/octet-stream',
+				'so'	=>	'application/octet-stream',
+				'sea'	=>	'application/octet-stream',
+				'dll'	=>	'application/octet-stream',
+				'oda'	=>	'application/oda',
+				'pdf'	=>	'application/pdf',
+				'ai'	=>	'application/postscript',
+				'eps'	=>	'application/postscript',
+				'ps'	=>	'application/postscript',
+				'smi'	=>	'application/smil',
+				'smil'	=>	'application/smil',
+				'mif'	=>	'application/vnd.mif',
+				'xls'	=>	'application/vnd.ms-excel',
+				'ppt'	=>	'application/vnd.ms-powerpoint',
+				'wbxml'	=>	'application/vnd.wap.wbxml',
+				'wmlc'	=>	'application/vnd.wap.wmlc',
+				'dcr'	=>	'application/x-director',
+				'dir'	=>	'application/x-director',
+				'dxr'	=>	'application/x-director',
+				'dvi'	=>	'application/x-dvi',
+				'gtar'	=>	'application/x-gtar',
+				'php'	=>	'application/x-httpd-php',
+				'php4'	=>	'application/x-httpd-php',
+				'php3'	=>	'application/x-httpd-php',
+				'phtml'	=>	'application/x-httpd-php',
+				'phps'	=>	'application/x-httpd-php-source',
+				'js'	=>	'application/x-javascript',
+				'swf'	=>	'application/x-shockwave-flash',
+				'sit'	=>	'application/x-stuffit',
+				'tar'	=>	'application/x-tar',
+				'tgz'	=>	'application/x-tar',
+				'xhtml'	=>	'application/xhtml+xml',
+				'xht'	=>	'application/xhtml+xml',
+				'zip'	=>	'application/zip',
+				'mid'	=>	'audio/midi',
+				'midi'	=>	'audio/midi',
+				'mpga'	=>	'audio/mpeg',
+				'mp2'	=>	'audio/mpeg',
+				'mp3'	=>	'audio/mpeg',
+				'aif'	=>	'audio/x-aiff',
+				'aiff'	=>	'audio/x-aiff',
+				'aifc'	=>	'audio/x-aiff',
+				'ram'	=>	'audio/x-pn-realaudio',
+				'rm'	=>	'audio/x-pn-realaudio',
+				'rpm'	=>	'audio/x-pn-realaudio-plugin',
+				'ra'	=>	'audio/x-realaudio',
+				'rv'	=>	'video/vnd.rn-realvideo',
+				'wav'	=>	'audio/x-wav',
+				'bmp'	=>	'image/bmp',
+				'gif'	=>	'image/gif',
+				'jpeg'	=>	'image/jpeg',
+				'jpg'	=>	'image/jpeg',
+				'jpe'	=>	'image/jpeg',
+				'png'	=>	'image/png',
+				'tiff'	=>	'image/tiff',
+				'tif'	=>	'image/tiff',
+				'css'	=>	'text/css',
+				'html'	=>	'text/html',
+				'htm'	=>	'text/html',
+				'shtml'	=>	'text/html',
+				'txt'	=>	'text/plain',
+				'text'	=>	'text/plain',
+				'log'	=>	'text/plain',
+				'rtx'	=>	'text/richtext',
+				'rtf'	=>	'text/rtf',
+				'xml'	=>	'text/xml',
+				'xsl'	=>	'text/xml',
+				'mpeg'	=>	'video/mpeg',
+				'mpg'	=>	'video/mpeg',
+				'mpe'	=>	'video/mpeg',
+				'qt'	=>	'video/quicktime',
+				'mov'	=>	'video/quicktime',
+				'avi'	=>	'video/x-msvideo',
+				'movie'	=>	'video/x-sgi-movie',
+				'doc'	=>	'application/msword',
+				'word'	=>	'application/msword',
+				'xl'	=>	'application/excel',
+				'eml'	=>	'message/rfc822'
+		);
 
 		return ( ! isset($mimes[strtolower($ext)])) ? "application/x-unknown-content-type" : $mimes[strtolower($ext)];
 	}

@@ -55,12 +55,12 @@ class CI_DB_postgre_driver extends CI_DB {
 	function _connect_string()
 	{
 		$components = array(
-								'hostname'	=> 'host',
-								'port'		=> 'port',
-								'database'	=> 'dbname',
-								'username'	=> 'user',
-								'password'	=> 'password'
-							);
+				'hostname'	=> 'host',
+				'port'		=> 'port',
+				'database'	=> 'dbname',
+				'username'	=> 'user',
+				'password'	=> 'password'
+		);
 
 		$connect_string = "";
 		foreach ($components as $key => $val)
@@ -297,8 +297,8 @@ class CI_DB_postgre_driver extends CI_DB {
 		if ($like === TRUE)
 		{
 			$str = str_replace(	array('%', '_', $this->_like_escape_chr),
-								array($this->_like_escape_chr.'%', $this->_like_escape_chr.'_', $this->_like_escape_chr.$this->_like_escape_chr),
-								$str);
+					array($this->_like_escape_chr.'%', $this->_like_escape_chr.'_', $this->_like_escape_chr.$this->_like_escape_chr),
+					$str);
 		}
 
 		return $str;
@@ -659,16 +659,16 @@ class CI_DB_postgre_driver extends CI_DB {
 
 	// --------------------------------------------------------------------
 	/**
-	 * Limit string
-	 *
-	 * Generates a platform-specific LIMIT clause
-	 *
-	 * @access	public
-	 * @param	string	the sql query string
-	 * @param	integer	the number of rows to limit the query to
-	 * @param	integer	the offset value
-	 * @return	string
-	 */
+	* Limit string
+	*
+	* Generates a platform-specific LIMIT clause
+	*
+	* @access	public
+	* @param	string	the sql query string
+	* @param	integer	the number of rows to limit the query to
+	* @param	integer	the offset value
+	* @return	string
+	*/
 	function _limit($sql, $limit, $offset)
 	{
 		$sql .= "LIMIT ".$limit;

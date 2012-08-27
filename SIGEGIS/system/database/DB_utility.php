@@ -112,7 +112,7 @@ class CI_DB_utility extends CI_DB_forge {
 
 		if (is_bool($sql))
 		{
-				show_error('db_must_use_set');
+			show_error('db_must_use_set');
 		}
 
 		$query = $this->db->query($sql);
@@ -302,14 +302,14 @@ class CI_DB_utility extends CI_DB_forge {
 
 		// Set up our default preferences
 		$prefs = array(
-							'tables'		=> array(),
-							'ignore'		=> array(),
-							'filename'		=> '',
-							'format'		=> 'gzip', // gzip, zip, txt
-							'add_drop'		=> TRUE,
-							'add_insert'	=> TRUE,
-							'newline'		=> "\n"
-						);
+				'tables'		=> array(),
+				'ignore'		=> array(),
+				'filename'		=> '',
+				'format'		=> 'gzip', // gzip, zip, txt
+				'add_drop'		=> TRUE,
+				'add_insert'	=> TRUE,
+				'newline'		=> "\n"
+		);
 
 		// Did the user submit any preferences? If so set them....
 		if (count($params) > 0)
@@ -345,7 +345,7 @@ class CI_DB_utility extends CI_DB_forge {
 		// Is the encoder supported?  If not, we'll either issue an
 		// error or use plain text depending on the debug settings
 		if (($prefs['format'] == 'gzip' AND ! @function_exists('gzencode'))
-		OR ($prefs['format'] == 'zip'  AND ! @function_exists('gzcompress')))
+				OR ($prefs['format'] == 'zip'  AND ! @function_exists('gzcompress')))
 		{
 			if ($this->db->db_debug)
 			{

@@ -30,11 +30,11 @@ class CI_Loader {
 
 	// All these are set automatically. Don't mess with them.
 	/**
-	 * Nesting level of the output buffering mechanism
-	 *
-	 * @var int
-	 * @access protected
-	 */
+	* Nesting level of the output buffering mechanism
+	*
+	* @var int
+	* @access protected
+	*/
 	protected $_ci_ob_level;
 	/**
 	 * List of paths to load views from
@@ -73,11 +73,11 @@ class CI_Loader {
 	 */
 	protected $_base_classes		= array(); // Set by the controller class
 	/**
-	 * List of cached variables
-	 *
-	 * @var array
-	 * @access protected
-	 */
+	* List of cached variables
+	*
+	* @var array
+	* @access protected
+	*/
 	protected $_ci_cached_vars		= array();
 	/**
 	 * List of loaded classes
@@ -114,7 +114,7 @@ class CI_Loader {
 	 * @access protected
 	 */
 	protected $_ci_varmap			= array('unit_test' => 'unit',
-											'user_agent' => 'agent');
+			'user_agent' => 'agent');
 
 	/**
 	 * Constructor
@@ -794,12 +794,12 @@ class CI_Loader {
 
 		/*
 		 * Extract and cache variables
-		 *
-		 * You can either set variables using the dedicated $this->load_vars()
-		 * function or via the second parameter of this function. We'll merge
-		 * the two types and cache them so that views that are embedded within
-		 * other views can have access to these variables.
-		 */
+		*
+		* You can either set variables using the dedicated $this->load_vars()
+		* function or via the second parameter of this function. We'll merge
+		* the two types and cache them so that views that are embedded within
+		* other views can have access to these variables.
+		*/
 		if (is_array($_ci_vars))
 		{
 			$this->_ci_cached_vars = array_merge($this->_ci_cached_vars, $_ci_vars);
@@ -808,16 +808,16 @@ class CI_Loader {
 
 		/*
 		 * Buffer the output
-		 *
-		 * We buffer the output for two reasons:
-		 * 1. Speed. You get a significant speed boost.
-		 * 2. So that the final rendered template can be
-		 * post-processed by the output class.  Why do we
-		 * need post processing?  For one thing, in order to
-		 * show the elapsed page load time.  Unless we
-		 * can intercept the content right before it's sent to
-		 * the browser and then stop the timer it won't be accurate.
-		 */
+		*
+		* We buffer the output for two reasons:
+		* 1. Speed. You get a significant speed boost.
+		* 2. So that the final rendered template can be
+		* post-processed by the output class.  Why do we
+		* need post processing?  For one thing, in order to
+		* show the elapsed page load time.  Unless we
+		* can intercept the content right before it's sent to
+		* the browser and then stop the timer it won't be accurate.
+		*/
 		ob_start();
 
 		// If the PHP installation does not support short tags we'll
@@ -845,14 +845,14 @@ class CI_Loader {
 
 		/*
 		 * Flush the buffer... or buff the flusher?
-		 *
-		 * In order to permit views to be nested within
-		 * other views, we need to flush the content back out whenever
-		 * we are beyond the first level of output buffering so that
-		 * it can be seen and included properly by the first included
-		 * template and any subsequent ones. Oy!
-		 *
-		 */
+		*
+		* In order to permit views to be nested within
+		* other views, we need to flush the content back out whenever
+		* we are beyond the first level of output buffering so that
+		* it can be seen and included properly by the first included
+		* template and any subsequent ones. Oy!
+		*
+		*/
 		if (ob_get_level() > $this->_ci_ob_level + 1)
 		{
 			ob_end_flush();

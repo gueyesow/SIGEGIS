@@ -1,4 +1,31 @@
-
+/*	function getGrid(){
+		param=$sources.val()+","+$("#ana_tour").val();
+		if ( $.getUrlVar("niveau") ) {$url='http://www.sigegis.ugb-edu.com/main_controller/analyser?niveau='+$.getUrlVar("niveau")+'&param='+param;}
+		else {$url='http://www.sigegis.ugb-edu.com/main_controller/analyser?param='+param;}
+	
+		$("#help").after('<div id="theGrid"><table id="list"></table><div id="pager"></div></div>');
+		$("#help").remove();
+		$("#list").jqGrid({		
+			url:$url,
+			autowidth:true,
+		    datatype: 'xml',
+		    mtype: 'GET',
+		    colNames:['Nom du candidat','Année','Nombre de voix'],
+		    colModel :[ 
+		      {name:'nomCandidat', index:'nomCandidat', search:true},
+		      {name:'annee', index:'annee', width:80,sortable:true},
+		      {name:'nbVoix', index:'nbVoix', width:80, align:'nbVoix',sortable:true}  
+		    ],
+		    pager: '#pager',
+		    rowNum:20,
+		    rowList:[20,30,50,100],
+		    sortname: 'nbVoix',
+		    sortorder: 'desc',
+		    viewrecords: true,
+		    gridview: true,
+		}).navGrid("#pager",{edit:true,add:true,del:true}).trigger("reloadGrid");
+	}
+*/	
 $("#MoveRight,#MoveLeft").on("click",function(event) {
 	var id = $(event.target).attr("id");
 	var selectFrom = id == "MoveRight" ? "#choixmultipleA" : "#choixmultipleB";
@@ -46,6 +73,10 @@ $("#valider").on("click",function(event) {
 	listeCandidats="";
 	paramBis=$sources.val()+","+$("#ana_tour").val()+","+$("#localite").val();
 	
+	$("#theGrid,#chartdiv1").show();
+	$("#help").hide();
+	$("#list").setGridWidth(906);
+	
 	$("#choixmultipleB").children().each(function() {
 		if(listeAnnees=="") listeAnnees+=$(this).text();
 		else listeAnnees+=","+$(this).text();
@@ -82,6 +113,10 @@ $("#validerLocalite").on("click",function(event) {
 	listeLocalites="";
 	listeCandidats="";
 	paramBis=$sources.val()+","+$tours.val()+","+$elections.val();
+	
+	$("#theGrid,#chartdiv1").show();
+	$("#help").hide();
+	$("#list").setGridWidth(906);
 	
 	$("#choixMultipleLocalitesB").children().each(function() {
 		if(listeLocalites=="") listeLocalites+=$(this).text();
