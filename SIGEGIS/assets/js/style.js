@@ -39,3 +39,6 @@ $('#menu-css li a').hover(
 	$("#chartdiv2").hide();
 
 	$("#accordion").accordion({ header: "h3" });
+	
+	$("#accordion div div[id*='ana']").css('clear','both');
+	

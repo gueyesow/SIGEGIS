@@ -2,7 +2,7 @@
 	text-align: center;
 }
 
-#choixmultipleA,#choixmultipleB,#choixCandidatA,#choixCandidatB {
+#choixmultipleA,#choixmultipleB,#choixCandidatA,#choixCandidatB,#choixMultipleLocalitesA,#choixMultipleLocalitesB,#choixCandidatLocaliteA,#choixCandidatLocaliteB {
 	width: 130px;
 }
 
@@ -11,7 +11,7 @@
 	list-style: none;
 }
 
-#menu-css li a { /*font-size:14px;*/
+#menu-css li a { 
 	font-weight: bold;
 	/* Border Radius */
 	-webkit-border-radius: 15px;
@@ -111,6 +111,7 @@ label {
 
 fieldset {
 	margin: 8px 0 8px 0;
+	border:none;
 }
 
 .zone_des_options {
@@ -155,8 +156,6 @@ fieldset {
 #header-wrap ul li {
 	float: left;
 	list-style: none;
-	zborder: 1px solid;
-	qbackground: red;
 }
 
 #header-wrap ul li a {
@@ -164,4 +163,9 @@ fieldset {
 	font-weight: bold;
 	text-decoration: none;
 	margin-right: 15px;
+}
+
+.ui-accordion .ui-accordion-content{ 
+	/*overflow:visible !important;*/
+	height:auto!important; 
 }

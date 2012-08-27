@@ -37,7 +37,7 @@
 			<?php 
 			foreach ($filtres as $filtre)
 				echo $this->mon_filtre->form_dropdown("$filtre","$filtre",$styles,"$labels_filtres[$filtre]");
-			echo "<div style='clear:both;'></div>";
+			//echo "<div style='clear:both;'></div>";
 			?>
 		</form>
 	</div>
@@ -82,30 +82,26 @@
 
 				<div class="zone_des_options">
 					<div id="accordion">
-						<form method="post" action="">
-							<div>
-								<h3>
-									<a href="#">Analyser suivant la localité</a>
-								</h3>
-								<fieldset style="border:2px solid;">									
+					<div>
+					<h3><a href="#">Analyser suivant la localité</a></h3>
+					<div id="accordion_item1">
+						<form  style="clear:both;" method="post" action="">															
+								<fieldset>									
 									<?php 
-									//$options=array("tout"=>"Tous les découpages","decoupage2000"=>"Découpage avant 2008","decoupage2008"=>"Découpage après 2008");
-									//echo $this->mon_filtre->form_dropdown2("ana_decoupage","ana_decoupage",null,$options,"Découpage")."<br />";
 									echo $this->mon_filtre->form_dropdown("ana_decoupage","ana_decoupage",null,"Découpages")."<br />";
-									echo "<div style='clear:both;'></div>";
+									
 									$options = array(
 											'pays'  => 'Pays',
 											'region'    => 'Région',
 											'departement'   => 'Département',
 											'centre' => 'Centre',
 									);
-									echo "<b>Type de localité</b><br>";
-									echo form_dropdown('ana_localite', $options, 'region')."<br />";
+									
+									echo $this->mon_filtre->form_dropdown2("ana_localite","ana_localite",null,$options,"Type de localité")."<br />";
 
 									if($_GET["type"]=="presidentielle"){
 										$options=array("premier_tour"=>"Premier tour","second_tour"=>"Second tour");
 										echo $this->mon_filtre->form_dropdown2("ana_tour","ana_tour",null,$options,"Tour")."<br />";
-										echo "<div style='clear:both;'></div>";
 									}
 
 									echo $this->mon_filtre->form_dropdown("localite","localite",null,"Lieu")."<br />";
@@ -120,7 +116,7 @@
 												<input id="MoveLeft" type="button" value=" &lt;&lt; " class="move" />
 											</td>
 											<td>
-												<select id="choixmultipleB" multiple="multiple" style="float: right; margin: 0;"></select>
+												<select id="choixmultipleB" multiple="multiple"></select>
 											</td>
 										</tr>
 									</table>
@@ -129,7 +125,7 @@
 									<table class="swapList">
 										<tr>
 											<td>
-												<select id="choixCandidatA" multiple="multiple" style="margin: 0;"></select>
+												<select id="choixCandidatA" multiple="multiple"></select>
 											</td>
 											<td>
 												<input id="MoveRightCandidat" type="button" value=" &gt;&gt; " class="move" /> 
@@ -140,20 +136,18 @@
 											</td>
 										</tr>
 									</table>
-									<input id="valider" type="button" value="Valider" style="float: right;" />
+									<input id="valider" type="button" value="Valider" style="float:right;"/>
 								</fieldset>
-							</div>
-							<div>
-								<h3>
-									<a href="#">Analyser suivant l'année</a>
-								</h3>
+								</form>
+								</div>
+								</div>
+								<div>
+								<h3><a href="#">Analyser suivant l'année</a></h3>
+								<div id="accordion_item2">
+								<form style="clear:both;" method="post" action="">
 								<fieldset>
 									<?php 
-									//$options=array("tout"=>"Tous les découpages","decoupage2000"=>"Découpage avant 2008","decoupage2008"=>"Découpage après 2008");
-									//echo $this->mon_filtre->form_dropdown2("ana_decoupage","ana_decoupage",null,$options,"Découpage")."<br />";
 									echo $this->mon_filtre->form_dropdown("ana_decoupage_localite","ana_decoupage_localite",null,"Découpages")."<br />";
-									echo "<div style='clear:both;'></div>";
-
 
 									$options = array(
 											'pays'  => 'Pays',
@@ -161,17 +155,15 @@
 											'departement'   => 'Département',
 											'centre' => 'Centre',
 									);
-									echo "<b>Choisir le type de localité</b><br>".form_dropdown('ana_localite2', $options, 'region')."<br />";
-									echo "<div style='clear:both;'></div>";
+									echo $this->mon_filtre->form_dropdown2("ana_localite2","ana_localite2",null,$options,"Type de localité")."<br />";
 									?>
-									<div style="clear: both;"></div>
+									
 									<?php
 									$styles="";
 									$filtres=array("elections","tours","pays","regions","departements","collectivites","centres");
 									$labels_filtres=array("elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");
 									foreach ($filtres as $filtre) {
 										echo $this->mon_filtre->form_dropdown("$filtre","$filtre",$styles,"$labels_filtres[$filtre]");
-										echo "<div style='clear:both;'></div>";
 									}
 									?>
 
@@ -192,9 +184,9 @@
 											</td>
 										</tr>
 									</table>
-
-									<b>Choisir les candidats (10 Max.)</b><br>
+									
 									<table class="swapList">
+										<tr><td colspan="3"><b>Choisir les candidats (10 Max.)</b></td></tr>
 										<tr>
 											<td>
 												<select id="choixCandidatLocaliteA" multiple="multiple" style="margin: 0;"></select>
@@ -208,18 +200,17 @@
 											</td>
 										</tr>
 									</table>
-									<input id="validerLocalite" type="button" value="Valider" style="float: right;" />
+									<input id="validerLocalite" type="button" value="Valider" style="float:right;"/>
 								</fieldset>
-							</div>
-							<br />
-						</form>
-					</div>
-				</div>
+								</form>
+								</div>
+								</div>
+							</div>													
+					</div>				
 			</td>
 
 			<td>
 				<div id="container">
-
 					<h1 id="titre"></h1>
 					
 					<div id="help">
@@ -238,10 +229,7 @@
 
 					<div id="chartdiv1" class="diagrammes"></div>
 					<div id="chartdiv2" class="diagrammes"></div>
-					<br />
-
-					<div style='clear: both;'></div>
-
+					<br />		
 				</div>
 			</td>
 		</tr>
@@ -251,6 +239,8 @@
 	<script type="text/javascript">
 	$("#chartdiv1").hide();
 	$("#theGrid").hide();
+	$("#pie").attr("disabled","disabled");
+	$("#ana_localite,#ana_localite2").val("region");
 	$.ajax({            
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getDecoupages',            			         			   
 		dataType: 'json',      

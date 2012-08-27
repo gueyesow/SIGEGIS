@@ -576,7 +576,7 @@ class Analyse_model extends CI_Model{
 					else $theYear.= " OR $parametres3='".$laLocalite."'";
 				}
 				$requete.=$theYear.")";
-				$requete.=" AND rp.idCandidature=".$leCandidat." GROUP BY rp.idCandidature,annee, region.idRegion ORDER BY rp.idCandidature";
+				$requete.=" AND rp.idCandidature=".$leCandidat." GROUP BY rp.idCandidature,annee, $parametres3 ORDER BY rp.idCandidature";
 
 				$resultats=$this->db->query($requete)->result();
 
@@ -591,6 +591,7 @@ class Analyse_model extends CI_Model{
 
 				$tableauResultats[]="{name:'$resultat->nomCandidat', data:[".$ordonnee."]}";
 			}
+			
 			$a=explode(",", $_GET["listeLocalites"]);
 			$in=0;
 			foreach ($a as $s)		if(!$in++) $abscisse.="'".$s."'"; else $abscisse.=",'".$s."'";
@@ -781,7 +782,7 @@ class Analyse_model extends CI_Model{
 					else $theYear.= " OR $parametres3='".$laLocalite."'";
 				}
 				$requete.=$theYear.")";
-				$requete.=" AND rp.idCandidature=".$leCandidat." GROUP BY rp.idCandidature,annee, region.idRegion ORDER BY rp.idCandidature";
+				$requete.=" AND rp.idCandidature=".$leCandidat." GROUP BY rp.idCandidature,annee, $parametres3 ORDER BY rp.idCandidature";
 
 				$resultats=$this->db->query($requete)->result();
 
@@ -963,7 +964,7 @@ class Analyse_model extends CI_Model{
 					else $theYear.= " OR $parametres3='".$laLocalite."'";
 				}
 				$requete.=$theYear.")";
-				$requete.=" AND rp.idCandidature=".$leCandidat." GROUP BY rp.idCandidature,annee, region.idRegion ORDER BY rp.idCandidature";
+				$requete.=" AND rp.idCandidature=".$leCandidat." GROUP BY rp.idCandidature,annee, $parametres3 ORDER BY rp.idCandidature";
 
 				$tableauResultats[]=$this->db->query($requete)->result();
 			}
@@ -1003,4 +1004,98 @@ class Analyse_model extends CI_Model{
 		$s .= "</rows>";
 		echo $s;
 	} // ...............  Fin de tableauLocalite() ...............
+	
+	function test(){
+		$candidats="";$seriesGlob="";$series="";$localites="";
+		echo "<script>
+			var chart;
+			$(document).ready(function() {
+		
+				var colors = Highcharts.getOptions().colors,
+				categories = [$candidats],
+				name = 'Browser brands',
+				data = [{
+					y: $seriesGlob,
+					color: colors[0],
+					drilldown: {
+						name: 'MSIE versions',
+						categories: [$localites],
+						data: [$series],
+						color: colors[0]
+					}
+				}];
+		
+		
+				// Build the data arrays
+				var browserData = [];
+				var versionsData = [];
+				for (var i = 0; i < data.length; i++) {
+		
+					// add browser data
+					browserData.push({
+						name: categories[i],
+						y: data[i].y,
+						color: data[i].color
+					});
+		
+					// add version data
+					for (var j = 0; j < data[i].drilldown.data.length; j++) {
+						var brightness = 0.2 - (j / data[i].drilldown.data.length) / 5 ;
+						versionsData.push({
+							name: data[i].drilldown.categories[j],
+							y: data[i].drilldown.data[j],
+							color: Highcharts.Color(data[i].color).brighten(brightness).get()
+						});
+					}
+				}
+		
+				// Create the chart
+				chart = new Highcharts.Chart({
+					chart: {
+						renderTo: 'container',
+						type: 'pie'
+					},
+					title: {
+						text: 'Browser market share, April, 2011'
+					},
+					yAxis: {
+						title: {
+							text: 'Total percent market share'
+						}
+					},
+					plotOptions: {
+						pie: {
+							shadow: false
+						}
+					},
+					tooltip: {
+						formatter: function() {
+							return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+						}
+					},
+					series: [{
+						name: 'Browsers',
+						data: browserData,
+						size: '60%',
+						dataLabels: {
+							formatter: function() {
+								//return this.y > 5 ? this.point.name : null;
+							},
+							color: 'white',
+							distance: -30
+						}
+					}, {
+						name: 'Versions',
+						data: versionsData,
+						innerSize: '60%',
+						dataLabels: {
+							formatter: function() {
+								// display only if larger than 1
+								//return this.y > 1 ? '<b>'+ this.point.name +':</b> '+ this.y +'%'  : null;
+							}
+						}
+					}]
+				});
+			});</script>";		
+	}
 }
