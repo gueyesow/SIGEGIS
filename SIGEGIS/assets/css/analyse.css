@@ -1,9 +1,18 @@
-#swapList td {
-	text-align: center;
+.zone_des_options {
+	marginss: auto;
+	font-weight: bold;
+	font-size: 12px;
+	color: black;
+	padding: 5px;
+	width: 280px;
+	border: 1px solid gray;
+	"
 }
+.swapList{clear: both;}
 
 #choixmultipleA,#choixmultipleB,#choixCandidatA,#choixCandidatB,#choixMultipleLocalitesA,#choixMultipleLocalitesB,#choixCandidatLocaliteA,#choixCandidatLocaliteB {
-	width: 130px;
+	width: 330px;
+	height:150px;
 }
 
 #menu-css li {

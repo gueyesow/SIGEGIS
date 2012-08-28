@@ -16,13 +16,9 @@ $(document).ready(function() {
 			valeur=($(this).attr("checked")==="checked")?"yes":"no";		
 			mode+="&"+idmode+"="+valeur;			
 		});
-		
-		
+				
 		if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
-		
-		
-		
-		//window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser?type="+$.getUrlVar("type")+mode;
+					
 		$.ajax({        							
 			url: 'http://www.sigegis.ugb-edu.com/main_controller/analyser',    
 			data:"type="+$.getUrlVar("type")+mode, 					     

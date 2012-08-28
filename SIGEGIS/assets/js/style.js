@@ -7,12 +7,7 @@ $('#menu-css li a').hover(
   
             $(this).css('padding', '5px 15px')   
          .stop()
-         .animate({'backgroundColor':'rgba(0,0,0,0.5)'},   
-                     'fast');   
-         /*.animate({'paddingLeft'    : '17px',   
-                     'paddingRight' : '17px',   
-                     'backgroundColor':'rgba(0,0,0,0.5)'},   
-                     'fast');*/   
+         .animate({'backgroundColor':'rgba(0,0,0,0.5)'},'fast');               
         },   
   
         function() {   
@@ -39,6 +34,23 @@ $('#menu-css li a').hover(
 	$("#chartdiv2").hide();
 
 	$("#accordion").accordion({ header: "h3" });
+
+	$("#dialog_zone_des_options").dialog({
+		autoOpen: false,
+		width: 800,
+		buttons: {
+			"Fermer": function() {
+				$(this).dialog("close");
+				$("#ouvrir").show();
+			}
+		},
+		closeOnEscape: true ,
+		beforeClose: function(event, ui) { $("#ouvrir").show(); }
+	});
+
 	
-	$("#accordion div div[id*='ana']").css('clear','both');
+	$("#ouvrir").on("click",function(){
+		$("#dialog_zone_des_options").dialog('open');
+		$("#ouvrir").hide();
+	});
 	
