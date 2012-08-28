@@ -16,13 +16,9 @@ $(document).ready(function() {
 			valeur=($(this).attr("checked")==="checked")?"yes":"no";		
 			mode+="&"+idmode+"="+valeur;			
 		});
-		
-		
+				
 		if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
-		
-		
-		
-		//window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser?type="+$.getUrlVar("type")+mode;
+					
 		$.ajax({        							
 			url: 'http://www.sigegis.ugb-edu.com/main_controller/analyser',    
 			data:"type="+$.getUrlVar("type")+mode, 					     
@@ -83,15 +79,16 @@ $(document).ready(function() {
 		autowidth:true,
 	    datatype: 'xml',
 	    mtype: 'GET',
-	    colNames:['Nom du candidat','Année','Nombre de voix'],
+	    colNames:['Nom du candidat','Lieu de vote','Année','Nombre de voix'],
 	    colModel :[ 
 	      {name:'nomCandidat', index:'nomCandidat', search:true},
+	      {name:'lieu', index:'lieuDeVote', width:80,sortable:true},
 	      {name:'annee', index:'annee', width:80,sortable:true},
 	      {name:'nbVoix', index:'nbVoix', width:80, align:'nbVoix',sortable:true}  
 	    ],
 	    pager: '#pager',
 	    rowNum:20,
-	    rowList:[20,30,50,100],
+	    rowList:[20,30,50,100,200],
 	    sortname: 'nbVoix',
 	    sortorder: 'desc',
 	    viewrecords: true,

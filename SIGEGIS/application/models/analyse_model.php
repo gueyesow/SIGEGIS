@@ -434,7 +434,7 @@ class Analyse_model extends CI_Model{
 
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat,rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM resultatspresidentielles rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
@@ -494,6 +494,7 @@ class Analyse_model extends CI_Model{
 			foreach ($tableauResultats[$j] as $row) {
 				$s .= "<row id='". $row->idCandidature ."'>";
 				$s .= "<cell>". $row->nomCandidat ."</cell>";
+				$s .= "<cell>". $row->lieuDeVote ."</cell>";
 				$s .= "<cell>". $row->annee ."</cell>";
 				$s .= "<cell>". $row->nbVoix ."</cell>";
 				$s .= "</row>";
@@ -936,7 +937,7 @@ class Analyse_model extends CI_Model{
 			foreach ($listeCandidats as $leCandidat){
 
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM resultatspresidentielles rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
@@ -996,6 +997,7 @@ class Analyse_model extends CI_Model{
 			foreach ($tableauResultats[$j] as $row) {
 				$s .= "<row id='". $row->idCandidature ."'>";
 				$s .= "<cell>". $row->nomCandidat ."</cell>";
+				$s .= "<cell>". $row->lieuDeVote ."</cell>";
 				$s .= "<cell>". $row->annee ."</cell>";
 				$s .= "<cell>". $row->nbVoix ."</cell>";
 				$s .= "</row>";

@@ -31,25 +31,15 @@
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=cen");?>">Résultats au niveau des centres</a></li>
 		</ul>
 	</div>
-
-	<div id="zone_des_filtres">
-		<form id="drag">
-			<?php 
-			foreach ($filtres as $filtre)
-				echo $this->mon_filtre->form_dropdown("$filtre","$filtre",$styles,"$labels_filtres[$filtre]");
-			//echo "<div style='clear:both;'></div>";
-			?>
-		</form>
-	</div>
+	
 	<br />
 	<br />
 
 	<table id="tableau">
 		<tr>
 			<td id="left-sidebar">
-
 				<div class="zone_des_options">
-					<form action="">
+					<form action="" method="post">
 						<fieldset id="types_elections">
 							<legend>Type d'élection à représenter</legend>
 							<input id="presidentielle" type="radio" name="radio" />
@@ -76,11 +66,21 @@
 							<label for="valeur_absolue">Valeurs absolues</label><br />
 							<input id="valeur_relative" type="radio" name="format" />
 							<label for="valeur_relative">Valeurs relatives</label><br />
-						</fieldset>
+						</fieldset>						
 					</form>
-				</div> <br> <br>
-
-				<div class="zone_des_options">
+				</div> 
+				<br />
+				<!--button id="ouvrir">Ouvrir l'utilitaire d'analyse<span class="ui-icon ui-icon-newwin"></span></button-->
+				<button id="ouvrir">Ouvrir l'utilitaire d'analyse</button>
+				<div id="dialog_zone_des_options"  title="Utilitaire SIGEGIS">
+				<div class="zone_des_options_analyse">
+				<form id="drag">
+					<?php 
+					foreach ($filtres as $filtre)
+						echo $this->mon_filtre->form_dropdown("$filtre","$filtre",$styles,"$labels_filtres[$filtre]");
+					echo "<div style='clear:both;'></div>";
+					?>
+				</form>
 					<div id="accordion">
 					<div>
 					<h3><a href="#">Analyser suivant la localité</a></h3>
@@ -88,7 +88,7 @@
 						<form  style="clear:both;" method="post" action="">															
 								<fieldset>									
 									<?php 
-									echo $this->mon_filtre->form_dropdown("ana_decoupage","ana_decoupage",null,"Découpages")."<br />";
+									echo $this->mon_filtre->form_dropdown("ana_decoupage","ana_decoupage",null,"Découpages");
 									
 									$options = array(
 											'pays'  => 'Pays',
@@ -97,23 +97,23 @@
 											'centre' => 'Centre',
 									);
 									
-									echo $this->mon_filtre->form_dropdown2("ana_localite","ana_localite",null,$options,"Type de localité")."<br />";
+									echo $this->mon_filtre->form_dropdown2("ana_localite","ana_localite",null,$options,"Agréger par");
 
 									if($_GET["type"]=="presidentielle"){
 										$options=array("premier_tour"=>"Premier tour","second_tour"=>"Second tour");
-										echo $this->mon_filtre->form_dropdown2("ana_tour","ana_tour",null,$options,"Tour")."<br />";
+										echo $this->mon_filtre->form_dropdown2("ana_tour","ana_tour",null,$options,"Tour");
 									}
 
-									echo $this->mon_filtre->form_dropdown("localite","localite",null,"Lieu")."<br />";
+									echo $this->mon_filtre->form_dropdown("localite","localite",null,"Lieu");
 									?>
 									
 									<table class="swapList">
 										<tr><td colspan="3"><b>Choisir les années</b></td></tr>
 										<tr>											
 											<td><select id="choixmultipleA" multiple="multiple"></select></td>
-											<td>
-												<input id="MoveRight" type="button" value=" &gt;&gt; " class="move" /> 
-												<input id="MoveLeft" type="button" value=" &lt;&lt; " class="move" />
+											<td>																								
+												<input id="MoveRight" type="button" value=" &gt;&gt; " class="move" />
+												<input id="MoveLeft" type="button" value=" &lt;&lt; " class="move" /> 
 											</td>
 											<td>
 												<select id="choixmultipleB" multiple="multiple"></select>
@@ -127,16 +127,16 @@
 											<td>
 												<select id="choixCandidatA" multiple="multiple"></select>
 											</td>
-											<td>
-												<input id="MoveRightCandidat" type="button" value=" &gt;&gt; " class="move" /> 
+											<td>												 												
+												<input id="MoveRightCandidat" type="button" value=" &gt;&gt; " class="move" />
 												<input id="MoveLeftCandidat" type="button" value=" &lt;&lt; " class="move" />
 											</td>
 											<td>
-												<select id="choixCandidatB" multiple="multiple" style="float: right; margin: 0;"></select>
+												<select id="choixCandidatB" multiple="multiple"></select>
 											</td>
 										</tr>
 									</table>
-									<input id="valider" type="button" value="Valider" style="float:right;"/>
+									<input id="valider" type="button" value="Valider" style="float:right;" />
 								</fieldset>
 								</form>
 								</div>
@@ -147,7 +147,7 @@
 								<form style="clear:both;" method="post" action="">
 								<fieldset>
 									<?php 
-									echo $this->mon_filtre->form_dropdown("ana_decoupage_localite","ana_decoupage_localite",null,"Découpages")."<br />";
+									echo $this->mon_filtre->form_dropdown("ana_decoupage_localite","ana_decoupage_localite",null,"Découpages");
 
 									$options = array(
 											'pays'  => 'Pays',
@@ -155,7 +155,7 @@
 											'departement'   => 'Département',
 											'centre' => 'Centre',
 									);
-									echo $this->mon_filtre->form_dropdown2("ana_localite2","ana_localite2",null,$options,"Type de localité")."<br />";
+									echo $this->mon_filtre->form_dropdown2("ana_localite2","ana_localite2",null,$options,"Type de localité");
 									?>
 									
 									<?php
@@ -175,12 +175,12 @@
 											<td>
 												<select id="choixMultipleLocalitesA" multiple="multiple"></select>
 											</td>
-											<td>
-												<input id="MoveLeftLocalite" type="button" value=" &lt;&lt; " class="move" /> 
+											<td>												 
 												<input id="MoveRightLocalite" type="button" value=" &gt;&gt; " class="move" />
+												<input id="MoveLeftLocalite" type="button" value=" &lt;&lt; " class="move" />
 											</td>
 											<td>
-												<select id="choixMultipleLocalitesB" multiple="multiple" style="float: right; margin: 0;"></select>
+												<select id="choixMultipleLocalitesB" multiple="multiple"></select>
 											</td>
 										</tr>
 									</table>
@@ -191,12 +191,12 @@
 											<td>
 												<select id="choixCandidatLocaliteA" multiple="multiple" style="margin: 0;"></select>
 											</td>
-											<td>
-												<input id="MoveLeftCandidatLocalite" type="button" value=" &lt;&lt; " class="move" /> 
+											<td>												 
 												<input id="MoveRightCandidatLocalite" type="button"	value=" &gt;&gt; " class="move" />
+												<input id="MoveLeftCandidatLocalite" type="button" value=" &lt;&lt; " class="move" />
 											</td>
 											<td>
-												<select id="choixCandidatLocaliteB" multiple="multiple" style="float: right; margin: 0;"></select>
+												<select id="choixCandidatLocaliteB" multiple="multiple"></select>
 											</td>
 										</tr>
 									</table>
@@ -206,10 +206,11 @@
 								</div>
 								</div>
 							</div>													
-					</div>				
+					</div>		
+					</div>		
 			</td>
 
-			<td>
+			<td id="content">
 				<div id="container">
 					<h1 id="titre"></h1>
 					
@@ -219,7 +220,8 @@
 						Cet outil outil vous permet de:<br />
 						1) Analyser suivant une localité précise<br />
 						2) Analyser suivant une élection précise<br />
-						Les options sont quasi identiques. Il suffit juste de déplacer les éléments qui vous intéressent de la zone à gauche à celle de droite. 
+						Les options sont quasi identiques. Il suffit juste de déplacer les éléments qui vous intéressent de la zone à gauche à celle de droite.
+						Cliquez sur <b style="font-size:14px;">Ouvrir l'utilitaire d'analyse</b> pour débuter. 
 						</p>
 					</div>
 					<div id="theGrid">
@@ -239,7 +241,7 @@
 	<script type="text/javascript">
 	$("#chartdiv1").hide();
 	$("#theGrid").hide();
-	$("#pie").attr("disabled","disabled");
+	$("#pie,#grid,#bar,#map").attr("disabled","disabled");
 	$("#ana_localite,#ana_localite2").val("region");
 	$.ajax({            
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getDecoupages',            			         			   

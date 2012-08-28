@@ -69,6 +69,8 @@ $("#MoveRightCandidatLocalite,#MoveLeftCandidatLocalite").on("click",function(ev
 $(".move").button();
 
 $("#valider").on("click",function(event) {
+	$("#grid,#bar,#map").removeAttr("disabled");
+	$("#dialog_zone_des_options").dialog('close');
 	listeAnnees="";
 	listeCandidats="";
 	paramBis=$sources.val()+","+$("#ana_tour").val()+","+$("#localite").val();
@@ -110,6 +112,8 @@ $("#valider").on("click",function(event) {
 });
 
 $("#validerLocalite").on("click",function(event) {
+	$("#grid,#bar,#map").removeAttr("disabled");
+	$("#dialog_zone_des_options").dialog('close');
 	listeLocalites="";
 	listeCandidats="";
 	paramBis=$sources.val()+","+$tours.val()+","+$elections.val();

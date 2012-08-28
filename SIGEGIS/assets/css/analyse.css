@@ -1,9 +1,21 @@
-#swapList td {
-	text-align: center;
+#help p{
+	font-size: 14px;	
 }
+.zone_des_options {
+	marginss: auto;
+	font-weight: bold;
+	font-size: 12px;
+	color: black;
+	padding: 5px;
+	width: 280px;
+	border: 1px solid gray;
+	"
+}
+.swapList{clear: both;}
 
 #choixmultipleA,#choixmultipleB,#choixCandidatA,#choixCandidatB,#choixMultipleLocalitesA,#choixMultipleLocalitesB,#choixCandidatLocaliteA,#choixCandidatLocaliteB {
-	width: 130px;
+	width: 330px;
+	height:150px;
 }
 
 #menu-css li {
@@ -32,7 +44,6 @@
 
 #menu-css li a:hover {
 	background: rgba(0, 0, 0, 0.2);
-	/*padding: 5px 25px;*/
 }
 
 #menu-css li a:active {
@@ -43,10 +54,8 @@
 }
 
 #menu-css li .actif { //
-	background: rgba(28, 148, 196, 0.8); //
-	background: rgba(0, 0, 0, 0.5);
-	background: rgba(210, 71, 83, 0.8); //
-	color: black;
+	background: rgba(28, 148, 196, 0.8); 
+	background: rgba(210, 71, 83, 0.8); 
 	color: white;
 	-webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
 	-moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
@@ -80,18 +89,16 @@ label {
 }
 
 #container {
-	zmargin-left: 8px;
 	padding-left: 15px;
 }
 
 #tableau {
 	width: 95%;
-	borders: 2px solid red;
 	border-collapse: collapse;
 	margin: auto;
 }
 
-#tableau tr td {
+#left-sidebar , #content{
 	vertical-align: top;
 }
 
