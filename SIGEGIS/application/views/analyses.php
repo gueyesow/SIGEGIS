@@ -220,7 +220,7 @@
 						Cet outil outil vous permet de:<br />
 						1) Analyser suivant une localité précise<br />
 						2) Analyser suivant une élection précise<br />
-						Les options sont quasi identiques. Il suffit juste de déplacer les éléments qui vous intéressent de la zone à gauche à celle de droite.
+						Les options sont quasi identiques. Il suffit juste de déplacer les éléments qui vous intéressent de la zone à gauche à celle de droite.<br />
 						Cliquez sur <b style="font-size:14px;">Ouvrir l'utilitaire d'analyse</b> pour débuter. 
 						</p>
 					</div>
