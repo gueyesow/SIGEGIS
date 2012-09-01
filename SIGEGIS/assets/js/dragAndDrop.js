@@ -69,11 +69,14 @@ $("#MoveRightCandidatLocalite,#MoveLeftCandidatLocalite").on("click",function(ev
 $(".move").button();
 
 $("#valider").on("click",function(event) {
+	$(".ui-jqgrid-bdiv").removeAttr("style");
 	$("#grid,#bar,#map").removeAttr("disabled");
 	$("#dialog_zone_des_options").dialog('close');
 	listeAnnees="";
 	listeCandidats="";
-	paramBis=$sources.val()+","+$("#ana_tour").val()+","+$("#localite").val();
+	paramBis=$sources.val();
+	if($.getUrlVar("type")==="presidentielle") paramBis+=","+$("#ana_tour").val();
+	paramBis+=","+$("#localite").val();
 	
 	$("#theGrid,#chartdiv1").show();
 	$("#help").hide();
@@ -95,28 +98,31 @@ $("#valider").on("click",function(event) {
 	
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getHistoAnalyse',    
-		data:'param='+paramBis,	     
+		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),	     
 		success: function(json) {
 			$("#chartdiv1").append(json);										
 		}    
 	});
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieAnalyse',    
-		data:'param='+paramBis,	     
+		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),	     
 		success: function(json) {
 			$("#chartdiv2").append(json);										
 		}    
 	});
-	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyse?niveau=dep&param="+paramBis,page:1}).trigger("reloadGrid");
+	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyse?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
 	
 });
 
 $("#validerLocalite").on("click",function(event) {
+	$(".ui-jqgrid-bdiv").removeAttr("style");
 	$("#grid,#bar,#map").removeAttr("disabled");
 	$("#dialog_zone_des_options").dialog('close');
 	listeLocalites="";
 	listeCandidats="";
-	paramBis=$sources.val()+","+$tours.val()+","+$elections.val();
+	
+	if($.getUrlVar("type")==="presidentielle") paramBis+=","+$tours.val();
+	paramBis+=","+$("#localite").val();
 	
 	$("#theGrid,#chartdiv1").show();
 	$("#help").hide();
@@ -138,19 +144,19 @@ $("#validerLocalite").on("click",function(event) {
 	
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getHistoAnalyseLocalite',    
-		data:'param='+paramBis,	     
+		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),	     
 		success: function(json) {
 			$("#chartdiv1").append(json);										
 		}    
 	});
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieAnalyseLocalite',    
-		data:'param='+paramBis,	     
+		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),     
 		success: function(json) {
 			$("#chartdiv2").append(json);										
 		}    
 	});
-	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyseLocalite?niveau=dep&param="+paramBis,page:1}).trigger("reloadGrid");
+	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyseLocalite?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
 	
 });
 

@@ -69,22 +69,23 @@ $(document).ready(function() {
 	/**
 	 * Ajouter en paramètre la source,le tour à représenter
 	 */
-	param=$sources.val()+","+$("#ana_tour").val();
+	
+	/*param=$sources.val()+","+$("#ana_tour").val();
 	if ( $.getUrlVar("niveau") ) {$url='http://www.sigegis.ugb-edu.com/main_controller/analyser?niveau='+$.getUrlVar("niveau")+'&param='+param;}
-	else {$url='http://www.sigegis.ugb-edu.com/main_controller/analyser?param='+param;}
+	else {$url='http://www.sigegis.ugb-edu.com/main_controller/analyser?param='+param;}*/
 
 	
 	$("#list").jqGrid({		
-		url:$url,
+		//url:$url,
 		autowidth:true,
 	    datatype: 'xml',
 	    mtype: 'GET',
 	    colNames:['Nom du candidat','Lieu de vote','Année','Nombre de voix'],
 	    colModel :[ 
-	      {name:'nomCandidat', index:'nomCandidat', search:true},
-	      {name:'lieu', index:'lieuDeVote', width:80,sortable:true},
-	      {name:'annee', index:'annee', width:80,sortable:true},
-	      {name:'nbVoix', index:'nbVoix', width:80, align:'nbVoix',sortable:true}  
+	      {name:'nomCandidat', index:'nomCandidat'},
+	      {name:'lieuDeVote', index:'lieuDeVote', width:80},
+	      {name:'annee', index:'annee', width:80},
+	      {name:'nbVoix', index:'nbVoix', width:80}  
 	    ],
 	    pager: '#pager',
 	    rowNum:20,
@@ -93,7 +94,7 @@ $(document).ready(function() {
 	    sortorder: 'desc',
 	    viewrecords: true,
 	    gridview: true,
-	}).navGrid("#pager",{edit:true,add:true,del:true});
+	}).navGrid("#pager",{edit:false,add:false,del:false});
 	
 			
 	$('#menu-css a').each(function(){
