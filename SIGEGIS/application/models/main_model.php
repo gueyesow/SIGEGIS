@@ -1052,7 +1052,7 @@ private $tablesParticipation=array("presidentielle"=>"participationpresidentiell
 		public function getPoidsElectoralRegions($balise){
 			if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
 			else return;
-			if (!empty($_GET['annee'])) $annee=$_GET['annee']; else return;
+			if (!empty($_GET['annee']) AND !empty($_GET['tour'])) {$annee=$_GET['annee'];$tour=$_GET['tour'];} else return;
 			
 			$requete="SELECT nomRegion, SUM( nbInscrits ) as inscrits
 			FROM {$this->tablesParticipation[$typeElection]} rp
@@ -1061,7 +1061,7 @@ private $tablesParticipation=array("presidentielle"=>"participationpresidentiell
 			LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement 
 			LEFT JOIN region ON departement.idRegion = region.idRegion 
-			WHERE YEAR(dateElection)=$annee AND nomRegion<>'ETRANGER' 
+			WHERE YEAR(dateElection)=$annee AND nomRegion<>'ETRANGER' AND election.tour='$tour' 
 			GROUP BY region.idRegion ORDER BY nomRegion";
 		
 			$resultats=$this->db->query($requete)->result();

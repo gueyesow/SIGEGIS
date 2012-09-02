@@ -1,0 +1,35 @@
+@CHARSET "utf-8";
+
+body{	
+	font-family:arial,Helvetica,sans-serif;
+	font-size:12px;
+	line-height:18px;
+	}
+	
+#left-sidebar,#menu-css,#zone_des_filtres,#pager,#exportButton,#printButton,#alerthd,#alertcnt{
+	display: none;
+	}
+
+#theGrid th{
+	text-align: left; background-color:#d3c4b2;
+	padding: 5px;
+	}
+	
+#theGrid table{
+	border-collapse: collapse;
+	border:1px solid lightgray;
+	}
+
+#list tr, #list tr td{
+	/*border:1px solid lightgray;*/
+	padding: 5px;
+	}
+
+#list tr:nth-child(odd){
+	background: orange;
+	}
+	
+#theGrid .jqgfirstrow{
+	/*display:none;*/
+	/*height:0;padding:0;*/
+}

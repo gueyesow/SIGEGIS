@@ -22,14 +22,14 @@
 	<?php $labels_filtres=array("sources"=>"Source","elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");?>
 	<?php $typeElection=empty($_GET["type"])?$type:$_GET["type"];?>
 
-	<div id="menu-css">	
+	<div id="menu-css">
 		<ul>
-			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>			
+			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>
+			<li><a href="<?php echo site_url("main_controller/administration");?>">Administration</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=globaux");?>">Résultats globaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=reg");?>">Résultats régionaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=dep");?>">Résultats départementaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=cen");?>">Résultats au niveau des centres</a></li>
-			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=globaux");?>">Statistiques</a></li>
 		</ul>
 	</div>
 
@@ -82,8 +82,8 @@
 					</form>
 				</div> <br> <br>
 				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img height="58px" src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
-				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
-				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
+				<button id="pdf" class="theToolTip" title="Exporter au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
+				<button id="exportcsv" class="theToolTip" title="Exporter au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
 			<td id="content">
 				<div id="container">
@@ -104,17 +104,11 @@
 			</td>
 		</tr>
 	</table>
-	
-	<div id="footer">
-		<p>&copy; Copyright SIGEGIS | Université Gaston Berger de Saint-Louis du Sénégal | 2012</p>
-	</div>
-	
 	<script src="<?php echo js_url("base");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("init_filtres");?>" type="text/javascript"></script>
-	<script src="<?php echo js_url("visualiser");?>" type="text/javascript"></script>	
+	<script src="<?php echo js_url("base2");?>" type="text/javascript"></script>	
 	<script src="<?php echo js_url("dragAndDrop");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("tooltips");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("style");?>" type="text/javascript"></script>
-		
 </body>
 </html>
