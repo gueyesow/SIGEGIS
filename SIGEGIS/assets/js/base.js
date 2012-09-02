@@ -15,7 +15,10 @@ $.extend({
 	    return vars;
 	  },
 	  getUrlVar: function(name){
-	    return $.getUrlVars()[name];
+		  if ($.getUrlVars()[name]!=null)
+			  return $.getUrlVars()[name];
+		  else 
+			  return null;
 	  }
 });
 
@@ -23,6 +26,10 @@ $.extend({
 	// 				Partie générique			//
 	// ---------------------------------------- //
 
+	var chart1;
+	var chart2;
+	var chart3;
+	var chart4;
 	var parametres_url="";
 	var param="";
 	var $pays = $('#pays');
@@ -45,3 +52,5 @@ $.extend({
 	var annees="";
 	var mode = "";
 	var parametres_analyse="";	 
+
+	

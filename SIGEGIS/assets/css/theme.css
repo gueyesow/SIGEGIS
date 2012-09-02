@@ -1,9 +1,13 @@
 .tooltip {
 	display: none;
+	font-size:12px;
+	font-weight:bold;
 	position: absolute;
-	border: 1px solid #333;
-	background-color: #ffed8a;
-	padding: 2px 6px;
+	border: 1px solid #d3c4b2;
+	background-color: #f0f0f0;
+	padding: 6px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
 }
 
 #menu-css li {
@@ -42,11 +46,8 @@
 	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
 }
 
-#menu-css li .actif { //
-	background: rgba(28, 148, 196, 0.8); //
-	background: rgba(0, 0, 0, 0.5);
-	background: rgba(210, 71, 83, 0.8); //
-	color: black;
+#menu-css li .actif { 
+	background: rgba(210, 71, 83, 0.8); 
 	color: white;
 	-webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
 	-moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
@@ -84,20 +85,21 @@ label {
 	margin-left: 8px;
 }
 
-#tableau {
+#getGrid {
 	width: 95%;
 	borders: 2px solid red;
 	border-collapse: collapse;
 	margin: auto;
 }
 
-#tableau tr td {
-	vertical-align: top;
-}
 
 #left-sidebar {
 	vertical-align: top;
 	width: 30%;
+}
+
+#content{
+	vertical-align: top;
 }
 
 #theGrid {
@@ -114,7 +116,6 @@ fieldset {
 }
 
 .zone_des_options {
-	marginss: auto;
 	font-weight: bold;
 	font-size: 12px;
 	color: black;
@@ -138,17 +139,6 @@ fieldset {
 	margin: 15px 5px;
 }
 
-.fg-button {
-	outline: 0;
-	margin: 0 4px 0 0;
-	padding: .4em 1em;
-	text-decoration: none !important;
-	cursor: pointer;
-	position: relative;
-	text-align: center;
-	zoom: 1;
-}
-
 #header-wrap {
 	background: url(../../assets/images/header-bg.png) repeat-x left -10px;
 	height: 50px;
@@ -167,4 +157,17 @@ fieldset {
 	font-weight: bold;
 	text-decoration: none;
 	margin-right: 15px;
+}
+
+#pies_participation{
+	width: 100%;
+}
+#pies_participation td{
+	width: 50%;
+}
+
+#pies_participation .diagrammes2 {
+ 	border: 1px solid lightgray;
+	swidth: 50%;
+	padding: 5px;
 }

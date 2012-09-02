@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>SIGEGIS &gt; Analyses</title>
+<link rel="stylesheet" type="text/css" media="print" href="<?php echo css_url("print"); ?>" />
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("ui.jqgrid"); ?>" />
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("analyse"); ?>" />
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("ui-lightness/jquery-ui-1.8.21.custom"); ?>" />
@@ -35,7 +36,7 @@
 	<br />
 	<br />
 
-	<table id="tableau">
+	<table id="getGrid">
 		<tr>
 			<td id="left-sidebar">
 				<div class="zone_des_options">
@@ -70,8 +71,9 @@
 					</form>
 				</div> 
 				<br />
-				<!--button id="ouvrir">Ouvrir l'utilitaire d'analyse<span class="ui-icon ui-icon-newwin"></span></button-->
-				<button id="ouvrir">Ouvrir l'utilitaire d'analyse</button>
+
+				<button id="ouvrir" class="theToolTip" title="Ensemble d'outils permettant d'effectuer des analyses">Ouvrir l'utilitaire d'analyse</button>
+				
 				<div id="dialog_zone_des_options"  title="Utilitaire SIGEGIS">
 				<div class="zone_des_options_analyse">
 				<form id="drag">
@@ -116,7 +118,7 @@
 												<input id="MoveLeft" type="button" value=" &lt;&lt; " class="move" /> 
 											</td>
 											<td>
-												<select id="choixmultipleB" multiple="multiple"></select>
+												<select id="choixmultipleB" multiple="multiple" class="theToolTip" title="Cliquez ici pour réinitialiser la sélection des candidats"></select>
 											</td>
 										</tr>
 									</table>
@@ -217,10 +219,19 @@
 					<div id="help">
 						<h1>Etapes à suivre</h1>
 						<p>
-						Cet outil outil vous permet de:<br />
-						1) Analyser suivant une localité précise<br />
-						2) Analyser suivant une élection précise<br />
-						Les options sont quasi identiques. Il suffit juste de déplacer les éléments qui vous intéressent de la zone à gauche à celle de droite.<br />
+						Vous êtes dans l'utilitaire SIGEGIS<br />
+						Deux options vous sont offertes:<br /><br />
+						<b>1) Analyser suivant une localité précise</b><br />
+						Avec cette option, vous pouvez sélectionner le lieu de vote qui vous intéresse puis les candidats ciblés<br /><br />
+						<b>2) Analyser suivant une élection précise</b><br />
+						Les options sont quasi identiques aux précédentes. Il suffit juste de déplacer les éléments qui vous intéressent de la zone à gauche à celle de droite.<br />
+						<br /><br />
+						Les modes de représentation disponibles se trouvent dans le menu de gauche.
+						a) Tableau
+						b) Carte
+						c) Diagramme circulaire
+						d) Diagramme en bâtons
+						<br /><br /> 
 						Cliquez sur <b style="font-size:14px;">Ouvrir l'utilitaire d'analyse</b> pour débuter. 
 						</p>
 					</div>
@@ -417,7 +428,8 @@
 
 	</script>
 	<script src="<?php echo js_url("analyse");?>" type="text/javascript"></script>
-	<script src="<?php echo js_url("dragAndDrop");?>" type="text/javascript"></script>
+	<script src="<?php echo js_url("dragAndDrop");?>" type="text/javascript"></script>	
 	<script src="<?php echo js_url("style");?>" type="text/javascript"></script>
+	<script src="<?php echo js_url("tooltips");?>" type="text/javascript"></script>
 </body>
 </html>

@@ -35,7 +35,7 @@
 			else if($.getUrlVar("niveau")==="pays") {niveau="par pays";}
 			else niveau="globaux";
 			
-			if (! $("#ana_decoupage").length) $("#titre").append("Résultats "+niveau+" de l'élection "+titres[type]+" de "+$elections.val());						
+			if (! $("#ana_decoupage").length) $("#titre").append("Election "+titres[type]+" de "+$elections.val()+": résultats "+niveau);						
 		}       
 	});
 	
@@ -53,11 +53,10 @@
 								$tours.append('<option value="'+ index +'">'+ value +'</option>');							
 							});         							
 							$tours.change();
-							if (! $("#ana_decoupage").length) $("#titre").text("Résultats "+niveau+" de l'élection "+titres[type]+" de "+$elections.val());
-							$('#menu-css a').each(function(){
-								
+							if (! $("#ana_decoupage").length) $("#titre").text("Election "+titres[type]+" de "+$elections.val()+": résultats "+niveau);
+							$('#menu-css a').each(function(){								
 								if( !$.getUrlVar("year") ){			
-									if( $(this).text()!=$('#menu-css a:first').text() && $(this).text()!=$('#menu-css a:eq(1)').text() )
+									if( $(this).text()!=$('#menu-css a:first').text() && $(this).text()!=$('#menu-css a:eq(1)').text()  && $(this).text()!=$('#menu-css a:last)').text())
 									if( $(this).attr("href").indexOf("year")===-1 )
 									$(this).attr("href",$(this).attr("href")+"&year="+$elections.val());
 									else $(this).attr("href",$(this).attr("href").substr(0,$(this).attr("href").indexOf('year')+5)+$elections.val());
@@ -66,7 +65,7 @@
 								url=$(this).attr("href");
 								year="";chaine="";
 								
-								if( $(this).text()!=$('#menu-css a:first').text() && $(this).text()!=$('#menu-css a:eq(1)').text() ){
+								if( $(this).text()!=$('#menu-css a:first').text() && $(this).text()!=$('#menu-css a:eq(1)').text() && $(this).text()!=('#menu-css a:last').text()){
 									if( $.getUrlVar("map") && $.getUrlVar("grid") && $.getUrlVar("pie") && $.getUrlVar("bar") ) 
 										url+="&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid");
 

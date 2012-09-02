@@ -44,7 +44,7 @@ $.extend($.jgrid,{
 			url: "n'est pas une adresse correcte. Préfixe requis ('http://' or 'https://')",
 			nodefined : " n'est pas défini!",
 			novalue : " la valeur de retour est requise!",
-			customarray : "Une fonction personnalisée devrait retourner un tableau (array)!",
+			customarray : "Une fonction personnalisée devrait retourner un getGrid (array)!",
 			customfcheck : "Une fonction personnalisée devrait être présente dans le cas d'une vérification personnalisée!"
 		}
 	},
@@ -68,7 +68,7 @@ $.extend($.jgrid,{
 		searchtext: " ",
 		searchtitle: "Chercher un enregistrement",
 		refreshtext: "",
-		refreshtitle: "Recharger le tableau",
+		refreshtitle: "Recharger le getGrid",
 		alertcap: "Avertissement",
 		alerttext: "Veuillez sélectionner une ligne",
 		viewtext: "",

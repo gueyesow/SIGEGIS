@@ -6,13 +6,13 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  *
  */
 class Analyse_model extends CI_Model{
-
+	private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
 	/**
 	 * Cette fonction retourne le code JavaScript du Column chart
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getHistoAnalyse($balise){
+	public function getBarAnalyserAnnee($balise){
 			
 		$tableauResultats=array();
 		$series="";
@@ -21,6 +21,14 @@ class Analyse_model extends CI_Model{
 		$unite="";
 		$abscisse="";
 
+
+		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		else return;
+		
+		if ($typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $titreElection="législative";
+		elseif ($typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$typeElection;		
 
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
@@ -50,7 +58,7 @@ class Analyse_model extends CI_Model{
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat,rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM resultatspresidentielles rp
+				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
@@ -178,7 +186,8 @@ class Analyse_model extends CI_Model{
 		}
 		},
 		exporting: {
-		enabled: false
+		//enabled: false
+		url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
 		},
 		legend: {
 		layout: 'vertical',
@@ -190,7 +199,7 @@ class Analyse_model extends CI_Model{
 		},
 		tooltip: {
 		formatter: function() {
-		return  this.x +': '+ this.y;
+		return  this.y;
 		}
 		},
 	
@@ -212,7 +221,7 @@ class Analyse_model extends CI_Model{
 		});
 		});
 		</script>";
-	} // ...............  Fin de getHistoAnalyse ...............
+	} // ...............  Fin de getBarAnalyserAnnee ...............
 
 
 	/**
@@ -220,7 +229,7 @@ class Analyse_model extends CI_Model{
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getPieAnalyse($balise){
+	public function getPieAnalyserAnnee($balise){
 
 
 		$tableauResultats=array();
@@ -231,9 +240,17 @@ class Analyse_model extends CI_Model{
 		$abscisse="";
 
 
-		if(!empty($_GET["niveau"]))	{
-			$niveau=$_GET["niveau"];
-		}	else $niveau=null;
+		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		else return;
+		
+		if ($typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $titreElection="législative";
+		elseif ($typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$typeElection;		
+
+		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
+		else $niveau=null;
+		
 
 		if ($niveau=="cen") $nomLieu="nomCentre,";
 		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
@@ -262,7 +279,7 @@ class Analyse_model extends CI_Model{
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat,rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM resultatspresidentielles rp
+				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
@@ -388,13 +405,13 @@ class Analyse_model extends CI_Model{
 
 	});</script>";
 
-	} // ...............  Fin de getPieAnalyse ...............
+	} // ...............  Fin de getPieAnalyserAnnee ...............
 
 	/**
 	 * Cette fonction affiche le code xml du Grid
 	 * @return string
 	 */
-	public function tableau(){
+	public function getGridAnalyserAnnee(){
 
 		$page = $_GET['page'];
 		$limit = $_GET['rows'];
@@ -410,7 +427,17 @@ class Analyse_model extends CI_Model{
 		$unite="";
 		$abscisse="";
 
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"]; else $niveau=null;
+		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		else return;
+		
+		if ($typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $titreElection="législative";
+		elseif ($typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$typeElection;		
+
+		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
+		else $niveau=null;
+		
 
 		if ($niveau=="cen") $nomLieu="nomCentre,";
 		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
@@ -435,7 +462,7 @@ class Analyse_model extends CI_Model{
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM resultatspresidentielles rp
+				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
@@ -503,15 +530,108 @@ class Analyse_model extends CI_Model{
 		$s .= "</rows>";
 
 		echo $s;
-	} // ...............  Fin de tableau() ...............
+	} // ...............  Fin de getGrid() ...............
 
+	
+	public function exportResultatsToCSV(){
+		$tableauResultats=array();
+		$series="";
+		$titre="";
+		$sous_titre="";
+		$unite="";
+		$abscisse="";
+	
+		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		else return;
+	
+		if ($typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $titreElection="législative";
+		elseif ($typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$typeElection;
+	
+		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
+		else $niveau=null;
+	
+	
+		if ($niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		else $nomLieu="";
+	
+		if(!empty($_GET['param']) AND !empty($_GET['listeAnnees']) AND !empty($_GET['listeCandidats'])){
+			$parametres=$_GET['param'];
+			$params=explode(",",$parametres);
+			$listeAnnees=explode(",",$_GET['listeAnnees']);
+			$listeCandidats=explode(",",$_GET['listeCandidats']);
+	
+			if ($niveau=="cen") $parametres3="centre.idCentre";
+			elseif ($niveau=="dep") $parametres3="departement.idDepartement";
+			elseif ($niveau=="reg") $parametres3="region.idRegion";
+			elseif ($niveau=="pays") $parametres3="pays.idPays";
+			else $parametres3="null";
+	
+			$colonnesBDD=array("rp.idSource","election.tour",$parametres3);
+	
+			foreach ($listeCandidats as $leCandidat){
+				$v=0;
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				FROM {$this->tables[$typeElection]} rp
+				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+				LEFT JOIN source ON rp.idSource = source.idSource
+				LEFT JOIN election ON rp.idElection = election.idElection
+				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+	
+				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+						$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
+						LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
+						if ($niveau=="reg" OR $niveau=="pays")
+						$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+						if ($niveau=="pays")
+						$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+	
+						for($i=0;$i<sizeof($params);$i++) {
+						if($v++) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+						else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
+						}
+						$theYear="";
+						foreach ($listeAnnees as $lAnnee)
+						{
+						if ($theYear=="") $theYear.=" AND ( YEAR(dateElection)='".$lAnnee."'";
+						else $theYear.= " OR YEAR(dateElection)='".$lAnnee."'";
+			}
+			$requete.=$theYear.")";
+	
+			$requete.=" AND rp.idCandidature=".$leCandidat." ORDER BY dateElection ASC";
+	
+			$tableauResultats[]=$this->db->query($requete)->result();
+	}
+	}
+	
+	
+	header("Content-type: text/csv;charset=utf-8");
+	header('Content-disposition: attachment;filename=SIGeGIS - Export.csv');
+	$s="Nom du candidat;Lieu de Vote;Année;Voix\r\n";
+	for( $j=0;$j<sizeof($tableauResultats);$j++ ){
+		foreach ($tableauResultats[$j] as $row) {
+			$s .= $row->nomCandidat .";";
+			$s .= $row->lieuDeVote .";";
+			$s .= $row->annee .";";
+			$s .= $row->nbVoix ."\r\n";
+		}
+	}
+	
+	echo $s;
+	} // ...............  Fin de exportToCsv() ...............
+	
+	
 	//------------------------------------------------------------------
 	/**
 	 * Cette fonction retourne le code JavaScript du Column chart
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getHistoAnalyseLocalite($balise){
+	public function getBarAnalyserLocalite($balise){
 
 		$tableauResultats=array();
 		$series="";
@@ -521,8 +641,17 @@ class Analyse_model extends CI_Model{
 		$abscisse="";
 
 
+		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		else return;
+		
+		if ($typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $titreElection="législative";
+		elseif ($typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$typeElection;		
+
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
+		
 
 		if ($niveau=="cen") $nomLieu="nomCentre,";
 		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
@@ -550,7 +679,7 @@ class Analyse_model extends CI_Model{
 
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM resultatspresidentielles rp
+				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
@@ -676,7 +805,8 @@ class Analyse_model extends CI_Model{
 	}
 	},
 	exporting: {
-	enabled: false
+	//enabled: false
+		url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
 	},
 	legend: {
 	layout: 'vertical',
@@ -688,7 +818,7 @@ class Analyse_model extends CI_Model{
 	},
 	tooltip: {
 	formatter: function() {
-	return  this.x +': '+ this.y;
+	return  this.y;
 	}
 	},
 
@@ -710,7 +840,7 @@ class Analyse_model extends CI_Model{
 	});
 	});
 	</script>";
-	}// ...............  Fin de tableau() ...............
+	}// ...............  Fin de getGrid() ...............
 
 
 	/**
@@ -718,7 +848,7 @@ class Analyse_model extends CI_Model{
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getPieAnalyseLocalite($balise){
+	public function getPieAnalyserLocalite($balise){
 		$tableauResultats=array();
 		$series="";
 		$titre="";
@@ -727,8 +857,17 @@ class Analyse_model extends CI_Model{
 		$abscisse="";
 
 
+		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		else return;
+		
+		if ($typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $titreElection="législative";
+		elseif ($typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$typeElection;		
+
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
+		
 
 		if ($niveau=="cen") $nomLieu="nomCentre,";
 		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
@@ -756,7 +895,7 @@ class Analyse_model extends CI_Model{
 
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM resultatspresidentielles rp
+				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
@@ -886,13 +1025,13 @@ class Analyse_model extends CI_Model{
 
 	});</script>";
 
-	}// ...............  Fin de getPieAnalyseLocalite() ...............
+	}// ...............  Fin de getPieAnalyserLocalite() ...............
 
 	/**
 	 * Cette fonction affiche le code xml du Grid
 	 * @return string
 	 */
-	public function tableauLocalite(){
+	public function getGridAnalyserLocalite(){
 
 		$page = $_GET['page'];
 		$limit = $_GET['rows'];
@@ -909,8 +1048,17 @@ class Analyse_model extends CI_Model{
 		$abscisse="";
 
 
+		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		else return;
+		
+		if ($typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $titreElection="législative";
+		elseif ($typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$typeElection;		
+
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
+		
 
 		if ($niveau=="cen") $nomLieu="nomCentre,";
 		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
@@ -938,7 +1086,7 @@ class Analyse_model extends CI_Model{
 
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM resultatspresidentielles rp
+				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
@@ -1006,6 +1154,118 @@ class Analyse_model extends CI_Model{
 		$s .= "</rows>";
 		echo $s;
 	} // ...............  Fin de tableauLocalite() ...............
+
+	
+	public function exportToCSVLocalite(){
+		$tableauResultats=array();
+		$series="";
+		$titre="";
+		$sous_titre="";
+		$unite="";
+		$abscisse="";
+	
+	
+		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		else return;
+	
+		if ($typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $titreElection="législative";
+		elseif ($typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$typeElection;
+	
+		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
+		else $niveau=null;
+	
+	
+		if ($niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		else $nomLieu="";
+	
+		if(!empty($_GET['param']) AND !empty($_GET['listeLocalites']) AND !empty($_GET['listeCandidats'])){
+			$parametres=$_GET['param'];
+			$params=explode(",",$parametres);
+			$listeLocalites=explode(",",$_GET['listeLocalites']);
+			$listeCandidats=explode(",",$_GET['listeCandidats']);
+	
+			$v=0;
+	
+			if ($niveau=="cen") $parametres3="centre.nomCentre";
+			elseif ($niveau=="dep") $parametres3="departement.nomDepartement";
+			elseif ($niveau=="reg") $parametres3="region.nomRegion";
+			elseif ($niveau=="pays") $parametres3="pays.nomPays";
+			else $parametres3="null";
+	
+			$colonnesBDD=array("rp.idSource","election.tour","YEAR(election.dateElection)","election.typeElection");
+	
+			foreach ($listeCandidats as $leCandidat){
+	
+				$v=0;
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				FROM {$this->tables[$typeElection]} rp
+				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+				LEFT JOIN source ON rp.idSource = source.idSource
+				LEFT JOIN election ON rp.idElection = election.idElection
+				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+	
+				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+						$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
+						LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
+						if ($niveau=="reg" OR $niveau=="pays")
+						$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+						if ($niveau=="pays")
+						$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+	
+						for($i=0;$i<sizeof($params);$i++) {
+						if($v++) {
+						$requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+				}
+				else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
+				}
+	
+				$theYear="";
+				foreach ($listeLocalites as $laLocalite){
+				if ($theYear=="") $theYear.=" AND ( $parametres3='".$laLocalite."'";
+				else $theYear.= " OR $parametres3='".$laLocalite."'";
+			}
+			$requete.=$theYear.")";
+			$requete.=" AND rp.idCandidature=".$leCandidat." GROUP BY rp.idCandidature,annee, $parametres3 ORDER BY rp.idCandidature";
+	
+			$tableauResultats[]=$this->db->query($requete)->result();
+	}
+	}
+	
+				$totalRows=sizeof($listeLocalites)*sizeof($listeCandidats);
+	
+				if( $totalRows > 0 && $limit > 0) {
+				$total_pages = ceil($totalRows/$limit);
+	}
+				else {
+				$total_pages = 0;
+	}
+	
+	if ($page > $total_pages) $page=$total_pages;
+	
+	$start = $limit*$page - $limit;
+	
+	if($start <0) $start = 0;
+	
+	header("Content-type: text/csv;charset=utf-8");
+	header('Content-disposition: attachment;filename=SIGeGIS - Export.csv');
+	$s="Nom du candidat;Lieu de Vote;Année;Voix\r\n";
+
+	for( $j=0;$j<sizeof($tableauResultats);$j++ ){
+		foreach ($tableauResultats[$j] as $row) {
+			$s .= $row->nomCandidat .";";
+			$s .= $row->lieuDeVote .";";
+			$s .= $row->annee .";";
+			$s .= $row->nbVoix ."\r\n";
+		}
+	}
+	echo $s;
+	} // ...............  Fin de tableauLocalite() ...............
+	
 	
 	function test(){
 		$candidats="";$seriesGlob="";$series="";$localites="";

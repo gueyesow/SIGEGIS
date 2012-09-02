@@ -63,7 +63,7 @@ class Main_controller extends CI_Controller {
 	}
 
 	public function afficher(){
-		$this->mon_modele->tableau();
+		$this->mon_modele->getGrid();
 	}
 
 	public function search(){
@@ -95,7 +95,7 @@ class Main_controller extends CI_Controller {
 	}
 
 	public function filtre_grid(){
-		$this->mon_filtre->tableau();
+		$this->mon_filtre->getGrid();
 	}
 
 }

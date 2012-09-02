@@ -3,24 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>SIGEGIS</title>
-<link rel="stylesheet" type="text/css" media="screen"
-	href="<?php echo css_url("ui.jqgrid"); ?>" />
-<link rel="stylesheet" type="text/css" media="screen"
-	href="<?php echo css_url("theme"); ?>" />
-<link rel="stylesheet" type="text/css" media="screen"
-	href="<?php echo css_url("ui-lightness/jquery-ui-1.8.21.custom"); ?>" />
-
-<script src="<?php echo js_url("jqgrid/js/jquery-1.7.2.min");?>"
-	type="text/javascript"></script>
-<script src="<?php echo js_url("jqgrid/plugins/jquery.searchFilter");?>"
-	type="text/javascript"></script>
-<script src="<?php echo js_url("jqgrid/js/i18n/grid.locale-fr");?>"
-	type="text/javascript"></script>
-<script src="<?php echo js_url("jqgrid/js/jquery.jqGrid.min");?>"
-	type="text/javascript"></script>
-<script
-	src="<?php echo js_url("jquery-ui/js/jquery-ui-1.8.21.custom.min");?>"
-	type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="print" href="<?php echo css_url("print"); ?>" />
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("ui.jqgrid"); ?>" />
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("theme"); ?>" />
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("ui-lightness/jquery-ui-1.8.21.custom"); ?>" />
+<script src="<?php echo js_url("jqgrid/js/jquery-1.7.2.min");?>" type="text/javascript"></script>
+<script src="<?php echo js_url("jqgrid/plugins/jquery.searchFilter");?>" type="text/javascript"></script>
+<script src="<?php echo js_url("jqgrid/js/i18n/grid.locale-fr");?>" type="text/javascript"></script>
+<script src="<?php echo js_url("jqgrid/js/jquery.jqGrid.min");?>" type="text/javascript"></script>
+<script src="<?php echo js_url("jquery-ui/js/jquery-ui-1.8.21.custom.min");?>" type="text/javascript"></script>
 <script src="<?php echo js_url("highcharts/js/highcharts");?>"></script>
 <script src="<?php echo js_url("highcharts/js/modules/exporting");?>"></script>
 </head>
@@ -29,31 +20,22 @@
 	<?php $styles="";?>
 	<?php $filtres=array("sources","elections","tours","pays","regions","departements","collectivites","centres");?>
 	<?php $labels_filtres=array("sources"=>"Source","elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");?>
+	<?php $typeElection=empty($_GET["type"])?$type:$_GET["type"];?>
 
-	<!--div id="header-wrap"-->
 	<div id="menu-css">
 		<ul>
 			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>
-			<li><a
-				href="<?php echo site_url("main_controller/administration");?>">Administration</a>
-			</li>
-			<li><a
-				href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=globaux");?>">Résultats
-					globaux</a></li>
-			<li><a
-				href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=reg");?>">Résultats
-					régionaux</a></li>
-			<li><a title="yes"
-				href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=dep");?>">Résultats
-					départementaux</a></li>
-			<li><a class="location" title="yes"
-				href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=cen");?>">Résultats
-					au niveau des centres</a></li>
+			<li><a href="<?php echo site_url("main_controller/administration");?>">Administration</a></li>
+			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=globaux");?>">Résultats globaux</a></li>
+			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=reg");?>">Résultats régionaux</a></li>
+			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=dep");?>">Résultats départementaux</a></li>
+			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=cen");?>">Résultats au niveau des centres</a></li>
+			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=globaux");?>">Statistiques</a></li>
 		</ul>
 	</div>
 
 	<div id="zone_des_filtres">
-		<form id="drag">
+		<form>
 			<?php 
 			foreach ($filtres as $filtre)
 				echo $this->mon_filtre->form_dropdown("$filtre","$filtre",$styles,"$labels_filtres[$filtre]");
@@ -64,29 +46,31 @@
 	<br />
 	<br />
 
-	<table id="tableau">
+	<table id="getGrid">
 		<tr>
 			<td id="left-sidebar">
 				<div class="zone_des_options">
 					<form action="">
 						<fieldset id="types_elections">
 							<legend>Type d'élection à représenter</legend>
-							<input id="presidentielle" type="radio" name="radio" /><label
-								for="presidentielle">Election présidentielle</label><br /> <input
-								id="legislative" type="radio" name="radio" /><label
-								for="legislative">Election législative</label><br /> <input
-								id="locale" type="radio" name="radio2" /><label for="locale">Election
-								locale</label><br />
+							<input id="presidentielle" type="radio" name="radio" />
+							<label for="presidentielle">Election présidentielle</label><br /> 
+							<input id="legislative" type="radio" name="radio" />
+							<label for="legislative">Election législative</label><br /> 
+							<input id="locale" type="radio" name="radio2" />
+							<label for="locale">Election locale</label><br />
 						</fieldset>
 
 						<fieldset id="types_affichage">
 							<legend>Mode de représentation</legend>
-							<input type="checkbox" id="map" name="map" /><label for="map">Carte</label><br />
-							<input type="checkbox" id="bar" checked="checked" name="bar" /><label
-								for="bar">Diagramme en colonnes</label><br /> <input
-								type="checkbox" id="pie" name="pie" /><label for="pie">Diagramme
-								à secteurs</label><br /> <input type="checkbox" id="grid"
-								name="grid" checked="checked" /><label for="grid">Tableau</label>
+							<input type="checkbox" id="map" name="map" />
+							<label for="map">Carte</label><br />
+							<input type="checkbox" id="bar" checked="checked" name="bar" />
+							<label for="bar">Diagramme en colonnes</label><br /> 
+							<input type="checkbox" id="pie" name="pie" />
+							<label for="pie">Diagramme à secteurs</label><br /> 
+							<input type="checkbox" id="grid" name="grid" checked="checked" />
+							<label for="grid">Tableau</label>
 						</fieldset>
 
 						<fieldset>
@@ -98,8 +82,11 @@
 						</fieldset>
 					</form>
 				</div> <br> <br>
+				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img height="58px" src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
+				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
+				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
-			<td>
+			<td id="content">
 				<div id="container">
 
 					<h1 id="titre"></h1>
@@ -119,38 +106,9 @@
 		</tr>
 	</table>
 	<script src="<?php echo js_url("base");?>" type="text/javascript"></script>
-	<script src="<?php echo js_url("init_filtres");?>"
-		type="text/javascript"></script>
-	<script src="<?php echo js_url("base2");?>" type="text/javascript"></script>
-	<!--script type='text/javascript'>
-			if ( $.getUrlVar('niveau') ) {
-				url='http://www.sigegis.ugb-edu.com/main_controller/afficher?niveau='+$.getUrlVar('niveau')+'&param='+param;
-			}
-			else {
-			url='http://www.sigegis.ugb-edu.com/main_controller/afficher?param='+param;
-			}
-			$('#list').jqGrid({
-				url:url,
-				autowidth:true,
-				datatype: 'xml',
-				mtype: 'GET',
-				colNames:['Nom du candidat','Nombre de voix'],
-				colModel :[
-				{
-					name:'nomCandidat', index:'nomCandidat', search:true},
-					{
-						name:'nbVoix', index:'nbVoix', width:80, align:'nbVoix',sortable:true}
-						],
-						pager: '#pager',
-						rowNum:20,
-						rowList:[20,30,50,100],
-						sortname: 'nbVoix',
-						sortorder: 'desc',
-						viewrecords: true,
-						gridview: true,
-			}).navGrid('#pager',{edit:true,add:true,del:true});</script-->
-	<script src="<?php echo js_url("dragAndDrop");?>"
-		type="text/javascript"></script>
+	<script src="<?php echo js_url("init_filtres");?>" type="text/javascript"></script>
+	<script src="<?php echo js_url("visualiser");?>" type="text/javascript"></script>	
+	<script src="<?php echo js_url("dragAndDrop");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("tooltips");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("style");?>" type="text/javascript"></script>
 </body>

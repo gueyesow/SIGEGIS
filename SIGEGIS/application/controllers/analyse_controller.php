@@ -15,8 +15,8 @@ class Analyse_controller extends CI_Controller {
 	public function index()
 	{
 		/*$data=array();
-		 $data['histo']=$this->mon_modele->getHisto('chartdiv1',null);
-		$data['pie']=$this->mon_modele->getPie('chartdiv2');
+		 $data['histo']=$this->mon_modele->getBarVisualiser('chartdiv1',null);
+		$data['pie']=$this->mon_modele->getPieVisualiser('chartdiv2');
 		$this->load->view('front_page',$data);*/
 		$this->load->view('accueil');
 	}
@@ -64,16 +64,16 @@ class Analyse_controller extends CI_Controller {
 
 	public function visualiser(){
 		$data=array();
-		$data['histo']=$this->mon_modele->getHisto('chartdiv1');
+		$data['histo']=$this->mon_modele->getBarVisualiser('chartdiv1');
 		$data['histo2']=$this->mon_modele->getHisto2('chartdiv1B');
-		$data['pie']=$this->mon_modele->getPie('chartdiv2');
+		$data['pie']=$this->mon_modele->getPieVisualiser('chartdiv2');
 		$this->load->view('front_page',$data);
 	}
 
 	public function analyser(){
 		$data=array();
-		$data['histo']=$this->modele_analyse->getHisto('chartdiv1');
-		$data['pie']=$this->mon_modele->getPie('chartdiv2');
+		$data['histo']=$this->modele_analyse->getBarVisualiser('chartdiv1');
+		$data['pie']=$this->mon_modele->getPieVisualiser('chartdiv2');
 		$this->load->view('analyses',$data);
 	}
 
@@ -82,19 +82,19 @@ class Analyse_controller extends CI_Controller {
 		$this->load->view('admin_page',$data);
 	}
 
-	public function getHisto(){
-		echo $this->mon_modele->getHisto("chartdiv1");
+	public function getBarVisualiser(){
+		echo $this->mon_modele->getBarVisualiser("chartdiv1");
 	}
 	public function getHisto2(){
-		echo $this->mon_modele->getHisto("chartdiv1B");
+		echo $this->mon_modele->getBarVisualiser("chartdiv1B");
 	}
 
-	public function getPie(){
-		echo $this->mon_modele->getPie("chartdiv2");
+	public function getPieVisualiser(){
+		echo $this->mon_modele->getPieVisualiser("chartdiv2");
 	}
 
 	public function afficher(){
-		$this->mon_modele->tableau("presidentielle2012");
+		$this->mon_modele->getGrid("presidentielle2012");
 	}
 
 	public function search(){
@@ -142,7 +142,7 @@ class Analyse_controller extends CI_Controller {
 	}
 
 	public function filtre_grid(){
-		$this->mon_modele->tableau("presidentielle2012");
+		$this->mon_modele->getGrid("presidentielle2012");
 	}
 	public function getCandidatsAnnee(){
 		$this->mon_filtre->getCandidatsAnnee();

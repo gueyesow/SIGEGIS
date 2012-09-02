@@ -1,18 +1,14 @@
 $("input[id=valider],input[id=validerLocalite]").button();
-$("#myRadio").buttonset();
 
 $('#menu-css li a').hover(   
 		  
-        function() {   
-  
-            $(this).css('padding', '5px 15px')   
+function() {     
+	$(this).css('padding', '5px 15px')   
          .stop()
          .animate({'backgroundColor':'rgba(0,0,0,0.5)'},'fast');               
-        },   
-  
-        function() {   
-  
-            $(this).css('padding', '5px 15px')   
+    },   
+    function() {   
+    	$(this).css('padding', '5px 15px')   
          .stop()   
          .animate({'paddingLeft'    : '15px',   
                     'paddingRight'      : '15px',   
@@ -21,7 +17,7 @@ $('#menu-css li a').hover(
   
     }).mousedown(function() {   
   
-        $(this).stop().animate({'backgroundColor': 'rgba(0,0,0,0.1)'}, 'fast');   
+    $(this).stop().animate({'backgroundColor': 'rgba(0,0,0,0.1)'}, 'fast');   
   
     }).mouseup(function() {   
   
@@ -46,18 +42,21 @@ $('#menu-css li a').hover(
 		},
 		closeOnEscape: true ,
 		resizable: false,
+		//open: function(event,ui){$("#valider,#validerLocalite").attr("disabled","disabled");},
 		beforeClose: function(event, ui) { $("#ouvrir").show(); }
 	});
 
 	
 	$("#ouvrir").on("click",function(){
 		$("#dialog_zone_des_options").dialog('open');
-		$("#ouvrir").hide();
+		$("#ouvrir").hide();		
 	});
 	
-	$("#ouvrir").button({
+	$("#ouvrir,#poidsElectoralRegions").button({
         icons: {
             secondary: "ui-icon-gear"            
         },
         text: true
     });
+	
+	//$("#presidentielle,#choixmultipleB").tinyTips('title');

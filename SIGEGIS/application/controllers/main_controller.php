@@ -4,7 +4,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Main_controller extends CI_Controller {
 
 	function __construct(){
-		// database et assets_helper sont charg�s automatiquement
+		// database et assets_helper sont chargés automatiquement
 		parent::__construct();
 		$this->load->model("main_model","mon_modele");
 		$this->load->model("analyse_model","modele_analyse");
@@ -66,45 +66,69 @@ class Main_controller extends CI_Controller {
 	public function analyser(){
 		$this->load->view('analyses');
 	}
+	
+	public function participation(){
+		$this->load->view('participation');
+	}
 
 	public function administration(){
 		$data=array();
 		$this->load->view('admin_page',$data);
 	}
 
-	public function getHisto(){
-		echo $this->mon_modele->getHisto("chartdiv1");
+	public function getBarVisualiser(){
+		echo $this->mon_modele->getBarVisualiser("chartdiv1");
 	}
 	
-	public function getHistoAnalyse(){
-		echo $this->modele_analyse->getHistoAnalyse("chartdiv1");
-	}
-	public function getPieAnalyse(){
-		echo $this->modele_analyse->getPieAnalyse("chartdiv2");
+	
+	public function getPieVisualiser(){
+		echo $this->mon_modele->getPieVisualiser("chartdiv2");
 	}
 	
-	public function getHistoAnalyseLocalite(){
-		echo $this->modele_analyse->getHistoAnalyseLocalite("chartdiv1");
+	public function getGridVisualiser(){
+		$this->mon_modele->getGridVisualiser();
 	}
 	
-	public function getPieAnalyseLocalite(){
-		echo $this->modele_analyse->getPieAnalyseLocalite("chartdiv2");
+	public function getBarAnalyserAnnee(){
+		echo $this->modele_analyse->getBarAnalyserAnnee("chartdiv1");
+	}
+	public function getPieAnalyserAnnee(){
+		echo $this->modele_analyse->getPieAnalyserAnnee("chartdiv2");
 	}
 	
-	public function getPie(){
-		echo $this->mon_modele->getPie("chartdiv2");
+	public function getBarAnalyserLocalite(){
+		echo $this->modele_analyse->getBarAnalyserLocalite("chartdiv1");
+	}
+	
+	public function getPieAnalyserLocalite(){
+		echo $this->modele_analyse->getPieAnalyserLocalite("chartdiv2");
 	}
 
-	public function getGrid(){
-		$this->mon_modele->tableau();
-	}
-
-	public function getGridAnalyse(){
-		$this->modele_analyse->tableau();
+	public function getBarParticipation(){
+		echo $this->mon_modele->getBarParticipation("chartdiv1");
 	}
 	
-	public function getGridAnalyseLocalite(){
-		$this->modele_analyse->tableauLocalite();
+	public function getPieParticipation(){
+		echo $this->mon_modele->getPieParticipation("chartdiv2");
+	}
+	public function getPieParticipation2(){
+		echo $this->mon_modele->getPieParticipation2("chartdiv3");
+	}
+	
+	public function getPoidsElectoralRegions(){
+		echo $this->mon_modele->getPoidsElectoralRegions("chartdiv4");
+	}
+	
+	public function getGridParticipation(){
+		$this->mon_modele->getGridParticipation();
+	}
+
+	public function getGridAnalyserAnnee(){
+		$this->modele_analyse->getGridAnalyserAnnee();
+	}
+	
+	public function getGridAnalyserLocalite(){
+		$this->modele_analyse->getGridAnalyserLocalite();
 	}
 	
 	public function getCandidats(){
@@ -158,6 +182,21 @@ class Main_controller extends CI_Controller {
 	public function getDecoupages(){
 		$this->mon_filtre->getDecoupages();
 	}
+	
+	public function exportResultatsToCSV(){
+		$this->mon_modele->exportResultatsToCSV();
+	}
+	public function exportStatisticsToCSV(){
+		$this->mon_modele->exportStatisticsToCSV();
+	}
+	
+	public function exportToCSVAnalyse(){
+		$this->mon_filtre->exportResultatsToCSV();
+	}
+	
+	public function exportToCSVAnalyseLocalite(){
+		$this->mon_filtre->exportToCSVLocalite();
+	}		
 }
 
 /* End of file main_controller.php */

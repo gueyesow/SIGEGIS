@@ -3,24 +3,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>SIGEGIS</title>
-<link rel="stylesheet" type="text/css" media="screen"
-	href="<?php echo css_url("ui.jqgrid"); ?>" />
-<link rel="stylesheet" type="text/css" media="screen"
-	href="<?php echo css_url("front_page"); ?>" />
-<link rel="stylesheet" type="text/css" media="screen"
-	href="<?php echo css_url("ui-lightness/jquery-ui-1.8.21.custom"); ?>" />
-<script src="<?php echo js_url("jqgrid/js/jquery-1.7.2.min");?>"
-	type="text/javascript"></script>
-<script src="<?php echo js_url("jqgrid/plugins/jquery.searchFilter");?>"
-	type="text/javascript"></script>
-<script src="<?php echo js_url("jqgrid/js/i18n/grid.locale-en");?>"
-	type="text/javascript"></script>
-<script src="<?php echo js_url("jqgrid/js/jquery.jqGrid.min");?>"
-	type="text/javascript"></script>
-<!--script src="<?php echo js_url("jquery-ui/js/jquery-1.7.2.min");?>" type="text/javascript"></script-->
-<script
-	src="<?php echo js_url("jquery-ui/js/jquery-ui-1.8.21.custom.min");?>"
-	type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("ui.jqgrid"); ?>" />
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("accueil"); ?>" />
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("ui-lightness/jquery-ui-1.8.21.custom"); ?>" />
+<script src="<?php echo js_url("jqgrid/js/jquery-1.7.2.min");?>" type="text/javascript"></script>
+<script src="<?php echo js_url("jqgrid/plugins/jquery.searchFilter");?>" type="text/javascript"></script>
+<script src="<?php echo js_url("jqgrid/js/i18n/grid.locale-en");?>" type="text/javascript"></script>
+<script src="<?php echo js_url("jqgrid/js/jquery.jqGrid.min");?>" type="text/javascript"></script>
+<script src="<?php echo js_url("jquery-ui/js/jquery-ui-1.8.21.custom.min");?>" type="text/javascript"></script> 
 <script src="<?php echo js_url("highcharts/js/highcharts");?>"></script>
 <script src="<?php echo js_url("highcharts/js/modules/exporting");?>"></script>
 </head>
@@ -35,14 +25,16 @@
 			</ul>
 		</div>
 
-		<div id="content">
+		<div id="content">		
 			<table id="boutons">
 				<tr>
-					<td class="bg"><div
-							style="margin: auto; width: 98%; height: 400px; margin-bottom: :100px;"></div>
+					<td width="30%" class="bg">					
+					<div style="float:left;wisdth:100%;border:1px dashed gray; font-size:14px;background:#dde0dd;padding:10px;border:1px solid ligthgray;margin:10px;">
+					<h2>Bienvenue</h2>
+					Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo.</div>					
 					</td>
 					<td>
-						<div id="corps" class="ui-corner-all">
+						<div id="corps">
 							<h1>Bienvenue</h1>
 							<table cellpadding="10">
 								<tr>

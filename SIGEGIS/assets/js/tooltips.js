@@ -1,5 +1,9 @@
-$('.location').hover(function(e) {
-// // Hover over code
+/**
+ * Infobulles JQuery 
+ */
+
+$('.theToolTip').hover(function(e) {
+// Hover over code
 	var titleText = $(this).attr('title');
 	$(this)
 	.data('tipText', titleText)

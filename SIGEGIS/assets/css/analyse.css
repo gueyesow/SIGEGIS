@@ -1,6 +1,21 @@
+.tooltip {
+	display: none;
+	font-size:12px;
+	font-weight:bold;
+	position: absolute;
+	border: 1px solid #d3c4b2;
+	background-color: #f0f0f0;
+	padding: 6px;
+	box-shadow:0 0 10px #000;	
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	z-index: 10000;
+}
+
 #help p{
 	font-size: 14px;	
 }
+
 .zone_des_options {
 	marginss: auto;
 	font-weight: bold;
@@ -92,7 +107,7 @@ label {
 	padding-left: 15px;
 }
 
-#tableau {
+#getGrid {
 	width: 95%;
 	border-collapse: collapse;
 	margin: auto;
