@@ -252,6 +252,11 @@
 			</td>
 		</tr>
 	</table>
+	
+	<div id="footer">
+		<p><a href="<?php echo site_url("main_controller/administration");?>"><img height="14px" alt="administration" src="../../assets/images/lock.png" /></a>&copy; Copyright SIGEGIS | Université Gaston Berger de Saint-Louis du Sénégal | 2012</p>
+	</div>
+	
 	<script src="<?php echo js_url("base");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("init_filtres");?>" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -366,7 +371,7 @@
 					if(annees=="") annees+=$(this).text(); else annees+=","+$(this).val();
 				});
 				
-				parametres_analyse="param="+param+"&annees="+annees;
+				parametres_analyse="param="+param+"&annees="+annees+"&typeElection="+$.getUrlVar("type");
 	
 				if ($("select[name*=ana_localite]").val()==="pays") { parametres_analyse+="&niveau=pays"; }
 				if ($("select[name*=ana_localite]").val()==="region") { parametres_analyse+="&niveau=reg";}

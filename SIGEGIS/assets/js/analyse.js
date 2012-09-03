@@ -86,11 +86,7 @@ $(document).ready(function() {
 	    mtype: 'GET',
 	    colNames:['Nom du candidat','Lieu de vote','Année','Nombre de voix'],
 	    colModel :[ 
-<<<<<<< HEAD
 	      {name:'nomCandidat', index:'nomCandidat',search:true},
-=======
-	      {name:'nomCandidat', index:'nomCandidat'},
->>>>>>> refs/heads/AmadeusBranch
 	      {name:'lieuDeVote', index:'lieuDeVote', width:80},
 	      {name:'annee', index:'annee', width:80},
 	      {name:'nbVoix', index:'nbVoix', width:80}  
@@ -102,11 +98,7 @@ $(document).ready(function() {
 	    sortorder: 'desc',
 	    viewrecords: true,
 	    gridview: true,
-<<<<<<< HEAD
 	}).navGrid("#pager",{edit:false,add:false,del:false,search:false});
-=======
-	}).navGrid("#pager",{edit:false,add:false,del:false});
->>>>>>> refs/heads/AmadeusBranch
 	
 	/*		
 	$('#menu-css a').each(function(){

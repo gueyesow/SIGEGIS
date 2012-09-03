@@ -1,3 +1,15 @@
+#footer {
+	background: lightgray;
+	text-align: center;
+	font-weight: bold;
+	border: 1px solid gray;
+	margin-top: 58px;
+	}
+
+#footer img{	
+	border: none;
+	}
+
 .tooltip {
 	display: none;
 	font-size:12px;

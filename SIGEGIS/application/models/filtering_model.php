@@ -1,6 +1,8 @@
 <?php
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Filtering_model extends CI_Model{
+	private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
+	private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
 
 	/**
 	 *  GENERE UNE LISTE DEROULANTE
@@ -41,7 +43,7 @@ class Filtering_model extends CI_Model{
 		return $output;
 	}
 
-	function getCandidats(){
+	/*function getCandidats(){
 		$nomCandidat = NULL;
 
 		if (!empty($_GET["nomCandidat"])) $nomCandidat=$_GET["nomCandidat"];
@@ -66,7 +68,7 @@ class Filtering_model extends CI_Model{
 		else{
 			return FALSE;
 		}
-	}
+	}*/
 	/*function getCandidatsAnnee(){
 		// On récupère les années sélectionnées
 	$arrayAnnees=explode(",",$_GET["annees"]);
@@ -89,6 +91,9 @@ class Filtering_model extends CI_Model{
 	}*/
 
 	function getCandidatsAnnee(){
+		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		else return;
+		
 		$annees = NULL;
 		$annees=$_GET["annees"];	// "2007,2012"
 
@@ -97,9 +102,9 @@ class Filtering_model extends CI_Model{
 		}
 
 		if ( !empty($_GET['param']) AND !empty($_GET["annees"]) AND !empty($_GET["niveau"])) {
-			$requete="";
+			
 			$requete="SELECT rp.idCandidature, nomCandidat
-			FROM resultatspresidentielles rp
+			FROM {$this->tables[$typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
@@ -112,9 +117,11 @@ class Filtering_model extends CI_Model{
 				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
 			if ($_GET["niveau"]=="pays")
 				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+			
 			$parametres=$_GET['param'];
 			$params=explode(",",$parametres);
 			$v=0;
+			
 			if ($_GET["niveau"]=="cen") $parametres3="centre.idCentre";
 			elseif ($_GET["niveau"]=="dep") $parametres3="departement.idDepartement";
 			elseif ($_GET["niveau"]=="reg") $parametres3="region.idRegion";
@@ -154,15 +161,21 @@ class Filtering_model extends CI_Model{
 	function getCandidatsLocalite(){
 		$localites = NULL;
 		$localites=$_GET["localites"];	// "R1,R2,R3"
-
+			
 		if($localites != NULL){
 			$arrayLocalites=explode(",",$localites);
 		}
 
 		if ( !empty($_GET['param']) AND !empty($_GET["localites"]) AND !empty($_GET["niveau"])) {
-			$requete="";
+
+			$parametres=$_GET['param'];
+			$params=explode(",",$parametres);
+			$v=0;
+						
+			$typeElection=$params[3]; // 4eme parametre
+			
 			$requete="SELECT rp.idCandidature, nomCandidat
-			FROM resultatspresidentielles rp
+			FROM {$this->tables[$typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
@@ -174,10 +187,7 @@ class Filtering_model extends CI_Model{
 			if ($_GET["niveau"]=="reg" OR $_GET["niveau"]=="pays")
 				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
 			if ($_GET["niveau"]=="pays")
-				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
-			$parametres=$_GET['param'];
-			$params=explode(",",$parametres);
-			$v=0;
+				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";			
 
 			$colonnesBDD=array("rp.idSource","election.tour","YEAR(election.dateElection)","election.typeElection");
 

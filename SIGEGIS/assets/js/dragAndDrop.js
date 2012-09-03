@@ -56,10 +56,6 @@ $(".move").button();
 //	Bouton VALIDER de l'analyse suivant une année  //
 //-------------------------------------------------//
 $("#valider").on("click",function(event) {
-<<<<<<< HEAD
-	
-=======
->>>>>>> refs/heads/AmadeusBranch
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 	$("#grid,#bar,#map").removeAttr("disabled");
 	$("#dialog_zone_des_options").dialog('close');
@@ -67,10 +63,7 @@ $("#valider").on("click",function(event) {
 	listeAnnees="";
 	listeCandidats="";
 	paramBis=$sources.val();
-<<<<<<< HEAD
-	
-=======
->>>>>>> refs/heads/AmadeusBranch
+
 	if($.getUrlVar("type")==="presidentielle") paramBis+=","+$("#ana_tour").val();
 	paramBis+=","+$("#localite").val();
 	
@@ -96,11 +89,7 @@ $("#valider").on("click",function(event) {
 	if ($("select[name*=ana_localite]").val()==="centre") { paramBis+="&niveau=cen";}
 	
 	$.ajax({        							
-<<<<<<< HEAD
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserAnnee',    
-=======
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getHistoAnalyse',    
->>>>>>> refs/heads/AmadeusBranch
 		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),	     
 		success: function(json) {
 			$("#chartdiv1").append(json);										
@@ -108,45 +97,29 @@ $("#valider").on("click",function(event) {
 	});
 	
 	$.ajax({        							
-<<<<<<< HEAD
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieAnalyserAnnee',    
-=======
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieAnalyse',    
->>>>>>> refs/heads/AmadeusBranch
 		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),	     
 		success: function(json) {
 			$("#chartdiv2").append(json);										
 		}    
 	});
-<<<<<<< HEAD
 	
-	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserAnnee?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
-=======
-	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyse?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
->>>>>>> refs/heads/AmadeusBranch
-	
+	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserAnnee?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");	
 });
 
 //-------------------------------------------------//
 //Bouton VALIDER de l'analyse suivant une localité  //
 //-------------------------------------------------//
 $("#validerLocalite").on("click",function(event) {
-<<<<<<< HEAD
-	
-=======
->>>>>>> refs/heads/AmadeusBranch
+
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 	$("#grid,#bar,#map").removeAttr("disabled");
 	$("#dialog_zone_des_options").dialog('close');
 	
 	listeLocalites="";
 	listeCandidats="";
-<<<<<<< HEAD
-=======
-	
 	if($.getUrlVar("type")==="presidentielle") paramBis+=","+$tours.val();
 	paramBis+=","+$("#localite").val();
->>>>>>> refs/heads/AmadeusBranch
 	
 	paramBis=$sources.val();
 
@@ -176,11 +149,7 @@ $("#validerLocalite").on("click",function(event) {
 	if ($("select[name*=ana_localite2]").val()==="centre") { paramBis+="&niveau=cen";}
 	
 	$.ajax({        							
-<<<<<<< HEAD
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserLocalite',    
-=======
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getHistoAnalyseLocalite',    
->>>>>>> refs/heads/AmadeusBranch
 		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),	     
 		success: function(json) {
 			$("#chartdiv1").append(json);										
@@ -188,22 +157,14 @@ $("#validerLocalite").on("click",function(event) {
 	});
 	
 	$.ajax({        							
-<<<<<<< HEAD
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieAnalyserLocalite',    
-=======
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieAnalyseLocalite',    
->>>>>>> refs/heads/AmadeusBranch
 		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),     
 		success: function(json) {
 			$("#chartdiv2").append(json);										
 		}    
 	});
-<<<<<<< HEAD
-	
 	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserLocalite?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
-=======
-	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyseLocalite?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
->>>>>>> refs/heads/AmadeusBranch
+
 	
 });
 
