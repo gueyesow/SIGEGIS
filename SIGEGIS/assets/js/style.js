@@ -52,11 +52,10 @@ function() {
 		$("#ouvrir").hide();		
 	});
 	
-	$("#ouvrir,#poidsElectoralRegions").button({
+	$(".boutons").button({
         icons: {
             secondary: "ui-icon-gear"            
         },
         text: true
     });
 	
-	//$("#presidentielle,#choixmultipleB").tinyTips('title');

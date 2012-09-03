@@ -20,7 +20,7 @@
 	<?php $styles="";?>
 	<?php $filtres=array("sources","elections","tours","pays","regions","departements","collectivites","centres");?>
 	<?php $labels_filtres=array("sources"=>"Source","elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");?>
-	<?php $typeElection=empty($_GET["type"])?$type:$_GET["type"];?>
+	<?php $typeElection=empty($_GET["type"])?"presidentielle":$_GET["type"];?>	
 
 	<div id="menu-css">	
 		<ul>
@@ -28,7 +28,7 @@
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=globaux");?>">Résultats globaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=reg");?>">Résultats régionaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=dep");?>">Résultats départementaux</a></li>
-			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=cen");?>">Résultats au niveau des centres</a></li>
+			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=cen");?>">Résultats par centre</a></li>
 			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=globaux");?>">Statistiques</a></li>
 		</ul>
 	</div>
@@ -89,6 +89,28 @@
 				<div id="container">
 
 					<h1 id="titre"></h1>
+					
+					<div id="help">
+						<h1>Bienvenue</h1>
+						<p>
+						Cette plateforme est simple d'utilisation et vous permet de visualiser les résultats des élections passées ainsi que d'effectuer des analyses sur les données électorales.<br />												
+					
+						La navigation entre les différentes élections se fait grâce au menu de gauche et la liste <b>Année</b> en haut <img height="50px" alt="screenshot" src="../../assets/images/capture.jpg">.
+						De même, les changements de mode de représentation des données se feront à partir de ce menu:
+						</p>
+						<ol type="a">
+							<li>Tableau</li>
+							<li>Carte</li>
+							<li>Diagramme circulaire</li>
+							<li>Diagramme en bâtons</li>
+						</ol> 
+						
+						<p> 
+						Chosissez l'opération que vous souhaitez effectuer:
+						<button id="visualiser" class="theToolTip boutons" title="Visualiser les résultats des élections passées">Visualiser des résultats</button>
+						<button id="analyser" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Analyser des résultats</button> 
+						</p>
+					</div>
 
 					<div id="theGrid">
 						<table id="list"></table>

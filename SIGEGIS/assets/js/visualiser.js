@@ -5,6 +5,10 @@
 
 $(document).ready(function() {   	 
 
+if(! $.getUrlVar("type"))	{$("#left-sidebar input, #left-sidebar button, #zone_des_filtres select").attr("disabled","disabled");}
+else $("#help").remove();
+
+	
 if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
 if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
 if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");}
@@ -22,12 +26,11 @@ $("#types_affichage input").on( "change",function() {
 	
 	
 	if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
-	if( $.getUrlVar("year") ) {		
-		if( $.getUrlVar("year")===$elections.val() )
-			mode+="&year="+$.getUrlVar("year");
-		else 
-			mode+="&year="+$elections.val();
-	}					
+	
+/*	if( $.getUrlVar("year") && $.getUrlVar("year")===$elections.val() )
+		mode+="&year="+$.getUrlVar("year");
+	else
+		mode+="&year="+$elections.val();*/						
 
 	window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+$.getUrlVar("type")+mode;
 });
@@ -96,7 +99,8 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 	if($.getUrlVar("type")==="presidentielle") param+=","+$tours.val();
 	
 	$url='http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?niveau='+$.getUrlVar("niveau")+'&param='+param+'&typeElection='+$.getUrlVar("type");
-	
+	if (! $.getUrlVar("type")) {$("#chartdiv1").hide();}
+	else
 	$("#list").jqGrid({		
 		autowidth:true,
 	    datatype: 'xml',
@@ -309,5 +313,13 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		$('#menu-css a').each(function(){
 			if($(this).text()!=$('#menu-css a:first').text() && $.getUrlVar("bar"))
 			$(this).attr("href",$(this).attr("href")+"&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid"));
+		});
+		
+		$('#visualiser').click(function() {
+			window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type=presidentielle&niveau=globaux";
+		});
+		
+		$('#analyser').click(function() {
+			window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser?type=presidentielle&niveau=globaux";			
 		});
 });

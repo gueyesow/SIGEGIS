@@ -24,12 +24,12 @@
 
 	<div id="menu-css">
 		<ul>
-			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>
-			<li><a href="<?php echo site_url("main_controller/administration");?>">Administration</a></li>
+			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>			
 			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=globaux");?>">Résultats globaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=reg");?>">Résultats régionaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=dep");?>">Résultats départementaux</a></li>
-			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=cen");?>">Résultats au niveau des centres</a></li>
+			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=cen");?>">Résultats par centre</a></li>
+			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=globaux");?>">Statistiques</a></li>
 		</ul>
 	</div>
 
@@ -82,7 +82,7 @@
 					</form>
 				</div> <br> <br>
 
-				<button id="poidsElectoralRegions" class="theToolTip" title="Afficher les poids des régions">Poids électoral des régions</button><br /><br />
+				<button id="poidsElectoralRegions" class="theToolTip boutons" title="Afficher les poids des régions">Poids électoral des régions</button><br /><br />
 				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img height="58px" src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
 				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
 				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>

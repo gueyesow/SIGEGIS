@@ -11,11 +11,13 @@
 			$sources.get(0).selectedIndex = 0;        //Permet de selectionner le premier
 			$elections.change();			
 		}       
-	});  
+	});
 	
-	$.ajax({            // OBTENIR LES ANNEES D'ELECTION 
+	if($.getUrlVar("type")) typeElection=$.getUrlVar("type"); else typeElection="presidentielle";
+	
+	$.ajax({            // OBTENIR LES ANNEES D'ELECTION `typeElection` 
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getDatesElections',
-		data:'typeElection='+$.getUrlVar("type"),
+		data:'typeElection='+typeElection,
 		dataType: 'json',      
 		success: function(json) {
 			$elections.empty();
@@ -26,16 +28,19 @@
 			if($.getUrlVar("year")) $("#elections option[value="+$.getUrlVar("year")+"]").attr("selected","selected");
 			else $("#elections option:last").attr("selected","selected");
 
-			$elections.change();         
+			$elections.change();
+			
 			titres={"presidentielle":"présidentielle","legislative":"législative","municipale":"municipales","regionale":"régionales"};
+			
 			if(type=""+$.getUrlVar("type")) {if (titre==="presidentielle") $titre="";}
+			
 			if($.getUrlVar("niveau")==="cen") {niveau="par centre";}
 			else if($.getUrlVar("niveau")==="dep") {niveau="départementaux";}
 			else if($.getUrlVar("niveau")==="reg") {niveau="régionaux";}
 			else if($.getUrlVar("niveau")==="pays") {niveau="par pays";}
-			else niveau="globaux";
+			else if ($.getUrlVar("niveau")==="globaux") niveau="globaux";
 			
-			if (! $("#ana_decoupage").length) $("#titre").append("Election "+titres[type]+" de "+$elections.val()+": résultats "+niveau);						
+			if (! $("#ana_decoupage").length && $.getUrlVar("type")) $("#titre").append("Election "+titres[type]+" de "+$elections.val()+": résultats "+niveau);						
 		}       
 	});
 	
@@ -51,23 +56,29 @@
 							$tours.empty();
 							$.each(json, function(index, value) {         
 								$tours.append('<option value="'+ index +'">'+ value +'</option>');							
-							});         							
+							});
+							//alert(typeElection);							
 							$tours.change();
+							
 							if (! $("#ana_decoupage").length) $("#titre").text("Election "+titres[type]+" de "+$elections.val()+": résultats "+niveau);
-							$('#menu-css a').each(function(){								
-								if( !$.getUrlVar("year") ){			
-									if( $(this).text()!=$('#menu-css a:first').text() && $(this).text()!=$('#menu-css a:eq(1)').text()  && $(this).text()!=$('#menu-css a:last)').text())
-									if( $(this).attr("href").indexOf("year")===-1 )
+							
+							$('#menu-css ul li  a').each(function(){								
+									
+							if( $(this).text()!=$('#menu-css a:first').text()  && $(this).text()!=$('#menu-css a:last').text())
+								if( $(this).attr("href").indexOf("year")===-1 )	
+								{
 									$(this).attr("href",$(this).attr("href")+"&year="+$elections.val());
-									else $(this).attr("href",$(this).attr("href").substr(0,$(this).attr("href").indexOf('year')+5)+$elections.val());
-								}									
+								}
+								else 
+									$(this).attr("href",$(this).attr("href").substr(0,$(this).attr("href").indexOf('year')+5)+$elections.val());
+								
 								
 								url=$(this).attr("href");
 								year="";chaine="";
-								
-								if( $(this).text()!=$('#menu-css a:first').text() && $(this).text()!=$('#menu-css a:eq(1)').text() && $(this).text()!=('#menu-css a:last').text()){
+																
+								if( $(this).text()!=$('#menu-css ul li a:first').text() && $(this).text()!=$('#menu-css ul li a:last').text()){
 									if( $.getUrlVar("map") && $.getUrlVar("grid") && $.getUrlVar("pie") && $.getUrlVar("bar") ) 
-										url+="&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid");
+										{url+="&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid");}
 
 									if( $.getUrlVar("year") ) {
 										if( $.getUrlVar("year")===$elections.val() )

@@ -29,7 +29,7 @@
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]);?>">Résultats globaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=reg");?>">Résultats régionaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=dep");?>">Résultats départementaux</a></li>
-			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=cen");?>">Résultats au niveau des centres</a></li>
+			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=cen");?>">Résultats par centre</a></li>
 		</ul>
 	</div>
 	
@@ -72,7 +72,7 @@
 				</div> 
 				<br />
 
-				<button id="ouvrir" class="theToolTip" title="Ensemble d'outils permettant d'effectuer des analyses">Ouvrir l'utilitaire d'analyse</button>
+				<button id="ouvrir" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Ouvrir l'utilitaire d'analyse</button>
 				
 				<div id="dialog_zone_des_options"  title="Utilitaire SIGEGIS">
 				<div class="zone_des_options_analyse">
@@ -227,11 +227,16 @@
 						Les options sont quasi identiques aux précédentes. Il suffit juste de déplacer les éléments qui vous intéressent de la zone à gauche à celle de droite.<br />
 						<br /><br />
 						Les modes de représentation disponibles se trouvent dans le menu de gauche.
-						a) Tableau
-						b) Carte
-						c) Diagramme circulaire
-						d) Diagramme en bâtons
-						<br /><br /> 
+						</p>
+						
+						<ol type="a">
+							<li>Tableau</li>
+							<li>Carte</li>
+							<li>Diagramme circulaire</li>
+							<li>Diagramme en bâtons</li>
+						</ol> 
+						
+						<p> 
 						Cliquez sur <b style="font-size:14px;">Ouvrir l'utilitaire d'analyse</b> pour débuter. 
 						</p>
 					</div>

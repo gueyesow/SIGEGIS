@@ -12,7 +12,7 @@
 	z-index: 10000;
 }
 
-#help p{
+#help p, #help ol li{
 	font-size: 14px;	
 }
 

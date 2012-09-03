@@ -22,6 +22,7 @@ $("#types_affichage input").on( "change",function() {
 	
 	
 	if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
+	
 	if( $.getUrlVar("year") ) {		
 		if( $.getUrlVar("year")===$elections.val() )
 			mode+="&year="+$.getUrlVar("year");
