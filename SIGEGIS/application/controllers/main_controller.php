@@ -77,14 +77,15 @@ class Main_controller extends CI_Controller {
 	}
 
 	public function getBarVisualiser(){
-		echo $this->mon_modele->getBarVisualiser("chartdiv1");
+		echo $this->mon_modele->getBarVisualiser();
 	}
 	
-	public function getBarVisualiserTest(){
-		echo $this->mon_modele->getBarVisualiserTest("chartdiv1");
-	}
 	public function getPieVisualiser(){
-		echo $this->mon_modele->getPieVisualiser("chartdiv2");
+		echo $this->mon_modele->getPieVisualiser();
+	}
+	
+	public function getComboParticipation(){
+		echo $this->mon_modele->getComboParticipation();
 	}
 	
 	public function getGridVisualiser(){

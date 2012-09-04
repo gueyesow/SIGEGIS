@@ -98,24 +98,7 @@
 					</div>
 
 					<div id="chartdiv1" class="diagrammes"></div>
-					<table id="pies_participation">
-					<tr>
-					<td>
-					<div id="chartdiv2" class="diagrammes2"></div>
-					</td>
-					<td>
-					<div id="chartdiv3" class="diagrammes2"></div>
-					</td>
-					</tr>
-							<tr>
-					<td>
-					<div id="chartdiv4" class="diagrammes2"></div>
-					</td>
-					<td>
-					<div id="chartdiv5" class="diagrammes2"></div>
-					</td>
-					</tr>
-					</table>
+
 					<br />
 
 					<div style='clear: both;'></div>
