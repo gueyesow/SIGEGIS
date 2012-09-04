@@ -14,7 +14,7 @@ $(document).ready(function() {
 			text: ''
 		},
 		subtitle: {
-		text: 'sss'
+		text: 'Informations sur la partipation'
 		},
 		xAxis: {
 		categories: ['Inscrits','Votants','Nuls','Suffrages exprimés'],

@@ -665,7 +665,7 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		elseif ($niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
 		elseif ($niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
 		else $sous_titre="";
-		$titre=($balise=="chartdiv2")?$titre_niveau:"Erreur sur l'emplacement du graphique !";
+		$titre=$titre_niveau;
 	
 		// ----------------------------------------	//
 		//			COLLECTE DES DONNEES			//
