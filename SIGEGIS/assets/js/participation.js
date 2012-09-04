@@ -3,7 +3,230 @@
  * Description: Cette partie gère tout ce qui est Taux de participation - Niches électorales 
  */
 
-$(document).ready(function() {   	 
+$(document).ready(function() {
+	
+	chart1 = new Highcharts.Chart({
+		chart: {
+			renderTo: 'chartdiv1',
+			type: 'column'
+		},
+		title: {
+			text: ''
+		},
+		subtitle: {
+		text: 'sss'
+		},
+		xAxis: {
+		categories: ['Inscrits','Votants','Nuls','Suffrages exprimés'],
+		labels: {
+		style: {
+		width:20,
+		fontWeight:'bold',
+		fontSize: '12px',
+		fontFamily: 'Verdana, sans-serif'
+		}
+		}
+		},
+		yAxis: {
+			min: 0,
+			title: {
+				text: 'Nombre'
+			}
+		},
+		exporting: {
+			url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+		},
+		legend: {
+			enabled:false
+		},
+		tooltip: {
+			formatter: function() {
+				return  this.x +': '+ this.y;
+			}
+		},
+		
+		plotOptions: {
+			column: {
+				pointPadding: 0.2,
+				borderWidth: 0,
+				colorByPoint: true,
+				dataLabels: {
+					enabled: true
+				}
+			}
+		},
+		credits: {
+			enabled: false
+		},
+		series: []
+	});
+	
+	chart2 = new Highcharts.Chart({
+		chart: {
+			renderTo: 'chartdiv2',
+			type:'pie'
+		},
+		title: {
+		text: ''
+		},
+		subtitle: {
+		text: ''
+		},
+		tooltip: {
+		formatter: function() {
+		return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+		}
+		},
+		plotOptions: {
+		pie: {
+			allowPointSelect: true,
+			cursor: 'pointer',
+			size: 190,
+			dataLabels: {
+				enabled: true,
+				color: '#000000',
+				connectorColor: '#000000',
+				formatter: function() {
+					return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+				}
+			},
+			showInLegend: true
+		}
+			
+		},
+		exporting: {
+			url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+		},
+		credits: {
+			enabled: false
+		},
+		series: [{
+			type: 'pie',
+			name: 'Browser share',
+			data: []
+		}]
+		});
+	
+	chart3 = new Highcharts.Chart({
+		chart: {
+			renderTo: 'chartdiv3',
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false
+		},
+		title: {
+			text: 'Participation',
+			style:{
+				width:'300px'
+			}
+		},
+		subtitle: {
+			text: ''
+		},
+		tooltip: {
+			formatter: function() {
+				return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+			}
+		},
+		plotOptions: {
+			pie: {
+				allowPointSelect: true,
+				cursor: 'pointer',
+				size: 190,
+				dataLabels: {
+					enabled: true,
+					color: '#000000',
+					connectorColor: '#000000',
+					formatter: function() {
+						return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+					}
+				},
+				showInLegend: true
+			}			
+		},
+		exporting: {
+			url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+		},
+		credits: {
+			enabled: false
+		},
+		series: [{
+			type: 'pie',
+			name: 'Browser share',
+			data: []
+		}]
+		});
+		
+	
+	function refreshBarChart(json){
+		
+		var series = {            
+	            name: 'Résultats',
+	            data: []
+	    };
+		
+		categories=new Array();
+		
+		data=JSON.parse(json);
+		$titre=data.titre;
+		$sous_titre=data.sous_titre;
+		$abscisse=data.abscisse;
+		$ordonnee=data.ordonnee;
+		
+		$.each($ordonnee, function(value) {							
+			categories.push($abscisse[value]);
+			series.data.push($ordonnee[value]);
+	    });
+																			
+		chart1.setTitle({text: $titre},{text: $sous_titre});
+								
+		if ( chart1.series.length > 0 ) {chart1.series[0].setData(series.data,true);} 
+		else	
+			chart1.addSeries(series);
+	}
+	
+	function refreshPieChart(json){
+		
+		series = {            
+	            name: 'Résultats',
+	            data: []
+	    };		
+		
+		data=JSON.parse(json);
+		
+		$line=data.line;
+		$line2=data.line2;
+		
+		$.each($line, function(value) {							
+			series.data.push($line[value]);
+	    });
+																		
+		chart2.setTitle({text: $titre},{text: $sous_titre});
+		
+		
+		if ( chart2.series.length > 0 ) {chart2.series[0].setData(series.data,true);} 
+		else	
+			chart2.addSeries(series);
+		chart2.series[0].redraw();
+
+		//CHART 3//
+		
+		series = {            
+	            name: 'Résultats',
+	            data: []
+	    };	
+				
+		$.each($line2, function(value) {							
+			categories.push($abscisse[value]);
+			series.data.push($line2[value]);
+	    });
+															
+		if ( chart3.series.length > 0 ) {chart3.series[0].setData(series.data,true);} 
+		else	
+			chart3.addSeries(series);
+		chart3.series[0].redraw();
+	}
+	
 $("#chartdiv2").show();
 if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
 if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
@@ -140,7 +363,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarParticipation',    
 					data:'niveau=cen&param='+param+'&typeElection='+$.getUrlVar("type"),        					     
 					success: function(json) {
-						$("#chartdiv1").append(json);									
+						refreshBarChart(json);									
 					}    
 				});
 				
@@ -148,7 +371,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieParticipation',    
 					data:'niveau=cen&param='+param+'&typeElection='+$.getUrlVar("type"),    					     
 					success: function(json) {
-						$("#chartdiv2").append(json);									
+						refreshPieChart(json);									
 					}    
 				});							
 			});			
@@ -168,7 +391,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 							url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarParticipation',    
 							data:'niveau=dep&param='+param+'&typeElection='+$.getUrlVar("type"),        					     
 							success: function(json) {
-								$("#chartdiv1").append(json);								
+								refreshBarChart(json);								
 							}    
 						});
 						
@@ -176,7 +399,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 							url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieParticipation',    
 							data:'niveau=dep&param='+param+'&typeElection='+$.getUrlVar("type"),      					     
 							success: function(json) {
-								$("#chartdiv2").append(json);									
+								refreshPieChart(json);									
 							}    
 						});									
 			});			
@@ -194,14 +417,14 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarParticipation',    
 					data:'niveau=reg&param='+param+'&typeElection='+$.getUrlVar("type"),     					     
 					success: function(json) {
-						$("#chartdiv1").append(json);						
+						refreshBarChart(json);					
 					}    
 				});
 				$.ajax({        							
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieParticipation',    
 					data:'niveau=reg&param='+param+'&typeElection='+$.getUrlVar("type"),   					     
 					success: function(json) {
-						$("#chartdiv2").append(json);
+						refreshPieChart(json);
 					}    
 				});
 			});			
@@ -222,7 +445,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarParticipation',    
 					data:'param='+param+'&typeElection='+$.getUrlVar("type"),     					     
 					success: function(json) {
-						$("#chartdiv1").append(json);						
+						refreshBarChart(json);						
 					}    
 				});
 				
@@ -230,7 +453,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieParticipation',    
 					data:'param='+param+'&typeElection='+$.getUrlVar("type"),   					     
 					success: function(json) {
-						$("#chartdiv2").append(json);										
+						refreshPieChart(json);										
 					}    
 				});
 			});

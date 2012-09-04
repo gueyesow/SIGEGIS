@@ -3,7 +3,169 @@
  * Description: Gestion de la partie d'affichage des résultats    
  */
 
-$(document).ready(function() {   	 
+$(document).ready(function() {
+	
+	function refreshBarChart(json){
+		var series = {            
+	            name: 'Résultats',
+	            data: []
+	    };
+		
+		categories=new Array();
+		
+		data=JSON.parse(json);
+		$titre=data.titre;
+		$sous_titre=data.sous_titre;
+		$unite=data.unite;
+		$abscisse=data.abscisse;
+		$ordonnee=data.ordonnee;
+		
+		$.each($ordonnee, function(value) {							
+			categories.push($abscisse[value]);
+			series.data.push($ordonnee[value]);
+	    });
+													
+		chart1.xAxis[0].setCategories(categories);					
+		chart1.setTitle({text: $titre},{text: $sous_titre});
+								
+		if ( chart1.series.length > 0 ) {chart1.series[0].setData(series.data,true);} 
+		else	
+			chart1.addSeries(series);
+	}
+	
+	function refreshPieChart(json){
+		series = {            
+	            name: 'Résultats',
+	            data: []
+	    };
+		
+		categories=new Array();
+		
+		data=JSON.parse(json);
+		$titre=data.titre;
+		$sous_titre=data.sous_titre;
+		$unite=data.unite;
+		$abscisse=data.abscisse;
+		$line=data.line;
+		
+		$.each($line, function(value) {							
+			categories.push($abscisse[value]);
+			series.data.push($line[value]);
+	    });
+													
+		chart2.xAxis[0].setCategories(categories);					
+		chart2.setTitle({text: $titre},{text: $sous_titre});
+		
+		
+		if ( chart2.series.length > 0 ) {chart2.series[0].setData(series.data,true);} 
+		else	
+			chart2.addSeries(series);
+		chart2.series[0].redraw();
+	}
+    
+			chart1 = new Highcharts.Chart({
+				chart: {
+					renderTo: 'chartdiv1',
+					type: 'column'
+				},
+				title: {
+					text: ''
+				},
+				subtitle: {
+				text: ''
+				},
+				xAxis: {
+				categories: [],
+				labels: {
+				rotation: -40,
+				align: 'right',
+				style: {
+				width:20,
+				fontSize: '12px',
+				fontFamily: 'Verdana, sans-serif'
+				}
+				}
+				},
+				yAxis: {
+					min: 0,
+					title: {
+						text: 'NbVoix'
+					}
+				},
+				exporting: {
+					url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+				},
+				legend: {
+					enabled:false
+				},
+				tooltip: {
+					formatter: function() {
+						return  this.x +': '+ this.y;
+					}
+				},
+				
+				plotOptions: {
+					column: {
+						pointPadding: 0.2,
+						borderWidth: 0,
+						colorByPoint: true,
+						dataLabels: {
+							enabled: true
+						}
+					}
+				},
+				credits: {
+					enabled: false
+				},
+				series: []
+			});
+			
+			chart2 = new Highcharts.Chart({
+				chart: {
+					renderTo: 'chartdiv2',
+					type:'pie'
+				},
+				title: {
+				text: ''
+				},
+				subtitle: {
+				text: ''
+				},
+				tooltip: {
+				formatter: function() {
+				return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+				}
+				},
+				plotOptions: {
+				pie: {
+					allowPointSelect: true,
+					cursor: 'pointer',
+					size: 190,
+					dataLabels: {
+						enabled: true,
+						color: '#000000',
+						connectorColor: '#000000',
+						formatter: function() {
+							return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+						}
+					},
+					showInLegend: true
+				}
+					
+				},
+				exporting: {
+					url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+				},
+				credits: {
+					enabled: false
+				},
+				series: [{
+					type: 'pie',
+					name: 'Browser share',
+					data: []
+				}]
+				});
+
 
 if(! $.getUrlVar("type"))	{$("#left-sidebar input, #left-sidebar button, #zone_des_filtres select").attr("disabled","disabled");}
 else $("#help").remove();
@@ -135,8 +297,8 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 				$.ajax({        							
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
 					data:'niveau=cen&param='+param+'&typeElection='+$.getUrlVar("type"),        					     
-					success: function(json) {
-						$("#chartdiv1").append(json);									
+					success: function(json) {																		
+						refreshBarChart(json);																						
 					}    
 				});
 				
@@ -144,7 +306,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
 					data:'niveau=cen&param='+param+'&typeElection='+$.getUrlVar("type"),    					     
 					success: function(json) {
-						$("#chartdiv2").append(json);									
+						refreshPieChart(json);
 					}    
 				});							
 			});			
@@ -164,7 +326,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 							url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
 							data:'niveau=dep&param='+param+'&typeElection='+$.getUrlVar("type"),        					     
 							success: function(json) {
-								$("#chartdiv1").append(json);								
+								refreshBarChart(json);								
 							}    
 						});
 						
@@ -172,7 +334,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 							url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
 							data:'niveau=dep&param='+param+'&typeElection='+$.getUrlVar("type"),      					     
 							success: function(json) {
-								$("#chartdiv2").append(json);									
+								refreshPieChart(json);									
 							}    
 						});									
 			});			
@@ -184,20 +346,23 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 			{
 				param=$sources.val()+","+$elections.val();
 				if($.getUrlVar("type")==="presidentielle") param+=","+$tours.val();
-				param+=","+$regions.val();			
+				param+=","+$regions.val();
+				
 				$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?niveau=reg&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
+				
 				$.ajax({        							
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
 					data:'niveau=reg&param='+param+'&typeElection='+$.getUrlVar("type"),     					     
 					success: function(json) {
-						$("#chartdiv1").append(json);						
+						refreshBarChart(json);					
 					}    
 				});
+				
 				$.ajax({        							
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
 					data:'niveau=reg&param='+param+'&typeElection='+$.getUrlVar("type"),   					     
 					success: function(json) {
-						$("#chartdiv2").append(json);
+						refreshPieChart(json);
 					}    
 				});
 			});			
@@ -218,7 +383,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
 					data:'&param='+param+'&typeElection='+$.getUrlVar("type"),     					     
 					success: function(json) {
-						$("#chartdiv1").append(json);						
+						refreshBarChart(json);					
 					}    
 				});
 				
@@ -226,7 +391,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
 					data:'&param='+param+'&typeElection='+$.getUrlVar("type"),   					     
 					success: function(json) {
-						$("#chartdiv2").append(json);										
+						refreshPieChart(json);									
 					}    
 				});
 			});
@@ -322,4 +487,5 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		$('#analyser').click(function() {
 			window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser?type=presidentielle&niveau=globaux";			
 		});
+				
 });

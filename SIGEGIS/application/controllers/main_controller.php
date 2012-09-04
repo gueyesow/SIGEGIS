@@ -80,7 +80,9 @@ class Main_controller extends CI_Controller {
 		echo $this->mon_modele->getBarVisualiser("chartdiv1");
 	}
 	
-	
+	public function getBarVisualiserTest(){
+		echo $this->mon_modele->getBarVisualiserTest("chartdiv1");
+	}
 	public function getPieVisualiser(){
 		echo $this->mon_modele->getPieVisualiser("chartdiv2");
 	}
