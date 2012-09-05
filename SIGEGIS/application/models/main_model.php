@@ -181,7 +181,6 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		if ($niveau=="pays")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
-
 		if ($niveau=="cen") $parametres3="centre.idCentre";
 		elseif ($niveau=="dep") $parametres3="departement.idDepartement";
 		elseif ($niveau=="reg") $parametres3="region.idRegion";
@@ -235,24 +234,16 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		//			COLLECTE DES DONNEES			//
 		// ----------------------------------------	//
 
-		$line="";
+		$pieData=array();
 		$i=0;
-
-		/*foreach ($resultats as $resultat)
-			if (!($i++)) $line.="{name: '$resultat->nomCandidat',y: $resultat->nbVoix,sliced: true,selected: true}";
-		else $line.=",['$resultat->nomCandidat',$resultat->nbVoix]";*/
-		$abscisse=array();$ordonnee=array();
 		
 		foreach ($resultats as $resultat){
-			$abscisse[]=$resultat->nomCandidat;
-			$line[]=array("name"=>$resultat->nomCandidat,"y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}");
+			$pieData[]=array("name"=>$resultat->nomCandidat,"y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}");
 		}
 						
 		$rendu=array();
-		$rendu["titre"]=$titre;
-		$rendu["sous_titre"]=$sous_titre;
-		$rendu["abscisse"]=$abscisse;
-		$rendu["line"]=$line;
+		$rendu[]=array("titre"=>$titre,"sous_titre"=>$sous_titre);		
+		$rendu[]=array("type"=>"pie","name"=>$titre,"data"=>$pieData);
 		
 		echo json_encode($rendu);
 
@@ -324,7 +315,7 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		// ----------------------------------------	//		
 		
 		$titre_niveau="Election $titreElection ".$resultats[0]->annee;
-		$titre_niveau.=" participation ";
+		$titre_niveau.=": Taux de participation ";
 		
 		if ($niveau=="cen") {
 			$titre_niveau.="par centre ";$sous_titre="Centre: ";
@@ -346,6 +337,7 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		elseif ($niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
 		else $sous_titre="";
 		$titre=$titre_niveau;
+		
 	
 		// ----------------------------------------	//
 		//			COLLECTE DES DONNEES			//
@@ -366,6 +358,7 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 	foreach ($resultats as $resultat){
 		
 		$source=$resultat->nomSource;
+		$sous_titre.=" | Source:".$source;
 		
 		$barData[]=array("y"=>(int)$resultat->inscrits,"color"=>"{$this->colors[0]}");
 		$barData[]=array("y"=>(int)$resultat->votants,"color"=>"{$this->colors[1]}");
@@ -378,11 +371,12 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		$pieData2[]=array("name"=>"Suffrages exprimés","y"=>(int)$resultat->exprimes,"color"=>"{$this->colors[3]}");
 						
 	}	
-
+	
 	$rendu=array();
-			
+
+	$rendu[]=array("titre"=>$titre,"sous_titre"=>$sous_titre);
 	$rendu[]=array("type"=>"column","name"=>"Informations sur la participation","data"=>$barData);
-	$rendu[]=array("type"=>"pie","name"=>"Abstention - Votants","data"=>$pieData,"size"=>100,"center"=>array(620,90));
+	$rendu[]=array("type"=>"pie","name"=>"Abstention - Votants","data"=>$pieData,"size"=>100,"center"=>array(610,90));
 	$rendu[]=array("type"=>"pie","name"=>"Nuls - Exprimés","data"=>$pieData2,"size"=>100,"center"=>array(340,90));
 	
 	echo json_encode($rendu);
@@ -934,7 +928,7 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		echo $s;
 		} // ...............  Fin de getGrid() ...............
 
-		public function getPoidsElectoralRegions($balise){
+		public function getPoidsElectoralRegions(){
 			if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
 			else return;
 			if (!empty($_GET['annee']) AND !empty($_GET['tour'])) {$annee=$_GET['annee'];$tour=$_GET['tour'];} else return;
@@ -961,69 +955,28 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 			else $titreElection=$typeElection;
 			$titre_niveau.=" $titreElection ".$annee;
 			$sous_titre="Poids électoral des régions"; 		
-			$titre=($balise=="chartdiv4")?$titre_niveau:"Erreur sur l'emplacement du graphique !";
+			$titre=$titre_niveau;
 		
 			// ----------------------------------------	//
 			//			COLLECTE DES DONNEES			//
 			// ----------------------------------------	//
 		
-			$line="";
 			$i=0;
-		
-			foreach ($resultats as $resultat)
-					if (!($i++)) $line.="{name: '$resultat->nomRegion',y: $resultat->inscrits,sliced: true,selected: true}";
-					else $line.=",['$resultat->nomRegion',$resultat->inscrits]";
-		
-					return "<script>$(function () {
-		
-					$(document).ready(function() {
-						chart4 = new Highcharts.Chart({
-							chart: {
-								renderTo: '$balise',
-								plotBackgroundColor: null,
-								plotBorderWidth: null,
-								plotShadow: false
-							},
-							title: {
-								text: \"$titre\"
-							},
-							subtitle: {
-								text: '$sous_titre'
-							},
-							tooltip: {
-								formatter: function() {
-									return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
-								}
-							},
-							plotOptions: {
-								pie: {
-									allowPointSelect: true,
-									cursor: 'pointer',
-									dataLabels: {
-										enabled: true,
-										color: '#000000',
-										connectorColor: '#000000',
-										formatter: function() {
-											return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
-										}
-									},
-									showInLegend: true
-								}					
-							},
-							exporting: {
-								url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
-							},
-							credits: {
-								enabled: false
-							},
-							series: [{
-								type: 'pie',
-								name: 'Browser share',
-								data: [$line]
-							}]
-						});
-					});					
-					});</script>";
+
+			$pieData=array();
+			foreach ($resultats as $resultat){
+				if($i)
+					$pieData[]=array("name"=>$resultat->nomRegion,"y"=>(int)$resultat->inscrits,"color"=>"{$this->colors[$i++]}");
+				else
+					$pieData[]=array("name"=>$resultat->nomRegion,"y"=>(int)$resultat->inscrits,"color"=>"{$this->colors[$i++]}","sliced"=> true,"selected"=>true);
+			}
+					
+			$rendu=array();
+			$rendu[]=array( "titre"=>$titre ,"sous_titre"=> $sous_titre);
+			$rendu[]=array("type"=>"pie","name"=>$titre,"data"=>$pieData,"size"=>190,"center"=>array("50%","45%"));
+			
+			echo json_encode($rendu);
+					
 		
 		} // ...............  Fin de getPoidsElectoralRegions() ...............
 		

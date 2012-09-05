@@ -7,15 +7,15 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  */
 class Analyse_model extends CI_Model{
 	private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
+	private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
 	/**
 	 * Cette fonction retourne le code JavaScript du Column chart
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getBarAnalyserAnnee($balise){
+	public function getBarAnalyserAnnee(){
 			
-		$tableauResultats=array();
-		$series="";
+		$barSeries=array();
 		$titre="";
 		$sous_titre="";
 		$unite="";
@@ -54,7 +54,9 @@ class Analyse_model extends CI_Model{
 			else $parametres3="null";
 				
 			$colonnesBDD=array("rp.idSource","election.tour",$parametres3);
-				
+			
+			$couleur=0;
+			
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat,rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
@@ -88,20 +90,17 @@ class Analyse_model extends CI_Model{
 					
 				$requete.=" AND rp.idCandidature=".$leCandidat." ORDER BY dateElection ASC";
 					
-				$resultats=$this->db->query($requete)->result();
+				$resultats=$this->db->query($requete)->result();									
 					
-				$i=0;$j=0;
-					
-				$ordonnee="";
-					
+				$data=array();
+				
 				foreach ($resultats as $resultat){
-					if (!($j++)) $ordonnee.=$resultat->nbVoix;
-					else $ordonnee.=",$resultat->nbVoix";
+					$data[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$couleur]}");					
 				}
 
-				$tableauResultats[]="{name:'$resultat->nomCandidat', data:[".$ordonnee."]}";
-			}
-			$abscisse=$_GET["listeAnnees"];
+				$barSeries[]=array("name"=>$resultat->nomCandidat, "data"=>$data,"color"=>"{$this->colors[$couleur]}");
+				$couleur++;
+			}			
 		}
 
 		// ----------------------------------------	//
@@ -122,27 +121,20 @@ class Analyse_model extends CI_Model{
 		}
 		else  $titre_niveau.="globaux ";
 
-		//$titre_niveau.="de l'élection présidentielle de ".$resultats[0]->annee;
-
-
 		if ($niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
 		elseif ($niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
 		elseif ($niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
 		elseif ($niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
 		else $sous_titre="";
-		$titre=($balise=="chartdiv1")?$titre_niveau:"Erreur sur l'emplacement de l'histogramme !";
+		$titre=$titre_niveau;
 
 
 		// ----------------------------------------	//
 		//			COLLECTE DES DONNEES			//
 		// ----------------------------------------	//
 
-		for( $j=0;$j<sizeof($tableauResultats);$j++ ){
-			if ($series=="") $series.=$resultats=$tableauResultats[$j];
-			else $series.=",".$resultats=$tableauResultats[$j];
-		}
-
-
+		$categories=$listeAnnees;
+		
 		if(!empty($_GET['unite'])){
 			if ($_GET['unite']=="va") $unite="En valeurs absolues"; else $unite="En valeurs relatives";
 		} else  $unite="En valeurs absolues";
@@ -150,77 +142,13 @@ class Analyse_model extends CI_Model{
 		// ----------------------------------------	//
 		//					RENDU					//
 		// ----------------------------------------	//
-
-		return "<script type='text/javascript'>
-		$(function () {
-		var chart;
-		$(document).ready(function() {
-		chart = new Highcharts.Chart({
-		chart: {
-		renderTo: '$balise',
-		type: 'column'
-		},
-		title: {
-		text: \"$titre\"
-		},
-		subtitle: {
-		text: \"$sous_titre\"
-		},
-		xAxis: {
-		categories: [$abscisse],
-	
-		labels: {
-		rotation: -40,
-		align: 'right',
-		style: {
-		width:20,
-		fontSize: '12px',
-		fontFamily: 'Verdana, sans-serif'
-		}
-		}
-		},
-		yAxis: {
-		min: 0,
-		title: {
-		text: 'NbVoix ($unite)'
-		}
-		},
-		exporting: {
-		//enabled: false
-		url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
-		},
-		legend: {
-		layout: 'vertical',
-		backgroundColor: '#FFFFFF',
-		align: 'right',
-		verticalAlign: 'top',
-		floating: true,
-		shadow: true
-		},
-		tooltip: {
-		formatter: function() {
-		return  this.y;
-		}
-		},
-	
-		plotOptions: {
-		column: {
-		pointPadding: 0.2,
-		borderWidth: 0,
-		dataLabels: {
-		enabled: true
-		}
-		}
-		},
-		credits: {
-		enabled: false
-		},
-		series:[$series]
-	
-		});
-		});
-		});
-		</script>";
+		
+		$rendu=array();
+		$rendu[]=array("titre"=>$titre,"sous_titre"=>$sous_titre,"categories"=>$categories);
+		$rendu[]=$barSeries;		// series[1]
+		
+		echo json_encode($rendu);
+		
 	} // ...............  Fin de getBarAnalyserAnnee ...............
 
 
@@ -229,7 +157,7 @@ class Analyse_model extends CI_Model{
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getPieAnalyserAnnee($balise){
+	public function getPieAnalyserAnnee(){
 
 
 		$tableauResultats=array();
@@ -355,56 +283,7 @@ class Analyse_model extends CI_Model{
 		for( $j=0;$j<sizeof($tableauResultats);$j++ ){
 			if ($series=="") $series.=$resultats=$tableauResultats[$j];
 			else $series.=",".$resultats=$tableauResultats[$j];
-		}
-		return "<script>$(function () {
-		var chart;
-		$(document).ready(function() {
-		chart = new Highcharts.Chart({
-		chart: {
-		renderTo: '$balise',
-		plotBackgroundColor: null,
-		plotBorderWidth: null,
-		plotShadow: false
-	},
-	title: {
-	text: \"$titre\"
-	},
-	subtitle: {
-	text: \"$sous_titre\"
-	},
-	tooltip: {
-	formatter: function() {
-	return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
-	}
-	},
-	plotOptions: {
-	pie: {
-	allowPointSelect: true,
-	cursor: 'pointer',
-	dataLabels: {
-	enabled: true,
-	color: '#000000',
-	connectorColor: '#000000',
-	formatter: function() {
-	return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
-	}
-	},showInLegend: true
-	}
-		
-	},
-	credits: {
-	enabled: false
-	},
-	series: [{
-	type: 'pie',
-	name: 'Browser share',
-	data: [$series]
-	}]
-	});
-	});
-
-	});</script>";
-
+		}	
 	} // ...............  Fin de getPieAnalyserAnnee ...............
 
 	/**
@@ -631,16 +510,19 @@ class Analyse_model extends CI_Model{
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getBarAnalyserLocalite($balise){
+	public function getBarAnalyserLocalite(){
 
-		$tableauResultats=array();
+		$barSeries=array();
+		$categories=array();
 		$series="";
 		$titre="";
 		$sous_titre="";
 		$unite="";
 		$abscisse="";
+		$nomCandidat="";
+		
 
-
+		$couleur=0;
 		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
 		else return;
 		
@@ -664,7 +546,9 @@ class Analyse_model extends CI_Model{
 			$params=explode(",",$parametres);
 			$listeLocalites=explode(",",$_GET['listeLocalites']);
 			$listeCandidats=explode(",",$_GET['listeCandidats']);
-
+			
+			$categories=$listeLocalites;
+			
 			$v=0;
 
 			if ($niveau=="cen") $parametres3="centre.nomCentre";
@@ -674,7 +558,8 @@ class Analyse_model extends CI_Model{
 			else $parametres3="null";
 
 			$colonnesBDD=array("rp.idSource","election.tour","YEAR(election.dateElection)","election.typeElection");
-
+						
+			
 			foreach ($listeCandidats as $leCandidat){
 
 				$v=0;
@@ -712,19 +597,15 @@ class Analyse_model extends CI_Model{
 
 				$i=0;$j=0;
 
-				$ordonnee="";
-
+				$data=array();
+				
 				foreach ($resultats as $resultat){
-					if (!($j++)) $ordonnee.=$resultat->nbVoix;
-					else $ordonnee.=",$resultat->nbVoix";
+					$data[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$couleur]}");
 				}
 
-				$tableauResultats[]="{name:'$resultat->nomCandidat', data:[".$ordonnee."]}";
+				$barSeries[]=array("name"=>$resultat->nomCandidat, "data"=>$data);
+				$couleur++;
 			}
-			
-			$a=explode(",", $_GET["listeLocalites"]);
-			$in=0;
-			foreach ($a as $s)		if(!$in++) $abscisse.="'".$s."'"; else $abscisse.=",'".$s."'";
 		}
 
 		// ----------------------------------------	//
@@ -749,17 +630,7 @@ class Analyse_model extends CI_Model{
 		}
 		else  $titre_niveau.="Global";
 
-		$titre=($balise=="chartdiv1")?$titre_niveau:"Erreur sur l'emplacement de l'histogramme !";
-
-
-		// ----------------------------------------	//
-		//			COLLECTE DES DONNEES			//
-		// ----------------------------------------	//
-
-		for( $j=0;$j<sizeof($tableauResultats);$j++ ){
-			if ($series=="") $series.=$resultats=$tableauResultats[$j];
-			else $series.=",".$resultats=$tableauResultats[$j];
-		}
+		$titre=$titre_niveau;
 
 
 		if(!empty($_GET['unite'])){
@@ -769,78 +640,12 @@ class Analyse_model extends CI_Model{
 		// ----------------------------------------	//
 		//					RENDU					//
 		// ----------------------------------------	//
-
-		return "<script type='text/javascript'>
-		$(function () {
-		var chart;
-		$(document).ready(function() {
-		chart = new Highcharts.Chart({
-		chart: {
-		renderTo: '$balise',
-		type: 'column'
-	},
-	title: {
-	text: \"$titre\"
-	},
-	subtitle: {
-	text: \"$sous_titre\"
-	},
-	xAxis: {
-	categories: [$abscisse],
-
-	labels: {
-	rotation: -40,
-	align: 'right',
-	style: {
-	width:20,
-	fontSize: '12px',
-	fontFamily: 'Verdana, sans-serif'
-	}
-	}
-	},
-	yAxis: {
-	min: 0,
-	title: {
-	text: 'NbVoix ($unite)'
-	}
-	},
-	exporting: {
-	//enabled: false
-		url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
-	},
-	legend: {
-	layout: 'vertical',
-	backgroundColor: '#FFFFFF',
-	align: 'right',
-	verticalAlign: 'top',
-	floating: true,
-	shadow: true
-	},
-	tooltip: {
-	formatter: function() {
-	return  this.y;
-	}
-	},
-
-	plotOptions: {
-	column: {
-	pointPadding: 0.2,
-	borderWidth: 0,
-	dataLabels: {
-	enabled: true
-	}
-	}
-	},
-	credits: {
-	enabled: false
-	},
-	series:[$series]
-
-	});
-	});
-	});
-	</script>";
-	}// ...............  Fin de getGrid() ...............
+		$rendu=array();
+		$rendu[]=array("titre"=>$titre,"sous_titre"=>$sous_titre,"categories"=>$categories);
+		$rendu[]=$barSeries;		// series[1]
+		echo json_encode($rendu);
+		
+	}// ...............  Fin de getBarAnalyserLocalite() ...............
 
 
 	/**
@@ -848,7 +653,7 @@ class Analyse_model extends CI_Model{
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getPieAnalyserLocalite($balise){
+	public function getPieAnalyserLocalite(){
 		$tableauResultats=array();
 		$series="";
 		$titre="";
@@ -1153,7 +958,7 @@ class Analyse_model extends CI_Model{
 		}
 		$s .= "</rows>";
 		echo $s;
-	} // ...............  Fin de tableauLocalite() ...............
+	} // ...............  Fin de getGridAnalyserLocalite() ...............
 
 	
 	public function exportToCSVLocalite(){
@@ -1265,99 +1070,5 @@ class Analyse_model extends CI_Model{
 	}
 	echo $s;
 	} // ...............  Fin de tableauLocalite() ...............
-	
-	
-	function test(){
-		$candidats="";$seriesGlob="";$series="";$localites="";
-		echo "<script>
-			var chart;
-			$(document).ready(function() {
-		
-				var colors = Highcharts.getOptions().colors,
-				categories = [$candidats],
-				name = 'Browser brands',
-				data = [{
-					y: $seriesGlob,
-					color: colors[0],
-					drilldown: {
-						name: 'MSIE versions',
-						categories: [$localites],
-						data: [$series],
-						color: colors[0]
-					}
-				}];
-		
-		
-				// Build the data arrays
-				var browserData = [];
-				var versionsData = [];
-				for (var i = 0; i < data.length; i++) {
-		
-					// add browser data
-					browserData.push({
-						name: categories[i],
-						y: data[i].y,
-						color: data[i].color
-					});
-		
-					// add version data
-					for (var j = 0; j < data[i].drilldown.data.length; j++) {
-						var brightness = 0.2 - (j / data[i].drilldown.data.length) / 5 ;
-						versionsData.push({
-							name: data[i].drilldown.categories[j],
-							y: data[i].drilldown.data[j],
-							color: Highcharts.Color(data[i].color).brighten(brightness).get()
-						});
-					}
-				}
-		
-				// Create the chart
-				chart = new Highcharts.Chart({
-					chart: {
-						renderTo: 'container',
-						type: 'pie'
-					},
-					title: {
-						text: 'Browser market share, April, 2011'
-					},
-					yAxis: {
-						title: {
-							text: 'Total percent market share'
-						}
-					},
-					plotOptions: {
-						pie: {
-							shadow: false
-						}
-					},
-					tooltip: {
-						formatter: function() {
-							return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
-						}
-					},
-					series: [{
-						name: 'Browsers',
-						data: browserData,
-						size: '60%',
-						dataLabels: {
-							formatter: function() {
-								//return this.y > 5 ? this.point.name : null;
-							},
-							color: 'white',
-							distance: -30
-						}
-					}, {
-						name: 'Versions',
-						data: versionsData,
-						innerSize: '60%',
-						dataLabels: {
-							formatter: function() {
-								// display only if larger than 1
-								//return this.y > 1 ? '<b>'+ this.point.name +':</b> '+ this.y +'%'  : null;
-							}
-						}
-					}]
-				});
-			});</script>";		
-	}
+					
 }

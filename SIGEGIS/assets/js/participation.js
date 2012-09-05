@@ -76,19 +76,76 @@ chart4 = new Highcharts.Chart({
 	},
     series: []
 });
+
+chart2 = new Highcharts.Chart({
+	chart: {
+		renderTo: 'chartdiv2',
+		height: 420	
+	},
+	title: {
+		text: 'Poids électoral des régions'
+	},
+	subtitle: {
+		text: ''
+	},
+	tooltip: {
+		formatter: function() {
+			return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+		}
+	},
+	plotOptions: {
+		pie: {
+			allowPointSelect: true,
+			cursor: 'pointer',
+			dataLabels: {
+				enabled: true,
+				color: '#000000',
+				connectorColor: '#000000',
+				formatter: function() {
+					return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+				}
+			},
+			showInLegend: true
+		}					
+	},
+	exporting: {
+		url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+	},
+	credits: {
+		enabled: false
+	},
+	series: []
+});
+
+
+function refreshPiePoidsElectoralRegions(json){
+	var i=0;
+	
+	var series=JSON.parse(json);			
+	chart2.setTitle({text: series[0].titre},{text: series[0].sous_titre});		
+	if ( chart2.series.length > 0 ) {			
+		for(i=0;i<chart2.series.length;i++) {chart2.series[i].setData(series[i+1].data,false);}			
+	}		
+	else	
+	{
+		for(i=0;i<series.length;i++)
+			chart2.addSeries(series[i+1],false);
+	}	
+	chart2.redraw();
+}
 	
 function refreshComboChart(json){
 		var i=0;
 		
 		var series=JSON.parse(json);			
-				
+		chart4.setTitle({text: series[0].titre},{text: series[0].sous_titre});		
 		if ( chart4.series.length > 0 ) {			
-			for(i=0;i<chart4.series.length;i++) {chart4.series[i].setData(series[i].data,false);}			
+			for(i=0;i<chart4.series.length;i++) {chart4.series[i].setData(series[i+1].data,false);}			
 		}		
 		else	
 		{
-			for(i=0;i<3;i++)
-				chart4.addSeries(series[i],false);
+			for(i=0;i<series.length;i++)
+				chart4.addSeries(series[i+1],false);
 		}	
 		chart4.redraw();
 	}
@@ -98,7 +155,7 @@ if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox
 if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
 if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");}
 if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")==="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
-
+$("#chartdiv2").hide();
 
 $("#types_affichage input").on( "change",function() {
 	var idmode;
@@ -405,8 +462,8 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 			Highcharts.exportCharts([chart4],{type: 'application/pdf'});
 		});
 		
-		$('#menu-css a').each(function(){
-			if($(this).text()!=$('#menu-css a:first').text() && $.getUrlVar("bar"))
+		$('#menu a').each(function(){
+			if($(this).text()!=$('#menu a:first').text() && $.getUrlVar("bar"))
 			$(this).attr("href",$(this).attr("href")+"&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid"));
 		});
 		
@@ -415,8 +472,8 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 				url: 'http://www.sigegis.ugb-edu.com/main_controller/getPoidsElectoralRegions',    
 				data:'annee='+$elections.val()+'&tour='+$tours.val()+'&typeElection='+$.getUrlVar("type"),   					     
 				success: function(json) {
-					$("#chartdiv4").append(json);
-					window.location.href="#chartdiv4";
+					 $("#chartdiv2").show();
+					refreshPiePoidsElectoralRegions(json);					
 				}    
 			});
 		});	

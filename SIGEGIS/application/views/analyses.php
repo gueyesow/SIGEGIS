@@ -5,6 +5,7 @@
 <title>SIGEGIS &gt; Analyses</title>
 <link rel="stylesheet" type="text/css" media="print" href="<?php echo css_url("print"); ?>" />
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("ui.jqgrid"); ?>" />
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("theme"); ?>" />
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("analyse"); ?>" />
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("ui-lightness/jquery-ui-1.8.21.custom"); ?>" />
 <script src="<?php echo js_url("jqgrid/js/jquery-1.7.2.min");?>" type="text/javascript"></script>
@@ -17,12 +18,12 @@
 </head>
 
 <body>
-
+<div id="wrapper">
 	<?php $styles="";?>
 	<?php $filtres=array("sources");?>
 	<?php $labels_filtres=array("sources"=>"Source");?>
 
-	<div id="menu-css">
+	<div id="menu">
 		<ul>
 			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>
 			<li><a href="<?php echo site_url("main_controller/administration");?>">Administration</a></li>
@@ -36,7 +37,7 @@
 	<br />
 	<br />
 
-	<table id="getGrid">
+	<table id="wrapper-table">
 		<tr>
 			<td id="left-sidebar">
 				<div class="zone_des_options">
@@ -213,7 +214,8 @@
 			</td>
 
 			<td id="content">
-				<div id="container">
+				<div id="right_content">
+				
 					<h1 id="titre"></h1>
 					
 					<div id="help">
@@ -240,6 +242,7 @@
 						Cliquez sur <b style="font-size:14px;">Ouvrir l'utilitaire d'analyse</b> pour débuter. 
 						</p>
 					</div>
+					
 					<div id="theGrid">
 						<table id="list"></table>
 						<div id="pager"></div>
@@ -247,6 +250,7 @@
 
 					<div id="chartdiv1" class="diagrammes"></div>
 					<div id="chartdiv2" class="diagrammes"></div>
+
 					<br />		
 				</div>
 			</td>
@@ -256,12 +260,11 @@
 	<div id="footer">
 		<p><a href="<?php echo site_url("main_controller/administration");?>"><img height="14px" alt="administration" src="../../assets/images/lock.png" /></a>&copy; Copyright SIGEGIS | Université Gaston Berger de Saint-Louis du Sénégal | 2012</p>
 	</div>
+	</div>
 	
 	<script src="<?php echo js_url("base");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("init_filtres");?>" type="text/javascript"></script>
-	<script type="text/javascript">
-	$("#chartdiv1").hide();
-	$("#theGrid").hide();
+	<script type="text/javascript">	
 	$("#pie,#grid,#bar,#map").attr("disabled","disabled");
 	$("#ana_localite,#ana_localite2").val("region");
 	$.ajax({            
@@ -441,5 +444,6 @@
 	<script src="<?php echo js_url("dragAndDrop");?>" type="text/javascript"></script>	
 	<script src="<?php echo js_url("style");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("tooltips");?>" type="text/javascript"></script>
+	
 </body>
 </html>

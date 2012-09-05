@@ -3,15 +3,79 @@
  * Description: Gestion de la partie analyse  
  */
 
-$(document).ready(function() {   	 
+$(document).ready(function() {		
+	
+	chart1 = new Highcharts.Chart({
+	chart: {
+	renderTo: 'chartdiv1',
+	type: 'column'
+	},
+	title: {
+	text: ''
+	},
+	subtitle: {
+	text: ''
+	},
+	xAxis: {
+	categories: [],
 
+	labels: {
+	rotation: -40,
+	align: 'right',
+	style: {
+	width:20,
+	fontSize: '12px',
+	fontFamily: 'Verdana, sans-serif'
+	}
+	}
+	},
+	yAxis: {
+	min: 0,
+	title: {
+	text: 'NbVoix'
+	}
+	},
+	exporting: {
+	url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+	},
+	legend: {
+	layout: 'vertical',
+	backgroundColor: '#FFFFFF',
+	align: 'right',
+	verticalAlign: 'top',
+	floating: true,
+	shadow: true
+	},
+	tooltip: {
+	formatter: function() {
+	return  this.y;
+	}
+	},
+
+	plotOptions: {
+	column: {
+	pointPadding: 0.2,
+	borderWidth: 0,
+	dataLabels: {
+	enabled: true
+	}
+	}
+	},
+	credits: {
+	enabled: false
+	},
+	series:[]
+	});		
+	
 	if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
 	if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
 	if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");}
 	if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")==="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
+	
 	/**
 	 * CHOIX DU MODE DE REPRESENTATION DES DONNEES
 	 */
+	
 	$("#types_affichage input").on( "change",function() {
 		i=0;var idmode;
 	
@@ -23,7 +87,7 @@ $(document).ready(function() {
 				
 		if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
 					
-		$.ajax({        							
+		/*$.ajax({        							
 			url: 'http://www.sigegis.ugb-edu.com/main_controller/analyser',    
 			data:"type="+$.getUrlVar("type")+mode, 					     
 			success: function(json) {
@@ -31,7 +95,7 @@ $(document).ready(function() {
 				if( $("#types_affichage input:eq(2)").attr("checked")!="checked" ) $("#chartdiv2").hide();	else $("#chartdiv2").show();
 				if( $("#types_affichage input:eq(3)").attr("checked")!="checked" ) $("#theGrid").hide();	else $("#theGrid").show();
 			}    
-		});
+		});*/
 	});
 	
 	/**
@@ -67,44 +131,6 @@ $(document).ready(function() {
 				else window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser?type="+this;
 			}
 		});
-	});
-		
-	
-	/**
-	 * Ajouter en paramètre la source,le tour à représenter
-	 */
-	
-	/*param=$sources.val()+","+$("#ana_tour").val();
-	if ( $.getUrlVar("niveau") ) {$url='http://www.sigegis.ugb-edu.com/main_controller/analyser?niveau='+$.getUrlVar("niveau")+'&param='+param;}
-	else {$url='http://www.sigegis.ugb-edu.com/main_controller/analyser?param='+param;}*/
+	});	
 
-	
-	$("#list").jqGrid({		
-		//url:$url,
-		autowidth:true,
-	    datatype: 'xml',
-	    mtype: 'GET',
-	    colNames:['Nom du candidat','Lieu de vote','Année','Nombre de voix'],
-	    colModel :[ 
-	      {name:'nomCandidat', index:'nomCandidat',search:true},
-	      {name:'lieuDeVote', index:'lieuDeVote', width:80},
-	      {name:'annee', index:'annee', width:80},
-	      {name:'nbVoix', index:'nbVoix', width:80}  
-	    ],
-	    pager: '#pager',
-	    rowNum:20,
-	    rowList:[20,30,50,100,200],
-	    sortname: 'nbVoix',
-	    sortorder: 'desc',
-	    viewrecords: true,
-	    gridview: true,
-	}).navGrid("#pager",{edit:false,add:false,del:false,search:false});
-	
-	/*		
-	$('#menu-css a').each(function(){
-		if($(this).text()!=$('#menu-css a:first').text() && $.getUrlVar("bar"))
-		$(this).attr("href",$(this).attr("href")+"&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid"));
-	});
-	*/
-		
 });

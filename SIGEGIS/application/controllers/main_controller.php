@@ -93,18 +93,18 @@ class Main_controller extends CI_Controller {
 	}
 	
 	public function getBarAnalyserAnnee(){
-		echo $this->modele_analyse->getBarAnalyserAnnee("chartdiv1");
+		echo $this->modele_analyse->getBarAnalyserAnnee();
 	}
 	public function getPieAnalyserAnnee(){
 		echo $this->modele_analyse->getPieAnalyserAnnee("chartdiv2");
 	}
 	
 	public function getBarAnalyserLocalite(){
-		echo $this->modele_analyse->getBarAnalyserLocalite("chartdiv1");
+		echo $this->modele_analyse->getBarAnalyserLocalite();
 	}
 	
 	public function getPieAnalyserLocalite(){
-		echo $this->modele_analyse->getPieAnalyserLocalite("chartdiv2");
+		echo $this->modele_analyse->getPieAnalyserLocalite();
 	}
 
 	public function getBarParticipation(){
@@ -119,7 +119,7 @@ class Main_controller extends CI_Controller {
 	}
 	
 	public function getPoidsElectoralRegions(){
-		echo $this->mon_modele->getPoidsElectoralRegions("chartdiv4");
+		echo $this->mon_modele->getPoidsElectoralRegions();
 	}
 	
 	public function getGridParticipation(){

@@ -1,6 +1,6 @@
 $("input[id=valider],input[id=validerLocalite]").button();
 
-$('#menu-css li a').hover(   
+$('#menu li a').hover(   
 		  
 function() {     
 	$(this).css('padding', '5px 15px')   
@@ -27,8 +27,6 @@ function() {
 	$("#zone_des_filtres").addClass("ui-state-default ui-corner-all");
 	$(".zone_des_options").addClass("ui-state-default ui-corner-all");
 	
-	$("#chartdiv2").hide();
-
 	$("#accordion").accordion({ header: "h3" });
 
 	$("#dialog_zone_des_options").dialog({

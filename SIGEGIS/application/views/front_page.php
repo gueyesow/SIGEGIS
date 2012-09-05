@@ -17,12 +17,13 @@
 </head>
 
 <body>
+<div id="wrapper">
 	<?php $styles="";?>
 	<?php $filtres=array("sources","elections","tours","pays","regions","departements","collectivites","centres");?>
 	<?php $labels_filtres=array("sources"=>"Source","elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");?>
 	<?php $typeElection=empty($_GET["type"])?"presidentielle":$_GET["type"];?>	
 
-	<div id="menu-css">	
+	<div id="menu">	
 		<ul>
 			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>			
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=globaux");?>">Résultats globaux</a></li>
@@ -45,7 +46,7 @@
 	<br />
 	<br />
 
-	<table id="getGrid">
+	<table id="wrapper-table">
 		<tr>
 			<td id="left-sidebar">
 				<div class="zone_des_options">
@@ -86,8 +87,7 @@
 				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
 			<td id="content">
-				<div id="container">
-
+				<div>
 					<h1 id="titre"></h1>
 					
 					<div id="help">
@@ -130,7 +130,10 @@
 	<div id="footer">
 		<p><a href="<?php echo site_url("main_controller/administration");?>"><img height="14px" alt="administration" src="../../assets/images/lock.png" /></a>&copy; Copyright SIGEGIS | Université Gaston Berger de Saint-Louis du Sénégal | 2012</p>
 	</div>
-	
+</div> 
+
+<!--  Fermeture Wrapper -->
+				
 	<script src="<?php echo js_url("base");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("init_filtres");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("visualiser");?>" type="text/javascript"></script>	

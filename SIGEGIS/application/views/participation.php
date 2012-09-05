@@ -17,12 +17,13 @@
 </head>
 
 <body>
+<div id="wrapper">
 	<?php $styles="";?>
 	<?php $filtres=array("sources","elections","tours","pays","regions","departements","collectivites","centres");?>
 	<?php $labels_filtres=array("sources"=>"Source","elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");?>
 	<?php $typeElection=empty($_GET["type"])?$type:$_GET["type"];?>
 
-	<div id="menu-css">
+	<div id="menu">
 		<ul>
 			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>			
 			<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=globaux");?>">Résultats globaux</a></li>
@@ -45,7 +46,7 @@
 	<br />
 	<br />
 
-	<table id="getGrid">
+	<table id="wrapper-table">
 		<tr>
 			<td id="left-sidebar">
 				<div class="zone_des_options">
@@ -74,10 +75,10 @@
 
 						<fieldset>
 							<legend>Format des données</legend>
-							<input id="valeur_absolue" type="radio" name="format"
-								checked="checked" /><label for="valeur_absolue">Valeurs absolues</label><br />
-							<input id="valeur_relative" type="radio" name="format" /><label
-								for="valeur_relative">Valeurs relatives</label><br />
+							<input id="valeur_absolue" type="radio" name="format" checked="checked" />
+							<label for="valeur_absolue">Valeurs absolues</label><br />
+							<input id="valeur_relative" type="radio" name="format" />
+							<label for="valeur_relative">Valeurs relatives</label><br />
 						</fieldset>
 					</form>
 				</div> <br> <br>
@@ -88,7 +89,7 @@
 				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
 			<td id="content">
-				<div id="container">
+				<div>
 
 					<h1 id="titre"></h1>
 
@@ -98,6 +99,7 @@
 					</div>
 
 					<div id="chartdiv1" class="diagrammes"></div>
+					<div id="chartdiv2" class="diagrammes"></div>
 
 					<br />
 
@@ -110,7 +112,9 @@
 	<div id="footer">
 		<p><a href="<?php echo site_url("main_controller/administration");?>"><img height="14px" alt="administration" src="../../assets/images/lock.png" /></a>&copy; Copyright SIGEGIS | Université Gaston Berger de Saint-Louis du Sénégal | 2012</p>
 	</div>
-	
+</div>
+
+
 	<script src="<?php echo js_url("base");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("init_filtres");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("participation");?>" type="text/javascript"></script>	

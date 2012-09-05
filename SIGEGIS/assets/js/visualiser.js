@@ -34,33 +34,19 @@ $(document).ready(function() {
 	}
 	
 	function refreshPieChart(json){
-		series = {            
-	            name: 'Résultats',
-	            data: []
-	    };
+		var i=0;
 		
-		categories=new Array();
-		
-		data=JSON.parse(json);
-		$titre=data.titre;
-		$sous_titre=data.sous_titre;
-		$unite=data.unite;
-		$abscisse=data.abscisse;
-		$line=data.line;
-		
-		$.each($line, function(value) {							
-			categories.push($abscisse[value]);
-			series.data.push($line[value]);
-	    });
-													
-		chart2.xAxis[0].setCategories(categories);					
-		chart2.setTitle({text: $titre},{text: $sous_titre});
-		
-		
-		if ( chart2.series.length > 0 ) {chart2.series[0].setData(series.data,true);} 
+		var series=JSON.parse(json);			
+		chart2.setTitle({text: series[0].titre},{text: series[0].sous_titre});		
+		if ( chart2.series.length > 0 ) {			
+			for(i=0;i<chart2.series.length;i++) {chart2.series[i].setData(series[i+1].data,false);}			
+		}		
 		else	
-			chart2.addSeries(series);
-		chart2.series[0].redraw();
+		{
+			for(i=0;i<series.length;i++)
+				chart2.addSeries(series[i+1],false);
+		}	
+		chart2.redraw();															
 	}
     
 			chart1 = new Highcharts.Chart({
@@ -122,25 +108,24 @@ $(document).ready(function() {
 			
 			chart2 = new Highcharts.Chart({
 				chart: {
-					renderTo: 'chartdiv2',
-					type:'pie'
+					renderTo: 'chartdiv2'
 				},
 				title: {
-				text: ''
+					text: ''
 				},
 				subtitle: {
-				text: ''
+					text: ''
 				},
 				tooltip: {
-				formatter: function() {
-				return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
-				}
+					formatter: function() {
+						return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+					}
 				},
 				plotOptions: {
 				pie: {
 					allowPointSelect: true,
 					cursor: 'pointer',
-					size: 190,
+					size: 200,
 					dataLabels: {
 						enabled: true,
 						color: '#000000',
@@ -172,8 +157,8 @@ else $("#help").remove();
 
 	
 if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
-if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
-if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");}
+if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide();$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show();$("#bar").attr("checked","checked");}
+if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");} else $("#chartdiv2").hide();
 if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")==="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
 
 // Prise en compte des paramètres d'affichage (Bar,Pie,Map,Grid)   
@@ -475,8 +460,8 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 			else return;
 		});
 		
-		$('#menu-css a').each(function(){
-			if($(this).text()!=$('#menu-css a:first').text() && $.getUrlVar("bar"))
+		$('#menu a').each(function(){
+			if($(this).text()!=$('#menu a:first').text() && $.getUrlVar("bar"))
 			$(this).attr("href",$(this).attr("href")+"&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid"));
 		});
 		
