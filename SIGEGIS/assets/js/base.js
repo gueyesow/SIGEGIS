@@ -22,6 +22,13 @@ $.extend({
 	  }
 });
 
+function slideSmoothly(id){
+	$('html, body').animate({  
+	    scrollTop:$(id).offset().top  
+	}, 'slow');  
+	return false;  
+}
+
 	// ---------------------------------------- //
 	// 				Partie générique			//
 	// ---------------------------------------- //

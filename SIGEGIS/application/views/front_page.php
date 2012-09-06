@@ -137,7 +137,7 @@
 	<script src="<?php echo js_url("base");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("init_filtres");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("visualiser");?>" type="text/javascript"></script>	
-	<script src="<?php echo js_url("dragAndDrop");?>" type="text/javascript"></script>
+	<!--script src="<?php echo js_url("dragAndDrop");?>" type="text/javascript"></script-->
 	<script src="<?php echo js_url("tooltips");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("style");?>" type="text/javascript"></script>
 		

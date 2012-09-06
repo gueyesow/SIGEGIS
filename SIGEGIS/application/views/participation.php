@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>SIGEGIS</title>
+<title>SIGEGIS>Taux de participation</title>
 <link rel="stylesheet" type="text/css" media="print" href="<?php echo css_url("print"); ?>" />
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("ui.jqgrid"); ?>" />
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo css_url("theme"); ?>" />
@@ -118,7 +118,7 @@
 	<script src="<?php echo js_url("base");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("init_filtres");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("participation");?>" type="text/javascript"></script>	
-	<script src="<?php echo js_url("dragAndDrop");?>" type="text/javascript"></script>
+	<!--script src="<?php echo js_url("dragAndDrop");?>" type="text/javascript"></script-->
 	<script src="<?php echo js_url("tooltips");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("style");?>" type="text/javascript"></script>
 	

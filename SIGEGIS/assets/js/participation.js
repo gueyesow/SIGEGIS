@@ -473,7 +473,8 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 				data:'annee='+$elections.val()+'&tour='+$tours.val()+'&typeElection='+$.getUrlVar("type"),   					     
 				success: function(json) {
 					 $("#chartdiv2").show();
-					refreshPiePoidsElectoralRegions(json);					
+					refreshPiePoidsElectoralRegions(json);
+					slideSmoothly("#chartdiv2");
 				}    
 			});
 		});	

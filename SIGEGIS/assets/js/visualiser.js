@@ -157,7 +157,7 @@ else $("#help").remove();
 
 	
 if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
-if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide();$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show();$("#bar").attr("checked","checked");}
+if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide();$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show();$("#bar").attr("checked","checked");} //else $("#chartdiv1").hide();
 if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");} else $("#chartdiv2").hide();
 if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")==="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
 
@@ -246,8 +246,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 	if($.getUrlVar("type")==="presidentielle") param+=","+$tours.val();
 	
 	$url='http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?niveau='+$.getUrlVar("niveau")+'&param='+param+'&typeElection='+$.getUrlVar("type");
-	if (! $.getUrlVar("type")) {$("#chartdiv1").hide();}
-	else
+	if ( $.getUrlVar("type")) 
 	$("#list").jqGrid({		
 		autowidth:true,
 	    datatype: 'xml',
@@ -282,7 +281,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 				$.ajax({        							
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
 					data:'niveau=cen&param='+param+'&typeElection='+$.getUrlVar("type"),        					     
-					success: function(json) {																		
+					success: function(json) {		
 						refreshBarChart(json);																						
 					}    
 				});
