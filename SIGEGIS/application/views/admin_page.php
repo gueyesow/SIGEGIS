@@ -119,32 +119,14 @@ $(function() {
 		$("input[id^=nomCandidat]").autocomplete({source: 'http://www.sigegis.ugb-edu.com/main_controller/getCandidatsArray'});					    					
 		c++;
 	});
-		
-	
-	//$("input[id^='nomCandidat']").autocomplete({source: 'http://www.sigegis.ugb-edu.com/main_controller/getCandidatsArray'},{matchContains:false});
-	//$(":button").autocomplete({autoFill: false, selectFirst: true,source: 'http://www.sigegis.ugb-edu.com/main_controller/getCandidatsArray',matchContains:true});
 
-		$(".zone_des_filtres").addClass("ui-state-default ui-corner-all");
-		$.extend({
-			  getUrlVars: function(){
-			    var vars = [], hash;
-			    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-			    for(var i = 0; i < hashes.length; i++)
-			    {
-			      hash = hashes[i].split('=');
-			      vars.push(hash[0]);
-			      vars[hash[0]] = hash[1];
-			    }
-			    return vars;
-			  },
-			  getUrlVar: function(name){
-			    return $.getUrlVars()[name];
-			  }
-		});
+	$(".zone_des_filtres").addClass("ui-state-default ui-corner-all");
 });
+
 $("#nomCandidat0").autocomplete({source: 'http://www.sigegis.ugb-edu.com/main_controller/getCandidatsArray',select: function(event, ui) { 
-    alert(ui.item.id) 
-} });
+    alert(ui.item.id); 
+} 
+});
 //$("#nomCandidat0").autocomplete({source: 'http://www.sigegis.ugb-edu.com/main_controller/getCandidatsArray'});
 
 

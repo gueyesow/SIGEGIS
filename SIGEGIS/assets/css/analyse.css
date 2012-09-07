@@ -11,6 +11,11 @@ fieldset{
 	height:150px;
 	}
 
+*[id*="choix"] {
+	width: 330px;
+	height:150px;
+	}
+	
 .ui-accordion .ui-accordion-content{ 
 	/*overflow:visible !important;*/
 	height:auto!important; 

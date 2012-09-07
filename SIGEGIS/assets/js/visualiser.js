@@ -152,15 +152,15 @@ $(document).ready(function() {
 				});
 
 
-if(! $.getUrlVar("type"))	{$("#left-sidebar input, #left-sidebar button, #zone_des_filtres select").attr("disabled","disabled");}
-else $("#help").remove();
+if(! $.getUrlVar("type"))	{$("#left-sidebar input, #left-sidebar button, #zone_des_filtres select").attr("disabled","disabled");$("#chartdiv1").hide();}
+else {$("#help").remove(); $("#chartdiv1").show();}
 
 	
-if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
-if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide();$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show();$("#bar").attr("checked","checked");} //else $("#chartdiv1").hide();
+if($.getUrlVar("map")==="no") {$("#gbox_list").hide();} else {$("#gbox_list").show();}
+if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide();$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show();$("#bar").attr("checked","checked");}
 if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");} else $("#chartdiv2").hide();
 if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")==="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
-
+//else if($.getUrlVar("type"))$("#chartdiv1").show();
 // Prise en compte des paramètres d'affichage (Bar,Pie,Map,Grid)   
 $("#types_affichage input").on( "change",function() {
 	var idmode;
@@ -254,7 +254,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 	    colNames:['Nom du candidat','Nombre de voix'],
 	    colModel :[ 
 	      {name:'nomCandidat', index:'nomCandidat',search:true}, 
-	      {name:'nbVoix', index:'nbVoix', width:80,formatter:'currency', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}}  
+	      {name:'nbVoix', index:'nbVoix', width:80,formatter:'number', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}}  
 	    ],
 	    pager: '#pager',
 	    rowNum:20,
@@ -469,7 +469,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		});
 		
 		$('#analyser').click(function() {
-			window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser?type=presidentielle&niveau=globaux";			
+			window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser";			
 		});
 				
 });

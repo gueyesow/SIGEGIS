@@ -53,7 +53,10 @@ class Analyse_model extends CI_Model{
 			elseif ($niveau=="pays") $parametres3="pays.idPays";
 			else $parametres3="null";
 				
-			$colonnesBDD=array("rp.idSource","election.tour",$parametres3);
+			$colonnesBDD=array();
+			$colonnesBDD[]="rp.idSource";
+			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			$colonnesBDD[]=$parametres3;
 			
 			$couleur=0;
 			
@@ -336,7 +339,10 @@ class Analyse_model extends CI_Model{
 			elseif ($niveau=="pays") $parametres3="pays.idPays";
 			else $parametres3="null";
 
-			$colonnesBDD=array("rp.idSource","election.tour",$parametres3);
+			$colonnesBDD=array();
+			$colonnesBDD[]="rp.idSource";
+			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			$colonnesBDD[]=$parametres3;		
 
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
@@ -557,7 +563,11 @@ class Analyse_model extends CI_Model{
 			elseif ($niveau=="pays") $parametres3="pays.nomPays";
 			else $parametres3="null";
 
-			$colonnesBDD=array("rp.idSource","election.tour","YEAR(election.dateElection)","election.typeElection");
+			$colonnesBDD=array();
+			$colonnesBDD[]="rp.idSource";
+			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			$colonnesBDD[]="YEAR(election.dateElection)";
+			$colonnesBDD[]="election.typeElection";
 						
 			
 			foreach ($listeCandidats as $leCandidat){
@@ -885,7 +895,11 @@ class Analyse_model extends CI_Model{
 			elseif ($niveau=="pays") $parametres3="pays.nomPays";
 			else $parametres3="null";
 
-			$colonnesBDD=array("rp.idSource","election.tour","YEAR(election.dateElection)","election.typeElection");
+			$colonnesBDD=array();
+			$colonnesBDD[]="rp.idSource";
+			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			$colonnesBDD[]="YEAR(election.dateElection)";
+			$colonnesBDD[]="election.typeElection";
 
 			foreach ($listeCandidats as $leCandidat){
 

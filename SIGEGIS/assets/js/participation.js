@@ -5,7 +5,7 @@
 
 $(document).ready(function() {
 	
-chart4 = new Highcharts.Chart({
+chart1 = new Highcharts.Chart({
     chart: {
         renderTo: 'chartdiv1',
         height: 560
@@ -138,16 +138,16 @@ function refreshComboChart(json){
 		var i=0;
 		
 		var series=JSON.parse(json);			
-		chart4.setTitle({text: series[0].titre},{text: series[0].sous_titre});		
-		if ( chart4.series.length > 0 ) {			
-			for(i=0;i<chart4.series.length;i++) {chart4.series[i].setData(series[i+1].data,false);}			
+		chart1.setTitle({text: series[0].titre},{text: series[0].sous_titre});		
+		if ( chart1.series.length > 0 ) {			
+			for(i=0;i<chart1.series.length;i++) {chart1.series[i].setData(series[i+1].data,false);}			
 		}		
 		else	
 		{
 			for(i=0;i<series.length;i++)
-				chart4.addSeries(series[i+1],false);
+				chart1.addSeries(series[i+1],false);
 		}	
-		chart4.redraw();
+		chart1.redraw();
 	}
 	
 
@@ -156,6 +156,7 @@ if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide("animated");$("#bar").remove
 if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");}
 if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")==="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
 $("#chartdiv2").hide();
+$("#bar, #pie").attr("disabled","disabled");
 
 $("#types_affichage input").on( "change",function() {
 	var idmode;
@@ -452,14 +453,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		};
 
 		$('#pdf').click(function() {
-		    /*if ($("#bar").attr("checked")==="checked" && $("#pie").attr("checked")==="checked") Highcharts.exportCharts([chart1,chart2,chart3],{
-		    	url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php',type: 'application/pdf'});
-			else if ($("#bar").attr("checked")==="checked" || $("#pie").attr("checked")==="checked"){
-				if($("#bar").attr("checked")==="checked") Highcharts.exportCharts([chart1],{type: 'application/pdf'});
-				else Highcharts.exportCharts([chart2,chart3],{type: 'application/pdf'});				
-			}
-			else return;*/
-			Highcharts.exportCharts([chart4],{type: 'application/pdf'});
+			Highcharts.exportCharts([chart1],{type: 'application/pdf'});
 		});
 		
 		$('#menu a').each(function(){
@@ -477,6 +471,6 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					slideSmoothly("#chartdiv2");
 				}    
 			});
-		});	
-				
+		});					
 });
+$("#bar, #pie").attr("disabled","disabled");

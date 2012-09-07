@@ -199,6 +199,9 @@ class Main_controller extends CI_Controller {
 	
 	public function exportToCSVAnalyseLocalite(){
 		$this->mon_filtre->exportToCSVLocalite();
+	}
+	public function test(){
+		$this->load->view("clone");
 	}		
 }
 

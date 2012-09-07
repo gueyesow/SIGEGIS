@@ -27,10 +27,10 @@
 		<ul>
 			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>
 			<li><a href="<?php echo site_url("main_controller/administration");?>">Administration</a></li>
-			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]);?>">Résultats globaux</a></li>
+			<!-- li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]);?>">Résultats globaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=reg");?>">Résultats régionaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=dep");?>">Résultats départementaux</a></li>
-			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=cen");?>">Résultats par centre</a></li>
+			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=cen");?>">Résultats par centre</a></li-->
 		</ul>
 	</div>
 	
@@ -44,11 +44,18 @@
 					<form action="" method="post">
 						<fieldset id="types_elections">
 							<legend>Type d'élection à représenter</legend>
-							<input id="presidentielle" type="radio" name="radio" />
+							<input id="presidentielle" type="radio" name="radio" checked="checked" />
 							<label for="presidentielle">Election présidentielle</label><br /> 
 							<input id="legislative" type="radio" name="radio" />
 							<label for="legislative">Election législative</label><br /> 
-							<input id="locale" type="radio" name="radio2" /><label for="locale">Election locale</label><br />
+							<input id="locale" type="radio" name="radio" /><label for="locale">Election locale</label><br />
+							<fieldset id='elections_locales'><legend>Elections locales</legend>
+								<input id='municipale' type='radio' name='radio_locale' checked='checked' />
+								<label for='municipale'>Municipales</label><br />
+								<input id='regionale' type='radio' name='radio_locale' />
+								<label for='regionale'>Régionales</label><br />
+								<input id='rurale' type='radio' name='radio_locale' /><label for='rurale'>Rurales</label>
+							</fieldset>
 						</fieldset>
 
 						<fieldset id="types_affichage">
@@ -74,6 +81,7 @@
 				<br />
 
 				<button id="ouvrir" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Ouvrir l'utilitaire d'analyse</button>
+				<button id="save" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Sauvegarder et ajouter un nouveau graphique</button>
 				
 				<div id="dialog_zone_des_options"  title="Utilitaire SIGEGIS">
 				<div class="zone_des_options_analyse">
@@ -102,10 +110,8 @@
 									
 									echo $this->mon_filtre->form_dropdown2("ana_localite","ana_localite",null,$options,"Agréger par");
 
-									if($_GET["type"]=="presidentielle"){
-										$options=array("premier_tour"=>"Premier tour","second_tour"=>"Second tour");
-										echo $this->mon_filtre->form_dropdown2("ana_tour","ana_tour",null,$options,"Tour");
-									}
+									$options=array("premier_tour"=>"Premier tour","second_tour"=>"Second tour");
+									echo $this->mon_filtre->form_dropdown2("ana_tour","ana_tour",null,$options,"Tour");
 
 									echo $this->mon_filtre->form_dropdown("localite","localite",null,"Lieu");
 									?>
@@ -214,7 +220,7 @@
 			</td>
 
 			<td id="content">
-				<div id="right_content">
+				<div>
 				
 					<h1 id="titre"></h1>
 					
@@ -247,7 +253,11 @@
 						<table id="list"></table>
 						<div id="pager"></div>
 					</div>
-
+					<div id="theGrid2">
+						<table id="list2"></table>
+						<div id="pager2"></div>
+					</div>
+					<br /><br />
 					<div id="chartdiv1" class="diagrammes"></div>
 					<div id="chartdiv2" class="diagrammes"></div>
 
@@ -265,7 +275,7 @@
 	<script src="<?php echo js_url("base");?>" type="text/javascript"></script>
 	<script src="<?php echo js_url("init_filtres");?>" type="text/javascript"></script>
 	<script type="text/javascript">	
-	$("#pie,#grid,#bar,#map").attr("disabled","disabled");
+	
 	$("#ana_localite,#ana_localite2").val("region");
 	$.ajax({            
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getDecoupages',            			         			   
@@ -293,7 +303,7 @@
 	{
 		
 		$.ajax({            // DATES 
-			url: "http://www.sigegis.ugb-edu.com/main_controller/getDatesElections?typeElection="+$.getUrlVar("type")+"&anneeDecoupage="+$("#ana_decoupage_localite").val(),           			         			      
+			url: "http://www.sigegis.ugb-edu.com/main_controller/getDatesElections?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage_localite").val(),           			         			      
 			dataType: 'json',      
 			success: function(json) {
 				$elections.empty();
@@ -316,7 +326,7 @@
 		else if ($(this).val()==="departement") { methode="getDepartements";parametres_analyse+="&niveau=dep";}
 		else if ($(this).val()==="centre") { methode="getCentres";parametres_analyse+="&niveau=cen";}
 		
-		$url='http://www.sigegis.ugb-edu.com/main_controller/'+methode+"?typeElection="+$.getUrlVar("type")+"&anneeDecoupage="+$("#ana_decoupage").val();
+		$url='http://www.sigegis.ugb-edu.com/main_controller/'+methode+"?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage").val();
 	
 		$.ajax({        							
 			url: $url,    
@@ -353,7 +363,7 @@
 		if ($("select[name*=ana_localite]").val()==="departement") { methode="getDepartements";}
 		if ($("select[name*=ana_localite]").val()==="centre") { methode="getCentres";}
 		$.ajax({            // DATES 
-			url: "http://www.sigegis.ugb-edu.com/main_controller/getDatesElections?typeElection="+$.getUrlVar("type")+"&anneeDecoupage="+$("#ana_decoupage").val(),           			         			      
+			url: "http://www.sigegis.ugb-edu.com/main_controller/getDatesElections?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage").val(),           			         			      
 			dataType: 'json',      
 			success: function(json) {
 				$("#choixmultipleA").empty();
@@ -374,7 +384,7 @@
 					if(annees=="") annees+=$(this).text(); else annees+=","+$(this).val();
 				});
 				
-				parametres_analyse="param="+param+"&annees="+annees+"&typeElection="+$.getUrlVar("type");
+				parametres_analyse="param="+param+"&annees="+annees+"&typeElection="+typeElection;
 	
 				if ($("select[name*=ana_localite]").val()==="pays") { parametres_analyse+="&niveau=pays"; }
 				if ($("select[name*=ana_localite]").val()==="region") { parametres_analyse+="&niveau=reg";}
@@ -401,7 +411,7 @@
 	{
 			$("#choixCandidatLocaliteA,#choixCandidatLocaliteB").empty();
 			param="";localites="";
-			param+=$sources.val()+","+$tours.val()+","+$elections.val()+","+$.getUrlVar("type");
+			param+=$sources.val()+","+$tours.val()+","+$elections.val()+","+typeElection;
 			
 			$("#choixMultipleLocalitesB").children().each(function(){
 				if(localites=="") localites+=$(this).val(); else localites+=","+$(this).val();

@@ -1,4 +1,4 @@
-$("input[id=valider],input[id=validerLocalite]").button();
+$("input[id*='valider'],input[id*='validerLocalite']").button();
 
 $('#menu li a').hover(   
 		  
@@ -28,6 +28,7 @@ function() {
 	$(".zone_des_options").addClass("ui-state-default ui-corner-all");
 	
 	$("#accordion").accordion({ header: "h3" });
+	$("#accordion2").accordion({ header: "h3" });
 
 	$("#dialog_zone_des_options").dialog({
 		autoOpen: false,
@@ -40,14 +41,84 @@ function() {
 		},
 		closeOnEscape: true ,
 		resizable: false,
-		//open: function(event,ui){$("#valider,#validerLocalite").attr("disabled","disabled");},
 		beforeClose: function(event, ui) { $("#ouvrir").show(); }
 	});
-
+	
 	
 	$("#ouvrir").on("click",function(){
 		$("#dialog_zone_des_options").dialog('open');
-		$("#ouvrir").hide();		
+		$("#ouvrir").hide();
+		$(".zone_des_options *:not(*[id='bar'],*[id='pie'])").removeAttr("disabled");
+		typeElection=$(".zone_des_options input:checked:not(input[id=locale])").attr("id");
+	});
+	
+	$("#save").on("click",function(){
+		save=true;
+		if(save) balise="chartdiv2";
+		else balise="chartdiv1";
+		$("#chartdiv2").show();
+		//alert("Sauvegarde terminée");
+		chart1 = new Highcharts.Chart({
+			chart: {
+			renderTo: balise,
+			type: 'column'
+			},
+			title: {
+			text: ''
+			},
+			subtitle: {
+			text: ''
+			},
+			xAxis: {
+			categories: [],
+
+			labels: {
+			rotation: -40,
+			align: 'right',
+			style: {
+			width:20,
+			fontSize: '12px',
+			fontFamily: 'Verdana, sans-serif'
+			}
+			}
+			},
+			yAxis: {
+			min: 0,
+			title: {
+			text: 'NbVoix'
+			}
+			},
+			exporting: {
+			url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+			},
+			legend: {
+			layout: 'vertical',
+			backgroundColor: '#FFFFFF',
+			align: 'right',
+			verticalAlign: 'top',
+			floating: true,
+			shadow: true
+			},
+			tooltip: {
+			formatter: function() {
+			return  this.y;
+			}
+			},
+
+			plotOptions: {
+			column: {
+			pointPadding: 0.2,
+			borderWidth: 0,
+			dataLabels: {
+			enabled: true
+			}
+			}
+			},
+			credits: {
+			enabled: false
+			},
+			series:[]
+			});
 	});
 	
 	$(".boutons").button({

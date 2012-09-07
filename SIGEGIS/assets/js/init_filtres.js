@@ -62,9 +62,9 @@
 							
 							if (! $("#ana_decoupage").length) $("#titre").text("Election "+titres[type]+" de "+$elections.val()+": résultats "+niveau);
 							
-							$('#menu-css ul li  a').each(function(){								
+							$('#menu ul li  a').each(function(){								
 									
-							if( $(this).text()!=$('#menu-css a:first').text()  && $(this).text()!=$('#menu-css a:last').text())
+							if( $(this).text()!=$('#menu a:first').text()  && $(this).text()!=$('#menu a:last').text())
 								if( $(this).attr("href").indexOf("year")===-1 )	
 								{
 									$(this).attr("href",$(this).attr("href")+"&year="+$elections.val());
@@ -76,7 +76,7 @@
 								url=$(this).attr("href");
 								year="";chaine="";
 																
-								if( $(this).text()!=$('#menu-css ul li a:first').text() && $(this).text()!=$('#menu-css ul li a:last').text()){
+								if( $(this).text()!=$('#menu ul li a:first').text() && $(this).text()!=$('#menu ul li a:last').text()){
 									if( $.getUrlVar("map") && $.getUrlVar("grid") && $.getUrlVar("pie") && $.getUrlVar("bar") ) 
 										{url+="&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid");}
 

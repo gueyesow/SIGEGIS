@@ -3,33 +3,37 @@
  * Description: Gestion des filtres de la partie analyse 
  */
 	
-	$("#chartdiv1").hide();
+
+ 
 	/**
 	 * Ajouter en paramètre la source,le tour à représenter
 	 */
-	function putGrid(url){
-	if ($("#list").text()!="") $("#list").setGridParam({url: url,page:1}).trigger("reloadGrid");
+
+	function putGrid(url){	
+		
+		if(save) {balise="#list2";pager="#pager2";}
+		else {balise="#list";;pager="#pager";}
+		
+	if ($(balise).text()!="") $(balise).setGridParam({url: url,page:1}).trigger("reloadGrid");
 	else{ 
-	$("#list").jqGrid({		
+	$(balise).jqGrid({		
 		autowidth:true,
 		url: url,
 	    datatype: 'xml',
 	    mtype: 'GET',
 	    colNames:['Nom du candidat','Lieu de vote','Année','Nombre de voix'],
 	    colModel :[ 
-	      {name:'nomCandidat', index:'nomCandidat',search:true},
+	      {name:'nomCandidat', index:'nomCandidat'},
 	      {name:'lieuDeVote', index:'lieuDeVote', width:80},
 	      {name:'annee', index:'annee', width:80},
-	      {name:'nbVoix', index:'nbVoix', width:80}  
+	      {name:'nbVoix', index:'nbVoix', width:80, formatter:'number', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}}  
 	    ],
-	    pager: '#pager',
+	    pager: pager,
 	    rowNum:20,
-	    rowList:[20,30,50,100,200],
-	    sortname: 'nbVoix',
-	    sortorder: 'desc',
+	    rowList:[20,30,50,100,200],	    
 	    viewrecords: true,
 	    gridview: true,
-	}).navGrid("#pager",{edit:false,add:false,del:false,search:false});
+	}).navGrid(pager,{edit:false,add:false,del:false,search:false});
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 	}
 	}
@@ -116,13 +120,11 @@ $("#valider").on("click",function(event) {
 	listeCandidats="";
 	paramBis=$sources.val();
 
-	if($.getUrlVar("type")==="presidentielle") paramBis+=","+$("#ana_tour").val();
+	if(typeElection==="presidentielle") paramBis+=","+$("#ana_tour").val();
 	paramBis+=","+$("#localite").val();
 	
 	$("#theGrid,#chartdiv1").show();
 	$("#help").hide();
-	
-	//$("#list").setGridWidth(906);
 	
 	$("#choixmultipleB").children().each(function() {
 		if(listeAnnees=="") listeAnnees+=$(this).text();
@@ -143,13 +145,14 @@ $("#valider").on("click",function(event) {
 	
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserAnnee',    
-		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),	     
+		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
 			refreshBarChart(json);
 		}    
 	});
-	putGrid("http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserAnnee?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"));
-	//$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserAnnee?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");	
+	
+	putGrid("http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserAnnee?niveau=dep&param="+paramBis+"&typeElection="+typeElection);
+	
 });
 
 //-------------------------------------------------//
@@ -166,9 +169,9 @@ $("#validerLocalite").on("click",function(event) {
 	
 	paramBis=$sources.val();	
 	
-	if($.getUrlVar("type")==="presidentielle") paramBis+=","+$tours.val();
+	if(typeElection==="presidentielle") paramBis+=","+$tours.val();
 	
-	paramBis+=","+$elections.val()+","+$.getUrlVar("type");
+	paramBis+=","+$elections.val()+","+typeElection;
 		
 	$("#theGrid,#chartdiv1").show();
 	$("#help").hide();
@@ -192,14 +195,15 @@ $("#validerLocalite").on("click",function(event) {
 		
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserLocalite',    
-		data:'param='+paramBis+"&typeElection="+$.getUrlVar("type"),	     
+		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
 			refreshBarChart(json);										
 		}    
 	});
 	
-	putGrid("http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserLocalite?niveau=dep&param="+paramBis+"&typeElection="+$.getUrlVar("type"));	
+	putGrid("http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserLocalite?niveau=dep&param="+paramBis+"&typeElection="+typeElection);	
 });
+
 
 // Efface les champs de sélection multiple 
 $("#choixmultipleB,#choixCandidatB,#choixCandidatLocaliteA,#choixCandidatLocaliteB").children().each(function(){$(this).removeAttr("selected");});
@@ -207,5 +211,4 @@ $("#choixmultipleB,#choixCandidatB,#choixCandidatLocaliteA,#choixCandidatLocalit
 $("#accordion_item2 select[id*='ana']").on("change",function(){
 	$("#choixMultipleLocalitesB,#choixCandidatLocaliteA,#choixCandidatLocaliteB").empty();
 	$pays.change();
-	
 });

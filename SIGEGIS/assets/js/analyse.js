@@ -4,6 +4,7 @@
  */
 
 $(document).ready(function() {		
+	$(".zone_des_options *").attr("disabled","disabled");
 	
 	chart1 = new Highcharts.Chart({
 	chart: {
@@ -67,70 +68,112 @@ $(document).ready(function() {
 	series:[]
 	});		
 	
-	if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
-	if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
-	if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");}
-	if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")==="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
 	
 	/**
 	 * CHOIX DU MODE DE REPRESENTATION DES DONNEES
 	 */
 	
-	$("#types_affichage input").on( "change",function() {
-		i=0;var idmode;
-	
-		$("#types_affichage input").each(function(){
-			idmode=""+$(this).attr("id");
-			valeur=($(this).attr("checked")==="checked")?"yes":"no";		
-			mode+="&"+idmode+"="+valeur;			
-		});
-				
-		if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
-					
-		/*$.ajax({        							
-			url: 'http://www.sigegis.ugb-edu.com/main_controller/analyser',    
-			data:"type="+$.getUrlVar("type")+mode, 					     
-			success: function(json) {
-				if( $("#types_affichage input:eq(1)").attr("checked")!="checked" ) $("#chartdiv1").hide();	else $("#chartdiv1").show();
-				if( $("#types_affichage input:eq(2)").attr("checked")!="checked" ) $("#chartdiv2").hide();	else $("#chartdiv2").show();
-				if( $("#types_affichage input:eq(3)").attr("checked")!="checked" ) $("#theGrid").hide();	else $("#theGrid").show();
-			}    
-		});*/
+	$("#types_affichage input").on( "change",function() {									
+		if(!$("#bar")[0].checked) {$("*[id*='chartdiv']").hide("animated");$("#bar").removeAttr("checked");} else  if($("#bar")[0].checked) {$("*[id*='chartdiv']").show("animated");$("#bar").attr("checked","checked");}
+		if(!$("#grid")[0].checked) {$("*[id*='theGrid']").hide("animated");$("#grid").removeAttr("checked");} else  if($("#grid")[0].checked) {$("*[id*='theGrid']").show("animated");$("#grid").attr("checked","checked");}
 	});
+	
 	
 	/**
 	 * REDEFINITION DES VALEURS DES BOUTONS RADIOS (SELECTIONNER L'OPTION D'AFFICHAGE CHOISIE)
-	 */
-	$.each(types_election,function(){   
-		if ($.getUrlVar("type")===""+this){
-			$("#"+this).attr("checked","checked");
-			if(""+this==="locale"||""+this==="municipale"||""+this==="regionale"||""+this==="rurale") {
-				$("#types_elections").append(
-					"<fieldset><legend>Elections locales</legend>"+
-					"<input id='municipale' type='radio' name='radio' checked='checked' /><label for='municipale'>Municipales</label><br />"+
-					"<input id='regionale' type='radio' name='radio' /><label for='regionale'>Régionales</label><br />"+
-					"<input id='rurale' type='radio' name='radio' /><label for='rurale'>Rurales</label></fieldset>");
-				$("#locale").attr("checked","checked");
-			}
-		}
+	 */	
+	$("#types_elections input").on("click",function(){
+		if ($("#locale")[0].checked){
+			$("#elections_locales").show("animated");
+		} else $("#elections_locales").hide("animated");
+		//------------------ RELOAD ALL --------------------//
+		$("*[id*='choix']").empty();
+		Annees();
+		$("select[name*=ana_localite]").change();
+		$pays.change();
+		//------------------ 	END   	--------------------//
 	});
+	if (!$("#locale")[0].checked) $("#elections_locales").hide("animated");
+	
+	$('#imprimer').on("click",function(){
+		window.print();
+	});
+
+	$('#csv').on("click",function(){
+		window.location="http://www.sigegis.ugb-edu.com/main_controller/exportToCSVAnalyse?param="+param+"&typeElection="+typeElection+"&sord="+$("#list").jqGrid('getGridParam','sortorder');
+	});
+	
 	/**
-	 * RECHARGE DE LA PAGE A CHAQUE CHANGEMENT DU TYPE D'ELECTION A REPRESENTER
+	 * Create a global getSVG method that takes an array of charts as an argument
 	 */
-	$("#types_elections input").on( "change",function() {
-		 var idelection=""+$(this).attr("id");
-		$.each(types_election,function(){		
-			if (idelection===""+this ){
-				$("#types_affichage input").each(function(){
-					idmode=""+$(this).attr("id");
-					valeur=($(this).attr("checked")==="checked")?"yes":"no";		
-					mode+="&"+idmode+"="+valeur;			
-				});
-				if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
-				if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser?type="+this+mode;
-				else window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser?type="+this;
-			}
-		});
-	});	
+	Highcharts.getSVG = function(charts) {
+	    var svgArr = [],
+	        top = 0,
+	        width = 0;
+
+	    $.each(charts, function(i, chart) {
+	        var svg = chart.getSVG();
+	        svg = svg.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+	        svg = svg.replace('</svg>', '</g>');
+
+	        top += chart.chartHeight;
+	        width = Math.max(width, chart.chartWidth);
+
+	        svgArr.push(svg);
+	    });
+
+	    return '<svg height="'+ top +'" width="' + width + '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
+	};
+
+	/**
+	 * Create a global exportCharts method that takes an array of charts as an argument,
+	 * and exporting options as the second argument
+	 */
+	Highcharts.exportCharts = function(charts, options) {
+	    var form;
+	    svg = Highcharts.getSVG(charts);
+
+	    // merge the options
+	    options = Highcharts.merge(Highcharts.getOptions().exporting, options);
+
+	    // create the form
+	    form = Highcharts.createElement('form', {
+	        method: 'post',
+	        action: options.url
+	    }, {
+	        display: 'none'
+	    }, document.body);
+
+	    // add the values
+	    Highcharts.each(['filename', 'type', 'width', 'svg'], function(name) {
+	        Highcharts.createElement('input', {
+	            type: 'hidden',
+	            name: name,
+	            value: {
+	                filename: options.filename || 'chart',
+	                type: options.type,
+	                width: options.width,
+	                svg: svg
+	            }[name]
+	        }, null, form);
+	    });
+
+	    form.submit();
+
+	    form.parentNode.removeChild(form);
+	};
+
+	$('#pdf').click(function() {
+		/*if ($("#bar").attr("checked")==="checked" && $("#pie").attr("checked")==="checked") Highcharts.exportCharts([chart1,chart2],{type: 'application/pdf'});
+		else if ($("#bar").attr("checked")==="checked" || $("#pie").attr("checked")==="checked"){
+			if($("#bar").attr("checked")==="checked") theCharts=chart1;
+			else theCharts=chart2;
+			Highcharts.exportCharts([theCharts],{type: 'application/pdf'});
+		}
+		else return;*/
+		Highcharts.exportCharts([chart1],{type: 'application/pdf'});
+	});
+	
+	if(!$("#bar")[0].checked || $("#bar")[0].disabled) {$("*[id*='chartdiv']").hide("animated");}
 
 });
