@@ -25,10 +25,10 @@ class Analyse_model extends CI_Model{
 		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
 		else return;
 		
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection;		
+		if ($typeElection=="presidentielle") $titreElection="présidentielle(s)";
+		elseif ($typeElection=="legislative") $titreElection="législative(s)";
+		elseif ($typeElection=="regionale") $titreElection="régionale(s)";
+		else $titreElection=$typeElection."(s)";		
 
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
@@ -109,7 +109,7 @@ class Analyse_model extends CI_Model{
 		// ----------------------------------------	//
 		//			TITRES DES DIAGRAMMES			//
 		// ----------------------------------------	//
-		$titre_niveau="Résultats ";
+		$titre_niveau="Election(s) $titreElection ".htmlentities($_GET['listeAnnees']).": résultats ";
 		if ($niveau=="cen") {
 			$titre_niveau.="par centre ";$sous_titre="Centre: ";
 		}
@@ -621,22 +621,23 @@ class Analyse_model extends CI_Model{
 		// ----------------------------------------	//
 		//			TITRES DES DIAGRAMMES			//
 		// ----------------------------------------	//
-		$titre_niveau="Niveau d'agrégation des données";
+		$titre_niveau="Election $titreElection ".htmlentities($params[2]);
+		$sous_titre="Niveau d'agrégation des données: ";
 		if ($niveau=="cen")
 		{
-			$sous_titre="Par centre";
+			$sous_titre.="par centre";
 		}
 		elseif ($niveau=="dep")
 		{
-			$sous_titre="Par département";
+			$sous_titre.="par département";
 		}
 		elseif($niveau=="reg")
 		{
-			$sous_titre="Par région";
+			$sous_titre.="par région";
 		}
 		elseif($niveau=="pays")
 		{
-			$sous_titre="Par pays";
+			$sous_titre.="par pays";
 		}
 		else  $titre_niveau.="Global";
 
@@ -763,19 +764,19 @@ class Analyse_model extends CI_Model{
 		$titre_niveau="Niveau d'agrégation des données";
 		if ($niveau=="cen")
 		{
-			$sous_titre="Par centre";
+			$sous_titre="par centre";
 		}
 		elseif ($niveau=="dep")
 		{
-			$sous_titre="Par département";
+			$sous_titre="par département";
 		}
 		elseif($niveau=="reg")
 		{
-			$sous_titre="Par région";
+			$sous_titre="par région";
 		}
 		elseif($niveau=="pays")
 		{
-			$sous_titre="Par pays";
+			$sous_titre="par pays";
 		}
 		else  $titre_niveau.="Global";
 

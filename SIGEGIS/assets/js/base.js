@@ -37,6 +37,7 @@ function slideSmoothly(id){
 	var chart2;
 	var chart3;
 	var chart4;
+	var lastPressedButton=null;
 	var typeElection="presidentielle";
 	var save=false; // Sauvegarde des informations ( PARTIE ANALYSE )
 	var parametres_url="";

@@ -12,7 +12,7 @@
 	function putGrid(url){	
 		
 		if(save) {balise="#list2";pager="#pager2";}
-		else {balise="#list";;pager="#pager";}
+		else {balise="#list";pager="#pager";}
 		
 	if ($(balise).text()!="") $(balise).setGridParam({url: url,page:1}).trigger("reloadGrid");
 	else{ 
@@ -57,7 +57,49 @@ function refreshBarChart(json){
 		}
 		
 		chart1.redraw();
+}
+
+function refreshLineChart(json){
+	
+	var i=0;
+	
+	var series=JSON.parse(json);			
+	chart2.setTitle({text: series[0].titre},{text: series[0].sous_titre});
+	chart2.xAxis[0].setCategories(series[0].categories);
+	if ( chart2.series.length > 0 ) {
+		a_supprimer=chart2.series.length;
+		for(i=0;i<a_supprimer;i++) {				
+			chart2.series[0].remove();							
+		}
 	}
+					
+	for(i=0;i<series[1].length;i++){				
+		chart2.addSeries(series[1][i],false);
+	}
+	
+	chart2.redraw();
+}
+
+function refreshChart(theChart,json){
+	
+	var i=0;
+	
+	var series=JSON.parse(json);			
+	theChart.setTitle({text: series[0].titre},{text: series[0].sous_titre});
+	theChart.xAxis[0].setCategories(series[0].categories);
+	if ( theChart.series.length > 0 ) {
+		a_supprimer=theChart.series.length;
+		for(i=0;i<a_supprimer;i++) {				
+			theChart.series[0].remove();							
+		}
+	}
+					
+	for(i=0;i<series[1].length;i++){				
+		theChart.addSeries(series[1][i],false);
+	}
+	
+	theChart.redraw();
+}
 
 
 // Boutons du SwapList des années pour l'analyse suivant une année 	
@@ -112,6 +154,8 @@ $(".move").button();
 //	Bouton VALIDER de l'analyse suivant une année  //
 //-------------------------------------------------//
 $("#valider").on("click",function(event) {
+	lastPressedButton="valider";
+	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 	$("#grid,#bar,#map").removeAttr("disabled");
 	$("#dialog_zone_des_options").dialog('close');
@@ -123,7 +167,7 @@ $("#valider").on("click",function(event) {
 	if(typeElection==="presidentielle") paramBis+=","+$("#ana_tour").val();
 	paramBis+=","+$("#localite").val();
 	
-	$("#theGrid,#chartdiv1").show();
+	if ($("#bar")[0].checked) $("#chartdiv1").show();
 	$("#help").hide();
 	
 	$("#choixmultipleB").children().each(function() {
@@ -148,6 +192,8 @@ $("#valider").on("click",function(event) {
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
 			refreshBarChart(json);
+			if($("#line")[0].checked) refreshLineChart(json);
+			if($("#valeurs_relatives")[0].checked) {refreshChart(chart3,json);}
 		}    
 	});
 	
@@ -159,7 +205,7 @@ $("#valider").on("click",function(event) {
 //Bouton VALIDER de l'analyse suivant une localité  //
 //-------------------------------------------------//
 $("#validerLocalite").on("click",function(event) {
-
+	lastPressedButton="validerLocalite";
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 	$("#grid,#bar,#map").removeAttr("disabled");
 	$("#dialog_zone_des_options").dialog('close');
@@ -173,7 +219,7 @@ $("#validerLocalite").on("click",function(event) {
 	
 	paramBis+=","+$elections.val()+","+typeElection;
 		
-	$("#theGrid,#chartdiv1").show();
+	if ($("#bar")[0].checked) $("#chartdiv1").show();
 	$("#help").hide();
 	
 	$("#choixMultipleLocalitesB").children().each(function() {
@@ -197,7 +243,9 @@ $("#validerLocalite").on("click",function(event) {
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserLocalite',    
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
-			refreshBarChart(json);										
+			refreshBarChart(json);	
+			if($("#line")[0].checked) refreshLineChart(json);
+			if($("#valeurs_relatives")[0].checked) {refreshChart(chart3,json);}
 		}    
 	});
 	

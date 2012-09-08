@@ -73,13 +73,13 @@
 							<label for="grid">Tableau</label>
 						</fieldset>
 
-						<fieldset>
+						<!--fieldset>
 							<legend>Format des données</legend>
 							<input id="valeur_absolue" type="radio" name="format"
 								checked="checked" /><label for="valeur_absolue">Valeurs absolues</label><br />
 							<input id="valeur_relative" type="radio" name="format" /><label
 								for="valeur_relative">Valeurs relatives</label><br />
-						</fieldset>
+						</fieldset-->
 					</form>
 				</div> <br> <br>
 				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img height="58px" src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>

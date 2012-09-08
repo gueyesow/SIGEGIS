@@ -54,9 +54,9 @@ function() {
 	
 	$("#save").on("click",function(){
 		save=true;
-		if(save) balise="chartdiv2";
-		else balise="chartdiv1";
-		$("#chartdiv2").show();
+		if(save) {balise="chartdiv2";if($("#line")[0].checked) baliseLine="chartdiv4";}
+		else {balise="chartdiv1";if($("#line")[0].checked) baliseLine="chartdiv3";}
+		$("#chartdiv2,#chartdiv4").show();
 		//alert("Sauvegarde terminée");
 		chart1 = new Highcharts.Chart({
 			chart: {
@@ -101,7 +101,69 @@ function() {
 			},
 			tooltip: {
 			formatter: function() {
-			return  this.y;
+			return  "<b>"+this.series.name+":</b> "+this.y;
+			}
+			},
+
+			plotOptions: {
+			column: {
+			pointPadding: 0.2,
+			borderWidth: 0,
+			dataLabels: {
+			enabled: true
+			}
+			}
+			},
+			credits: {
+			enabled: false
+			},
+			series:[]
+			});
+		
+		chart2 = new Highcharts.Chart({
+			chart: {
+			renderTo: baliseLine,
+			type: 'line'
+			},
+			title: {
+			text: ''
+			},
+			subtitle: {
+			text: ''
+			},
+			xAxis: {
+			categories: [],
+
+			labels: {
+			rotation: -40,
+			align: 'right',
+			style: {
+			width:20,
+			fontSize: '12px',
+			fontFamily: 'Verdana, sans-serif'
+			}
+			}
+			},
+			yAxis: {
+			min: 0,
+			title: {
+			text: 'NbVoix'
+			}
+			},
+			exporting: {
+			url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+			},
+			legend: {
+			layout: 'vertical',
+			backgroundColor: '#FFFFFF',
+			align: 'right',
+			verticalAlign: 'top',
+			floating: true,
+			shadow: true
+			},
+			tooltip: {
+			formatter: function() {
+				return  "<b>"+this.series.name+":</b> "+this.y;
 			}
 			},
 

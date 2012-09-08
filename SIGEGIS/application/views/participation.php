@@ -71,15 +71,7 @@
 							<label for="pie">Diagramme à secteurs</label><br /> 
 							<input type="checkbox" id="grid" name="grid" checked="checked" />
 							<label for="grid">Tableau</label>
-						</fieldset>
-
-						<fieldset>
-							<legend>Format des données</legend>
-							<input id="valeur_absolue" type="radio" name="format" checked="checked" />
-							<label for="valeur_absolue">Valeurs absolues</label><br />
-							<input id="valeur_relative" type="radio" name="format" />
-							<label for="valeur_relative">Valeurs relatives</label><br />
-						</fieldset>
+						</fieldset>						
 					</form>
 				</div> <br> <br>
 

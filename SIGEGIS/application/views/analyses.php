@@ -26,8 +26,8 @@
 	<div id="menu">
 		<ul>
 			<li><a class="actif" href="<?php echo site_url();?>">Accueil</a></li>
-			<li><a href="<?php echo site_url("main_controller/administration");?>">Administration</a></li>
-			<!-- li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]);?>">Résultats globaux</a></li>
+			<!-- li><a href="<?php echo site_url("main_controller/administration");?>">Administration</a></li>
+			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]);?>">Résultats globaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=reg");?>">Résultats régionaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=dep");?>">Résultats départementaux</a></li>
 			<li><a href="<?php echo site_url("main_controller/visualiser?type=".$_GET["type"]."&amp;niveau=cen");?>">Résultats par centre</a></li-->
@@ -65,16 +65,18 @@
 							<label for="bar">Diagramme en colonnes</label><br /> 
 							<input type="checkbox" id="pie" name="pie" />
 							<label for="pie">Diagramme à secteurs</label><br /> 
+							<input type="checkbox" id="line" name="line" />
+							<label for="line">Courbes</label><br />
 							<input type="checkbox" id="grid" name="grid" checked="checked" />
 							<label for="grid">Tableau</label>
 						</fieldset>
 
-						<fieldset>
+						<fieldset id="format_des_donnees">
 							<legend>Format des données</legend>
-							<input id="valeur_absolue" type="radio" name="format" checked="checked" />
-							<label for="valeur_absolue">Valeurs absolues</label><br />
-							<input id="valeur_relative" type="radio" name="format" />
-							<label for="valeur_relative">Valeurs relatives</label><br />
+							<input id="valeurs_absolues" type="radio" name="format" checked="checked" />
+							<label for="valeurs_absolues">Valeurs absolues</label><br />
+							<input id="valeurs_relatives" type="radio" name="format" />
+							<label for="valeurs_relatives">Valeurs relatives</label><br />
 						</fieldset>						
 					</form>
 				</div> 
@@ -240,8 +242,9 @@
 						<ol type="a">
 							<li>Tableau</li>
 							<li>Carte</li>
-							<li>Diagramme circulaire</li>
+							<li>Courbes</li>
 							<li>Diagramme en bâtons</li>
+							<li>Diagramme circulaire</li>
 						</ol> 
 						
 						<p> 
@@ -260,6 +263,9 @@
 					<br /><br />
 					<div id="chartdiv1" class="diagrammes"></div>
 					<div id="chartdiv2" class="diagrammes"></div>
+					<div id="chartdiv3" class="diagrammes"></div>
+					<div id="chartdiv4" class="diagrammes"></div>
+					<div id="percentage" class="diagrammes"></div>
 
 					<br />		
 				</div>

@@ -64,7 +64,11 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		elseif ($niveau=="pays") $parametres3="pays.idPays";
 		else $parametres3="null";
 		
-		$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
+		$colonnesBDD=array();
+		$colonnesBDD[]="rp.idSource";
+		$colonnesBDD[]="YEAR(election.dateElection)";
+		if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+		$colonnesBDD[]=$parametres3;
 		
 		for($i=0;$i<sizeof($params);$i++) {
 			if($v++){
@@ -390,189 +394,206 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 	 * @param string $balise Le nom du conteneur Html
 	 */
 	public function getGridVisualiser(){
-
+	
 		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
 		else return;
-		
+	
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
-		
-		
+	
+	
 		$page = $_GET['page'];
 		$limit = $_GET['rows'];
 		$sidx = $_GET['sidx'];
 		$sord = $_GET['sord'];
-
+	
 		if(!$sidx) $sidx =1;
-
-
+	
+	
 		if(!empty($_GET['param'])){
 			$parametres=$_GET['param'];
 			$params=explode(",",$parametres);
 			$v=0;
 			$parametres3=null;
-				
-			$requete="SELECT rp.idCandidature, nomCandidat,nomSource, SUM( nbVoix ) as nbVoix
-			FROM {$this->tables[$typeElection]} rp
-			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
-			LEFT JOIN source ON rp.idSource = source.idSource
-			LEFT JOIN election ON rp.idElection = election.idElection
-			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-
-			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
-				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays")
-				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays")
-				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
-				
+			
 			if ($niveau=="cen") $parametres3="centre.idCentre";
 			elseif ($niveau=="dep") $parametres3="departement.idDepartement";
 			elseif ($niveau=="reg") $parametres3="region.idRegion";
 			elseif ($niveau=="pays") $parametres3="pays.idPays";
-				
+			
+			$colonnesBDD=array();
+			$colonnesBDD[]="rp.idSource";
+			$colonnesBDD[]="YEAR(election.dateElection)";
+			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			$colonnesBDD[]=$parametres3;			
+			
+			$requeteTOTAL="SELECT SUM( nbVoix ) ";
 
-			$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
-				
-			for($i=0;$i<sizeof($params);$i++) {
-				if( $colonnesBDD[$i] ){
-					if($v++)$requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
-					else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
-				}
-			}
-				
-			$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, nomCandidat,nomSource
-			FROM resultatspresidentielles rp
+			$joinPART=" FROM {$this->tables[$typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
-			LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$typeElection'";
-				
-			$requeteCount.=" GROUP BY rp.idCandidature) as S";
-				
-			$count = $this->db->query($requeteCount)->result();
-				
-			$totalRows=$count[0]->total;
-				
-			if( $totalRows > 0 && $limit > 0) {
-				$total_pages = ceil($totalRows/$limit);
+			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+			
+			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+			$joinPART.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
+			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
+			if ($niveau=="reg" OR $niveau=="pays")
+			$joinPART.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+			if ($niveau=="pays")
+			$joinPART.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+
+			$requeteTOTAL.=$joinPART;
+			$v=0;
+			for($i=0;$i<sizeof($params);$i++) {
+				if( $colonnesBDD[$i] ){
+					if($v++)$wherePART.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+					else $wherePART=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
+				}
 			}
-			else {
-				$total_pages = 0;
-			}
-				
-			if ($page > $total_pages) $page=$total_pages;
-				
-			$start = $limit*$page - $limit;
-				
-			if($start <0) $start = 0;
-				
-			$requete.=" GROUP BY idCandidature ORDER BY $sidx $sord LIMIT $start,$limit";
-				
-			$resultats=$this->db->query($requete)->result();
-		}
+			$requeteTOTAL.=$wherePART;
+			
+			$requete="SELECT rp.idCandidature, nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
+			$requete.=$joinPART.$wherePART;
+			
 
 			
-		header("Content-type: text/xml;charset=utf-8");
-
-		$s = "<?xml version='1.0' encoding='utf-8'?>";
-		$s .= "<rows>";
-		$s .= "<page>".$page."</page>";
-		$s .= "<total>".$total_pages."</total>";
-		$s .= "<records>".$totalRows."</records>";
-
-		foreach ($resultats as $row) {
-			$s .= "<row id='". $row->idCandidature ."'>";
-			$s .= "<cell>". $row->nomCandidat ."</cell>";
-			$s .= "<cell>". $row->nbVoix ."</cell>";
-			$s .= "</row>";
-		}
-		$s .= "</rows>";
-
-		echo $s;
+					
+	
+					$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, nomCandidat,nomSource
+					FROM resultatspresidentielles rp
+					LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+					LEFT JOIN source ON rp.idSource = source.idSource
+					LEFT JOIN election ON rp.idElection = election.idElection
+					LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$typeElection'";
+				
+					$requeteCount.=" GROUP BY rp.idCandidature) as S";
+				
+					$count = $this->db->query($requeteCount)->result();
+				
+					$totalRows=$count[0]->total;
+				
+					if( $totalRows > 0 && $limit > 0) {
+					$total_pages = ceil($totalRows/$limit);
+					}
+					else {
+					$total_pages = 0;
+				}
+				
+					if ($page > $total_pages) $page=$total_pages;
+				
+							$start = $limit*$page - $limit;
+				
+							if($start <0) $start = 0;
+				
+							$requete.=" GROUP BY idCandidature ORDER BY $sidx $sord LIMIT $start,$limit";
+				
+							$resultats=$this->db->query($requete)->result();
+				}
+	
+	
+	header("Content-type: text/xml;charset=utf-8");
+	
+	$s = "<?xml version='1.0' encoding='utf-8'?>";
+	$s .= "<rows>";
+	$s .= "<page>".$page."</page>";
+	$s .= "<total>".$total_pages."</total>";
+	$s .= "<records>".$totalRows."</records>";
+	
+	foreach ($resultats as $row) {
+	$s .= "<row id='". $row->idCandidature ."'>";
+	$s .= "<cell>". $row->nomCandidat ."</cell>";
+	$s .= "<cell>". $row->nbVoix ."</cell>";
+	$s .= "<cell>". $row->pourcentage ."</cell>";
+	$s .= "</row>";
+	}
+	$s .= "</rows>";
+	
+	echo $s;
 	} // ...............  Fin de getGrid() ...............
 	
 	public function exportResultatsToCSV(){
 		
-		$sord = $_GET['sord'];
-	
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+			if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
 		else return;
 	
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
-			
+	
+		$sord = $_GET['sord'];
+	
 		if(!empty($_GET['param'])){
 			$parametres=$_GET['param'];
 			$params=explode(",",$parametres);
 			$v=0;
 			$parametres3=null;
-	
-			$requete="SELECT rp.idCandidature, nomCandidat,nomSource, SUM( nbVoix ) as nbVoix
-			FROM {$this->tables[$typeElection]} rp
+			
+			if ($niveau=="cen") $parametres3="centre.idCentre";
+			elseif ($niveau=="dep") $parametres3="departement.idDepartement";
+			elseif ($niveau=="reg") $parametres3="region.idRegion";
+			elseif ($niveau=="pays") $parametres3="pays.idPays";
+			
+			$colonnesBDD=array();
+			$colonnesBDD[]="rp.idSource";
+			$colonnesBDD[]="YEAR(election.dateElection)";
+			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			$colonnesBDD[]=$parametres3;			
+			
+			$requeteTOTAL="SELECT SUM( nbVoix ) ";
+
+			$joinPART=" FROM {$this->tables[$typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-	
+			
 			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
-			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
+			$joinPART.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
 			if ($niveau=="reg" OR $niveau=="pays")
-					$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-					if ($niveau=="pays")
-							$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
-	
-							if ($niveau=="cen") $parametres3="centre.idCentre";
-							elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-							elseif ($niveau=="reg") $parametres3="region.idRegion";
-							elseif ($niveau=="pays") $parametres3="pays.idPays";
-	
-	
-									$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
-	
-									for($i=0;$i<sizeof($params);$i++) {
-											if( $colonnesBDD[$i] ){
-										if($v++)$requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
-										else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
-		}
-		}
-	
-				$requete.=" GROUP BY idCandidature ORDER BY nbVoix $sord";
-	
-				$resultats=$this->db->query($requete)->result();
+			$joinPART.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+			if ($niveau=="pays")
+			$joinPART.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+
+			$requeteTOTAL.=$joinPART;
+			$v=0;
+			for($i=0;$i<sizeof($params);$i++) {
+				if( $colonnesBDD[$i] ){
+					if($v++)$wherePART.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+					else $wherePART=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
+				}
+			}
+			$requeteTOTAL.=$wherePART;
+			
+			$requete="SELECT rp.idCandidature, nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
+			$requete.=$joinPART.$wherePART;
+			
+		$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, nomCandidat,nomSource
+		FROM resultatspresidentielles rp
+		LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+		LEFT JOIN source ON rp.idSource = source.idSource
+		LEFT JOIN election ON rp.idElection = election.idElection
+		LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$typeElection'";
+
+		$requete.=" GROUP BY idCandidature ORDER BY nbVoix $sord";
+
+		$resultats=$this->db->query($requete)->result();
 	}
-	
 	
 	header("Content-type: text/csv;charset=utf-8");
 	header('Content-disposition: attachment;filename=SIGeGIS - Export.csv');
-	$s="Nom du candidat;Voix\r\n";
+	$s="Nom du candidat;Voix;% exprimes\r\n";
 	foreach ($resultats as $row) {
 	$s .= $row->nomCandidat .";";
-	$s .= $row->nbVoix;
+	$s .= $row->nbVoix .";";
+	$s .= $row->pourcentage;
 	$s .= "\r\n";
 	}
 	
 	echo $s;
 	} // ...............  Fin de getGrid() ...............	
 	
-	public function build_menu(){
-		return "<div id='menu-css'>
-		<ul>
-		<li><a class='actif' href='".site_url()."'>Accueil</a></li>
-		<li><a href='".site_url("main_controller/administration")."'>Administration</a></li>
-		<li><a href='".site_url("main_controller/visualiser?type=$typeElection&amp;niveau=globaux").">Résultats globaux</a></li>
-		<li><a href='".site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=reg").">Résultats régionaux</a></li>
-		<li><a href='".site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=dep").">Résultats départementaux</a></li>
-		<li><a href='".site_url("main_controller/visualiser?type=".$typeElection."&amp;niveau=cen").">Résultats au niveau des centres</a></li>
-		<li><a href='".site_url("main_controller/participation?type=".$typeElection).">Statistiques</a></li>
-		</ul>
-		</div>";
-	}
-
-
-	public function getBarParticipation(){
+		public function getBarParticipation(){
 	
 		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
 		else return;
@@ -621,7 +642,11 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 					elseif ($niveau=="pays") $parametres3="pays.idPays";
 					else $parametres3="null";
 	
-					$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
+					$colonnesBDD=array();
+					$colonnesBDD[]="rp.idSource";
+					$colonnesBDD[]="YEAR(election.dateElection)";
+					if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+					$colonnesBDD[]=$parametres3;
 	
 					for($i=0;$i<sizeof($params);$i++) {
 							if($v++){
@@ -754,7 +779,11 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 					elseif ($niveau=="pays") $parametres3="pays.idPays";
 					else $parametres3="null";
 	
-					$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
+					$colonnesBDD=array();
+					$colonnesBDD[]="rp.idSource";
+					$colonnesBDD[]="YEAR(election.dateElection)";
+					if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+					$colonnesBDD[]=$parametres3;
 	
 					for($i=0;$i<sizeof($params);$i++) {
 							if($v++){
@@ -874,8 +903,11 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 				elseif ($niveau=="pays") $parametres3="pays.idPays";
 				else $parametres3="null";
 
-
-				$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
+				$colonnesBDD=array();
+				$colonnesBDD[]="rp.idSource";
+				$colonnesBDD[]="YEAR(election.dateElection)";
+				if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+				$colonnesBDD[]=$parametres3;
 
 				for($i=0;$i<sizeof($params);$i++) {
 					if($v++){
