@@ -1,5 +1,4 @@
 	
-
 	$.ajax({  // OBTENIR LES SOURCES          
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getSources',            			         			      
 		dataType: 'json',      

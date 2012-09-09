@@ -1,4 +1,7 @@
+
 $("input[id*='valider'],input[id*='validerLocalite']").button();
+
+$("#ouvrir, #comparer").css("width","200px");
 
 $('#menu li a').hover(   
 		  
@@ -49,15 +52,20 @@ function() {
 		$("#dialog_zone_des_options").dialog('open');
 		$("#ouvrir").hide();
 		$(".zone_des_options *:not(*[id='bar'],*[id='pie'])").removeAttr("disabled");
+		$("#comparer").removeAttr("disabled");
 		typeElection=$(".zone_des_options input:checked:not(input[id=locale])").attr("id");
 	});
 	
-	$("#save").on("click",function(){
+	$("#comparer").on("click",function(){
 		save=true;
 		if(save) {balise="chartdiv2";if($("#line")[0].checked) baliseLine="chartdiv4";}
 		else {balise="chartdiv1";if($("#line")[0].checked) baliseLine="chartdiv3";}
-		$("#chartdiv2,#chartdiv4").show();
-		//alert("Sauvegarde terminée");
+		
+		$("#chartdiv2").show();
+		if ($("#line")[0].checked) $("#chartdiv4").show();
+		
+		$("#dialog_zone_des_options").dialog('open');
+
 		chart1 = new Highcharts.Chart({
 			chart: {
 			renderTo: balise,

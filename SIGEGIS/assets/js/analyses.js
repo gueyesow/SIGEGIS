@@ -4,7 +4,10 @@
  */
 
 $(document).ready(function() {		
-	$(".zone_des_options *").attr("disabled","disabled");
+	
+	$("#menu ul li:gt(0)").remove();
+	
+	$(".zone_des_options *, #comparer").attr("disabled","disabled");
 	
 	chart1 = new Highcharts.Chart({
 	chart: {
@@ -129,94 +132,20 @@ $(document).ready(function() {
 		},
 		series:[]
 		});
-	
-	
-//------------- PERCENTAGE------------------------------
-	chart3 = new Highcharts.Chart({
-		chart: {
-		renderTo: 'percentage',
-		type: 'area'
-		},
-		title: {
-		text: ''
-		},
-		subtitle: {
-		text: ''
-		},
-		xAxis: {
-		categories: [],
-
-		labels: {
-		rotation: -40,
-		align: 'right',
-		style: {
-		width:20,
-		fontSize: '12px',
-		fontFamily: 'Verdana, sans-serif'
-		}
-		}
-		},
-		yAxis: {
-		min: 0,
-		title: {
-		text: 'NbVoix'
-		}
-		},
-		exporting: {
-		url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
-		},
-		legend: {
-		layout: 'vertical',
-		backgroundColor: '#FFFFFF',
-		align: 'right',
-		verticalAlign: 'top',
-		floating: true,
-		shadow: true
-		},
-		tooltip: {
-			formatter: function() {
-				return  "<b>"+this.series.name+":</b> "+Highcharts.numberFormat(this.percentage, 1)+"%";
-			}
-		},
-
-		plotOptions: {
-			 area: {
-                 stacking: 'percent',
-                 lineColor: '#ffffff',
-                 lineWidth: 1,
-                 marker: {
-                     lineWidth: 1,
-                     lineColor: '#ffffff'
-                 }
-             }
-		},
-		credits: {
-			enabled: false
-		},
-		series:[]
-		});
-	
+		
 	/**
 	 * CHOIX DU MODE DE REPRESENTATION DES DONNEES
 	 */
 	var numberOfClickForLine=0;	
 	$("#types_affichage input").on( "change",function() {									
-		if(!$("#bar")[0].checked) {$("*[id*='chartdiv1'],*[id*='chartdiv2']").hide("animated");$("#bar").removeAttr("checked");} else  if($("#bar")[0].checked) {$("*[id*='chartdiv1']").show("animated");if(save) $("*[id*='chartdiv2']").show("animated");$("#bar").attr("checked","checked");}
-		if(!$("#line")[0].checked) {$("*[id*='chartdiv3'],*[id*='chartdiv4']").hide("animated");$("#line").removeAttr("checked");} else  if($("#line")[0].checked) { $("*[id*='chartdiv3']").show("animated"); if(save) $("*[id*='chartdiv4']").show("animated"); $("#line").attr("checked","checked") ; if (numberOfClickForLine==0) {$("#"+lastPressedButton).click();numberOfClickForLine++;}/*Recharger les charts*/}
-		if(!$("#grid")[0].checked) {$("*[id*='theGrid']").hide("animated");$("#grid").removeAttr("checked");} else  if($("#grid")[0].checked) {$("*[id*='theGrid']").show("animated");$("#grid").attr("checked","checked");}
+		if(!$("#bar")[0].checked) {$("*[id*='chartdiv1'],*[id*='chartdiv2']").hide("animated");} else  if($("#bar")[0].checked) {$("*[id*='chartdiv1']").show("animated");if(save) $("*[id*='chartdiv2']").show("animated");}
+		if(!$("#line")[0].checked) {$("*[id*='chartdiv3'],*[id*='chartdiv4']").hide("animated");} else  if($("#line")[0].checked) { $("*[id='chartdiv3']").show("animated"); if(save && $("#chartdiv4").text()!="") $("*[id='chartdiv4']").show("animated");  if (numberOfClickForLine==0) {$("#"+lastPressedButton).click();numberOfClickForLine++;}/*Recharger les charts*/}
+		if(!$("#grid")[0].checked) {$("*[id*='theGrid']").hide("animated");} else  if($("#grid")[0].checked) {$("*[id*='theGrid']").show("animated");$("#grid").attr("checked","checked");}
 	});
-	/**
-	 * FORMAT DES DONNEES
-	 */
-	$("#format_des_donnees input").on( "change",function() {									
-		if($("#valeurs_absolues")[0].checked) {$("*[id='percentage']").hide("animated");$("#types_affichage input").change();}
-		if($("#valeurs_relatives")[0].checked) {$("*[id*='chartdiv']").hide("animated");$("*[id='percentage']").show("animated");if (numberOfClickForLine==0) {$("#"+lastPressedButton).click();numberOfClickForLine++;}} 		 
-	});
-	
-	
+		
 	
 	/**
-	 * REDEFINITION DES VALEURS DES BOUTONS RADIOS (SELECTIONNER L'OPTION D'AFFICHAGE CHOISIE)
+	 * Au changement du type d'élection à représenter, recharger les éléments de formulaire 
 	 */	
 	$("#types_elections input").on("click",function(){
 		if ($("#locale")[0].checked){

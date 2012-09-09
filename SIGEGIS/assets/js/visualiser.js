@@ -152,8 +152,14 @@ $(document).ready(function() {
 				});
 
 
-if(! $.getUrlVar("type"))	{$("#left-sidebar input, #left-sidebar button, #zone_des_filtres select").attr("disabled","disabled");$("#chartdiv1").hide();}
-else {$("#help").remove(); $("#chartdiv1").show();}
+if(! $.getUrlVar("type"))	
+{
+	$("#left-sidebar input, #left-sidebar button, #zone_des_filtres select").attr("disabled","disabled");
+	$("#chartdiv1").hide();
+	
+	$("#menu ul li:lt(6):not(:first)").remove();
+}
+else {$("#help").remove(); $("#chartdiv1").show();$("#menu ul li:gt(5)").remove();}
 
 	
 if($.getUrlVar("map")==="no") {$("#gbox_list").hide();} else {$("#gbox_list").show();}

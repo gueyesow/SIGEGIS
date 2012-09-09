@@ -4,7 +4,9 @@
  */
 
 $(document).ready(function() {
-	
+
+$("#menu ul li:gt(4)").remove();
+
 chart1 = new Highcharts.Chart({
     chart: {
         renderTo: 'chartdiv1',
@@ -155,7 +157,9 @@ if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox
 if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
 if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");}
 if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")==="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
+
 $("#chartdiv2").hide();
+
 $("#bar, #pie").attr("disabled","disabled");
 
 $("#types_affichage input").on( "change",function() {
@@ -209,7 +213,6 @@ $("#types_elections input").on( "change",function() {
 				if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/participation?type="+this+mode;
 				else window.location="http://www.sigegis.ugb-edu.com/main_controller/participation?type="+this;				
 			}
-			//else alert(this);
 		}
 	});
 });
@@ -290,14 +293,6 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 						refreshComboChart(json);									
 					}    
 				});
-				
-				/*$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieParticipation',    
-					data:'niveau=cen&param='+param+'&typeElection='+$.getUrlVar("type"),    					     
-					success: function(json) {
-						refreshPieChart(json);									
-					}    
-				});*/							
 			});			
 		}
 		else if ($.getUrlVar("niveau")==="dep")	// NIVEAU DEPARTEMENT 
@@ -317,15 +312,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 							success: function(json) {
 								refreshComboChart(json);								
 							}    
-						});
-						
-						/*$.ajax({        							
-							url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieParticipation',    
-							data:'niveau=dep&param='+param+'&typeElection='+$.getUrlVar("type"),      					     
-							success: function(json) {
-								refreshPieChart(json);									
-							}    
-						});*/									
+						});								
 			});			
 			
 		}
@@ -344,13 +331,6 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 						refreshComboChart(json);					
 					}    
 				});
-				/*$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieParticipation',    
-					data:'niveau=reg&param='+param+'&typeElection='+$.getUrlVar("type"),   					     
-					success: function(json) {
-						refreshPieChart(json);
-					}    
-				});*/
 			});			
 		}
 		else if($.getUrlVar("niveau")==="globaux")  
@@ -369,18 +349,9 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getComboParticipation',    
 					data:'param='+param+'&typeElection='+$.getUrlVar("type"),     					     
 					success: function(json) {
-						refreshComboChart(json);
-						//refreshBarChart(json);						
+						refreshComboChart(json);						
 					}    
 				});
-				
-				/*$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieParticipation',    
-					data:'param='+param+'&typeElection='+$.getUrlVar("type"),   					     
-					success: function(json) {
-						refreshPieChart(json);										
-					}    
-				});*/								
 			});
 		}
 		

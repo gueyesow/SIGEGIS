@@ -1,11 +1,10 @@
-<?php
-if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  *
  * @author Amadou SOW && Abdou Khadre GUEYE | DESS 2ITIC 2011-2012
  *
  */
-class Analyse_model extends CI_Model{
+class Analysis_model extends CI_Model{
 	private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
 	private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
 	/**
@@ -25,10 +24,10 @@ class Analyse_model extends CI_Model{
 		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
 		else return;
 		
-		if ($typeElection=="presidentielle") $titreElection="présidentielle(s)";
-		elseif ($typeElection=="legislative") $titreElection="législative(s)";
-		elseif ($typeElection=="regionale") $titreElection="régionale(s)";
-		else $titreElection=$typeElection."(s)";		
+		if ($typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $titreElection="législative";
+		elseif ($typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$typeElection."";		
 
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
@@ -109,7 +108,8 @@ class Analyse_model extends CI_Model{
 		// ----------------------------------------	//
 		//			TITRES DES DIAGRAMMES			//
 		// ----------------------------------------	//
-		$titre_niveau="Election(s) $titreElection ".htmlentities($_GET['listeAnnees']).": résultats ";
+		$titre="Election";if(sizeof($listeAnnees)>1) $titre.="s"; $titre.=" $titreElection";if(sizeof($listeAnnees)>1) $titre.="s"; $titre.=" ".htmlentities($_GET['listeAnnees']);
+		$titre_niveau="";
 		if ($niveau=="cen") {
 			$titre_niveau.="par centre ";$sous_titre="Centre: ";
 		}
@@ -129,7 +129,7 @@ class Analyse_model extends CI_Model{
 		elseif ($niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
 		elseif ($niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
 		else $sous_titre="";
-		$titre=$titre_niveau;
+		//$titre=$titre_niveau;
 
 
 		// ----------------------------------------	//
@@ -192,7 +192,8 @@ class Analyse_model extends CI_Model{
 
 
 		if(!empty($_GET['param']) AND !empty($_GET['listeAnnees']) AND !empty($_GET['listeCandidats'])){
-			$parametres=$_GET['param'];
+			
+			$parametres=$_GET['param'];			
 			$params=explode(",",$parametres);
 			$listeAnnees=explode(",",$_GET['listeAnnees']);
 			$listeCandidats=explode(",",$_GET['listeCandidats']);
@@ -252,7 +253,6 @@ class Analyse_model extends CI_Model{
 				}
 
 				$tableauResultats[]="{name: '$resultat->nomCandidat',y: $resultat->nbVoix}";
-				//,sliced: true,selected: true
 			}
 			$abscisse=$_GET["listeAnnees"];
 		}

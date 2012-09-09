@@ -26,6 +26,8 @@
 </head>
 
 <body>
+<a href="admin_controller/logout">Logout</a>
+
 	<input id="month" name="month" />
 
 	<?php $styles="";?>
@@ -36,7 +38,7 @@
 		<form id="drag">
 			<?php 
 			foreach ($filtres as $filtre)
-				echo $this->mon_filtre->form_dropdown("$filtre","$filtre",$styles,"$labels_filtres[$filtre]");
+				echo form_dropdown("$filtre","$filtre",$styles,"$labels_filtres[$filtre]");
 			echo "<div style='clear:both;'></div>";
 			?>
 		</form>
@@ -47,7 +49,7 @@
 			<table>
 				<tr>
 					<?php 		
-					echo "<td>".$this->mon_filtre->form_dropdown("idCandidat0","idCandidat0",$styles,"ID Candidat")."</td>";
+					echo "<td>".form_dropdown("idCandidat0","idCandidat0",$styles,"ID Candidat")."</td>";
 					echo "<td><label for='nomCandidat0'>Nom du candidat</label><br /><input type='text' id='nomCandidat0' name='nom0' /></td>";
 					?>
 					<td valign="bottom"><input class="add" type="button" value="Add" />

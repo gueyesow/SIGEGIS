@@ -1,208 +1,191 @@
-<?php 
-if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Main_controller extends CI_Controller {
 
 	function __construct(){
 		// database et assets_helper sont chargés automatiquement
 		parent::__construct();
-		$this->load->model("main_model","mon_modele");
-		$this->load->model("analyse_model","modele_analyse");
-		$this->load->model("filtering_model","mon_filtre");
+		$this->load->model("main_model","basicModel");
+		$this->load->model("analysis_model","analysisModel");
+		$this->load->model("filtering_model","filteringModel");
 		$this->load->helper('form');
 	}
 
 	public function index()
-	{		
-		$this->load->view('front_page');
+	{	
+		$js_scripts["scripts_array"]=array("base","init_filtres","visualiser","tooltips","style");
+		$top['title'] = 'SIGeGIS';
+		$top['styles'][] = 'theme';
+		$data['head'] = $this->load->view('top',$top,true);
+		$data['menu'] = $this->load->view('menu',$top,true);
+		$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
+		$data['footer'] = $this->load->view('footer',null,true);
+		$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+		$this->load->view('front_page',$data);		
 	}
 	
-	public function authentification()
+	public function apropos()
+	{		
+		$this->load->view('a_propos');
+	}
+	
+	public function exemples()
 	{
-		$attributes = array('class' => 'email', 'id' => 'myform');
-
-		echo form_open('main_controller/connexion', $attributes);
-
-		$data = array(
-				'name'        => 'login',
-				'id'          => 'username',
-				'maxlength'   => '100',
-				'value'		=> 'Identifiant',
-		);
-
-		echo form_input($data);
-		$data = array(
-				'name'          => 'password',
-				'value'          => 'password'
-		);
-		echo form_password($data);
-		echo form_submit('mysubmit', 'Ok');
-		$string = "</div></div>";
-		echo form_close($string);
-
+		$this->load->view('exemples');
 	}
-
-	public function connexion(){
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('login', '"Nom d\'utilisateur"','trim|required|min_length[5]|max_length[52]|alpha_dash|encode_php_tags|xss_clean');
-		$this->form_validation->set_rules('password', '"Mot de passe"','trim|required|min_length[5]|max_length[52]|alpha_dash|encode_php_tags|xss_clean');
-		if($this->form_validation->run())
-		{
-			// Le formulaire est valide
-			$this->load->view('admin_page');
-		}
-		else
-		{
-			// Le formulaire est invalide ou vide
-			$data=array("erreur"=>"1");
-			$this->load->view('front_page',$data);
-		}
-	}
-
+	
 	public function visualiser(){
-		$this->load->view('front_page');
+		$this->index();
 	}
 
 	public function analyser(){
-		$this->load->view('analyses');
+		$js_scripts["scripts_array"]=array("base","init_filtres","updateFilters","analyses","dragAndDrop","tooltips","style");
+		$top['title'] = 'SIGeGIS&gt;Analyses';
+		$top['styles'] = array('theme','analyses');
+		$data['head'] = $this->load->view('top',$top,true);
+		$data['menu'] = $this->load->view('menu',$top,true);
+		$data['options_menu'] = $this->load->view('menu_des_options',$top,true);		
+		$data['footer'] = $this->load->view('footer',null,true);
+		$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+		$this->load->view('analyses',$data);
 	}
 	
-	public function participation(){
-		$this->load->view('participation');
-	}
-
-	public function administration(){
-		$data=array();
-		$this->load->view('admin_page',$data);
+	public function participation(){	
+		$js_scripts["scripts_array"]=array("base","init_filtres","participation","tooltips","style");
+		$top['title'] = 'SIGeGIS&gt;Taux de participation';
+		$top['styles'][] = 'theme';
+		$data['head'] = $this->load->view('top',$top,true);
+		$data['menu'] = $this->load->view('menu',$top,true);
+		$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
+		$data['footer'] = $this->load->view('footer',null,true);
+		$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+		$this->load->view('participation',$data);
 	}
 
 	public function getBarVisualiser(){
-		echo $this->mon_modele->getBarVisualiser();
+		echo $this->basicModel->getBarVisualiser();
 	}
 	
 	public function getPieVisualiser(){
-		echo $this->mon_modele->getPieVisualiser();
+		echo $this->basicModel->getPieVisualiser();
 	}
 	
 	public function getComboParticipation(){
-		echo $this->mon_modele->getComboParticipation();
+		echo $this->basicModel->getComboParticipation();
 	}
 	
 	public function getGridVisualiser(){
-		$this->mon_modele->getGridVisualiser();
+		$this->basicModel->getGridVisualiser();
 	}
 	
 	public function getBarAnalyserAnnee(){
-		echo $this->modele_analyse->getBarAnalyserAnnee();
+		echo $this->analysisModel->getBarAnalyserAnnee();
 	}
 	public function getPieAnalyserAnnee(){
-		echo $this->modele_analyse->getPieAnalyserAnnee("chartdiv2");
+		echo $this->analysisModel->getPieAnalyserAnnee("chartdiv2");
 	}
 	
 	public function getBarAnalyserLocalite(){
-		echo $this->modele_analyse->getBarAnalyserLocalite();
+		echo $this->analysisModel->getBarAnalyserLocalite();
 	}
 	
 	public function getPieAnalyserLocalite(){
-		echo $this->modele_analyse->getPieAnalyserLocalite();
+		echo $this->analysisModel->getPieAnalyserLocalite();
 	}
 
 	public function getBarParticipation(){
-		echo $this->mon_modele->getBarParticipation("chartdiv1");
+		echo $this->basicModel->getBarParticipation("chartdiv1");
 	}
 	
 	public function getPieParticipation(){
-		echo $this->mon_modele->getPieParticipation("chartdiv2");
+		echo $this->basicModel->getPieParticipation("chartdiv2");
 	}
 	public function getPieParticipation2(){
-		echo $this->mon_modele->getPieParticipation2("chartdiv3");
+		echo $this->basicModel->getPieParticipation2("chartdiv3");
 	}
 	
 	public function getPoidsElectoralRegions(){
-		echo $this->mon_modele->getPoidsElectoralRegions();
+		echo $this->basicModel->getPoidsElectoralRegions();
 	}
 	
 	public function getGridParticipation(){
-		$this->mon_modele->getGridParticipation();
+		$this->basicModel->getGridParticipation();
 	}
 
 	public function getGridAnalyserAnnee(){
-		$this->modele_analyse->getGridAnalyserAnnee();
+		$this->analysisModel->getGridAnalyserAnnee();
 	}
 	
 	public function getGridAnalyserLocalite(){
-		$this->modele_analyse->getGridAnalyserLocalite();
+		$this->analysisModel->getGridAnalyserLocalite();
 	}
 	
 	public function getCandidats(){
-		$this->mon_filtre->getCandidats();
+		$this->filteringModel->getCandidats();
 	}
 
 	public function getCandidatsArray(){
-		$this->mon_filtre->getCandidatsArray();
+		$this->filteringModel->getCandidatsArray();
 	}
 
 	public function getSources(){
-		$this->mon_filtre->getSources();
+		$this->filteringModel->getSources();
 	}
 
 	public function getDatesElections(){
-		$this->mon_filtre->getDatesElections();
+		$this->filteringModel->getDatesElections();
 	}
 
 	public function getCentres(){
-		$this->mon_filtre->getCentres();
+		$this->filteringModel->getCentres();
 	}
 
 	public function getCollectivites(){
-		$this->mon_filtre->getCollectivites();
+		$this->filteringModel->getCollectivites();
 	}
 
 	public function getDepartements(){
-		$this->mon_filtre->getDepartements();
+		$this->filteringModel->getDepartements();
 	}
 
 	public function getRegions(){
-		$this->mon_filtre->getRegions();
+		$this->filteringModel->getRegions();
 	}
 
 	public function getPays(){
-		$this->mon_filtre->getPays();
+		$this->filteringModel->getPays();
 	}
 
 	public function getTours(){
-		$this->mon_filtre->getTours();
+		$this->filteringModel->getTours();
 	}
 
 	public function getCandidatsAnnee(){
-		$this->mon_filtre->getCandidatsAnnee();
+		$this->filteringModel->getCandidatsAnnee();
 	}
 	
 	public function getCandidatsLocalite(){
-		$this->mon_filtre->getCandidatsLocalite();
+		$this->filteringModel->getCandidatsLocalite();
 	}
 	
 	public function getDecoupages(){
-		$this->mon_filtre->getDecoupages();
+		$this->filteringModel->getDecoupages();
 	}
 	
 	public function exportResultatsToCSV(){
-		$this->mon_modele->exportResultatsToCSV();
+		$this->basicModel->exportResultatsToCSV();
 	}
 	public function exportStatisticsToCSV(){
-		$this->mon_modele->exportStatisticsToCSV();
+		$this->basicModel->exportStatisticsToCSV();
 	}
 	
 	public function exportToCSVAnalyse(){
-		$this->mon_filtre->exportResultatsToCSV();
+		$this->filteringModel->exportResultatsToCSV();
 	}
 	
 	public function exportToCSVAnalyseLocalite(){
-		$this->mon_filtre->exportToCSVLocalite();
-	}
-	public function test(){
-		$this->load->view("clone");
-	}		
+		$this->filteringModel->exportToCSVLocalite();
+	}	
 }
 
 /* End of file main_controller.php */

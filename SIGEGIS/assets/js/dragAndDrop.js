@@ -9,6 +9,7 @@
 	 * Ajouter en paramètre la source,le tour à représenter
 	 */
 
+// chart1 => Bar // chart2 => Line 
 	function putGrid(url){	
 		
 		if(save) {balise="#list2";pager="#pager2";}
@@ -38,53 +39,13 @@
 	}
 	}
 
-function refreshBarChart(json){
-		
-		var i=0;
-		
-		var series=JSON.parse(json);			
-		chart1.setTitle({text: series[0].titre},{text: series[0].sous_titre});
-		chart1.xAxis[0].setCategories(series[0].categories);
-		if ( chart1.series.length > 0 ) {
-			a_supprimer=chart1.series.length;
-			for(i=0;i<a_supprimer;i++) {				
-				chart1.series[0].remove();							
-			}
-		}
-						
-		for(i=0;i<series[1].length;i++){				
-			chart1.addSeries(series[1][i],false);
-		}
-		
-		chart1.redraw();
-}
-
-function refreshLineChart(json){
-	
-	var i=0;
-	
-	var series=JSON.parse(json);			
-	chart2.setTitle({text: series[0].titre},{text: series[0].sous_titre});
-	chart2.xAxis[0].setCategories(series[0].categories);
-	if ( chart2.series.length > 0 ) {
-		a_supprimer=chart2.series.length;
-		for(i=0;i<a_supprimer;i++) {				
-			chart2.series[0].remove();							
-		}
-	}
-					
-	for(i=0;i<series[1].length;i++){				
-		chart2.addSeries(series[1][i],false);
-	}
-	
-	chart2.redraw();
-}
-
 function refreshChart(theChart,json){
 	
 	var i=0;
 	
 	var series=JSON.parse(json);			
+	
+	if (save) $("#titleGrid2").text(series[0].titre); else $("#titleGrid1").text(series[0].titre);
 	theChart.setTitle({text: series[0].titre},{text: series[0].sous_titre});
 	theChart.xAxis[0].setCategories(series[0].categories);
 	if ( theChart.series.length > 0 ) {
@@ -191,9 +152,8 @@ $("#valider").on("click",function(event) {
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserAnnee',    
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
-			refreshBarChart(json);
-			if($("#line")[0].checked) refreshLineChart(json);
-			if($("#valeurs_relatives")[0].checked) {refreshChart(chart3,json);}
+			refreshChart(chart1,json);
+			if($("#line")[0].checked) refreshChart(chart2,json);
 		}    
 	});
 	
@@ -243,9 +203,8 @@ $("#validerLocalite").on("click",function(event) {
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserLocalite',    
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
-			refreshBarChart(json);	
-			if($("#line")[0].checked) refreshLineChart(json);
-			if($("#valeurs_relatives")[0].checked) {refreshChart(chart3,json);}
+			refreshChart(chart1,json);	
+			if($("#line")[0].checked) refreshChart(chart2,json);
 		}    
 	});
 	
