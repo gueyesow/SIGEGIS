@@ -160,7 +160,7 @@ if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("chec
 
 $("#chartdiv2").hide();
 
-$("#bar, #pie").attr("disabled","disabled");
+$("#bar, #pie, #line").attr("disabled","disabled");
 
 $("#types_affichage input").on( "change",function() {
 	var idmode;
@@ -256,7 +256,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		autowidth:true,
 	    datatype: 'xml',
 	    mtype: 'GET',
-	    colNames:['Lieu de vote','Inscrits','Votants','Nuls','Exprimés','Abstention'],
+	    colNames:['Lieu de vote','Inscrits','Votants','Nuls','Exprimés','Abstentions'],
 	    colModel :[ 
 	      {name:'nomLieu', index:'nomLieu'}, 
 	      {name:'nbInscrits', index:'nbInscrits', width:80,formatter:'number', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}},

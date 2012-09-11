@@ -257,7 +257,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		autowidth:true,
 	    datatype: 'xml',
 	    mtype: 'GET',
-	    colNames:['Nom du candidat','Nombre de voix','% exprimés'],
+	    colNames:['Nom du candidat','Voix','% exprimés'],
 	    colModel :[ 
 	      {name:'nomCandidat', index:'nomCandidat',search:true}, 
 	      {name:'nbVoix', index:'nbVoix', width:80,formatter:'number', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}},

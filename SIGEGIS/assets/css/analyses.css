@@ -20,3 +20,5 @@ fieldset{
 	/*overflow:visible !important;*/
 	height:auto!important; 
 	}
+	
+.tooltip{z-index:10000;}

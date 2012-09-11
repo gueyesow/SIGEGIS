@@ -39,7 +39,7 @@
 			else if($.getUrlVar("niveau")==="pays") {niveau="par pays";}
 			else if ($.getUrlVar("niveau")==="globaux") niveau="globaux";
 			
-			if (! $("#ana_decoupage").length && $.getUrlVar("type")) $("#titre").append("Election "+titres[type]+" de "+$elections.val()+": résultats "+niveau);						
+			if (! $("#ana_decoupage").length && $.getUrlVar("type")) $("#titre").append("Election "+titres[type]+" "+$elections.val()+": résultats "+niveau);						
 		}       
 	});
 	
@@ -59,7 +59,7 @@
 							//alert(typeElection);							
 							$tours.change();
 							
-							if (! $("#ana_decoupage").length) $("#titre").text("Election "+titres[type]+" de "+$elections.val()+": résultats "+niveau);
+							if (! $("#ana_decoupage").length) $("#titre").text("Election "+titres[type]+" "+$elections.val()+": résultats "+niveau);
 							
 							$('#menu ul li  a').each(function(){								
 									
@@ -128,12 +128,17 @@
 						dataType: 'json',      
 						success: function(json) {
 							$regions.empty();
-							if ($("select[name*=ana_localite2]").val() === "region") $("#choixMultipleLocalitesA").empty();
+							if ($("select[name*=ana_localite2]").length>0) $("#choixMultipleLocalitesA").empty();
 							$.each(json, function(index, value) {         
 								$regions.append('<option value="'+ index +'">'+ value +'</option>');
-								if ($("select[name*=ana_localite2]").val() === "region") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
+								if ($("select[name*=ana_localite2]").val() == "region") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');								
 							});
 							$regions.change();         
+							if ($("select[name*=ana_localite2]").val() == "pays") {
+								$pays.children().each(function() {         
+									$("#choixMultipleLocalitesA").append('<option value="'+ $(this).val() +'">'+ $(this).text() +'</option>');								
+								});
+							}
 						}           
 					});       
 				}    

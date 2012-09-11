@@ -326,26 +326,27 @@ class Filtering_model extends CI_Model{
 
 		$anneeDecoupage=NULL;	$annee=NULL;
 
-		if (!empty($_GET["anneeDecoupage"])) $anneeDecoupage=$_GET["anneeDecoupage"];
+		if (!empty($_GET["anneeDecoupage"])) {
+			$anneeDecoupage=$_GET["anneeDecoupage"];
+		}
+		else if (!empty($_GET["paramAnnee"])) {
+			$paramAnnee=$_GET["paramAnnee"];
+			$queryAnneesDecoupage=$this->db->query("SELECT distinct anneeDecoupage FROM election ORDER BY anneeDecoupage")->result();
+			foreach ($queryAnneesDecoupage as $b)
+				$anneesDecoupage[]=$b->anneeDecoupage."<br>";
+			foreach ($anneesDecoupage as $decoupage){
+				if ($paramAnnee>=$decoupage) $anneeDecoupage=$decoupage;
+				else break;
+			}
+		}
 
 		$this->db->select('idPays, nomPays');
 
-		if($anneeDecoupage) $this->db->where('anneeDecoupage', $anneeDecoupage);
-
-		$pays = array();
-
-		if (!empty($_GET["paramAnnee"])) $paramAnnee=$_GET["paramAnnee"];
-
-		$queryAnneesDecoupage=$this->db->query("SELECT distinct anneeDecoupage FROM election ORDER BY anneeDecoupage")->result();
-		foreach ($queryAnneesDecoupage as $b)
-			$anneesDecoupage[]=$b->anneeDecoupage."<br>";
-		foreach ($anneesDecoupage as $decoupage){
-			if ($paramAnnee>=$decoupage) $annee=$decoupage;
-			else break;
-		}
-		if($annee) $this->db->where('anneeDecoupage', $annee);
+		if($anneeDecoupage) $this->db->where('anneeDecoupage', $anneeDecoupage);		
 
 		$query = $this->db->get('pays');
+		
+		$pays = array();
 
 		if($query->result()){
 			foreach ($query->result() as $lepays)

@@ -729,7 +729,7 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 			if(!empty($_GET['param'])){
 				$parametres=$_GET['param'];
 			}
-			else $parametres="1,2012,premier_tour,globaux";
+			else return ;
 		
 			$params=explode(",",$parametres);
 			$v=0;

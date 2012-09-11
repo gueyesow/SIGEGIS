@@ -56,8 +56,8 @@
 						
 						<p> 
 						Chosissez l'opération que vous souhaitez effectuer:
-						<button id="visualiser" class="theToolTip boutons" title="Visualiser les résultats des élections passées">Visualiser des résultats</button>
-						<button id="analyser" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Analyser des résultats</button> 
+						<button id="visualiser" class="boutons" title="Visualiser les résultats des élections passées">Visualiser des résultats</button>
+						<button id="analyser" class="boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Analyser des résultats</button> 
 						</p>
 					</div>
 

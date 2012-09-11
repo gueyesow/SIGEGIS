@@ -17,11 +17,11 @@ $.ajax({
 	}           
 });
 
-$("select[name*=ana_decoupage]").on("change",function()
+$("select[name=ana_decoupage]").on("change",function()
 {		
 	$("#choixmultipleA,#choixmultipleB,#choixCandidatA,#choixCandidatB").empty();
 	Annees();
-	$("select[name*=ana_localite]").change();		
+	$("select[name=ana_localite]").change();		
 });
 
 $("select[name*=ana_decoupage_localite]").on("change",function()
@@ -44,12 +44,11 @@ $("select[name*=ana_decoupage_localite]").on("change",function()
 });
 
 $("select[name*=ana_localite]").on("change",function()
-{
-	
-	if ($(this).val()==="pays") { methode="getPays";parametres_analyse+="&niveau=pays";}
-	else if ($(this).val()==="region") { methode="getRegions";parametres_analyse+="&niveau=reg";}
-	else if ($(this).val()==="departement") { methode="getDepartements";parametres_analyse+="&niveau=dep";}
-	else if ($(this).val()==="centre") { methode="getCentres";parametres_analyse+="&niveau=cen";}
+{		
+	if ($(this).val()=="pays") { methode="getPays";parametres_analyse+="&niveau=pays&paramAnnee="+$("#ana_decoupage").val();}
+	else if ($(this).val()=="region") { methode="getRegions";parametres_analyse+="&niveau=reg";}
+	else if ($(this).val()=="departement") { methode="getDepartements";parametres_analyse+="&niveau=dep";}
+	else if ($(this).val()=="centre") { methode="getCentres";parametres_analyse+="&niveau=cen";}
 	
 	$url='http://www.sigegis.ugb-edu.com/main_controller/'+methode+"?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage").val();
 
@@ -67,26 +66,19 @@ $("select[name*=ana_localite]").on("change",function()
 
 $("select[name*=ana_localite2]").on("change",function()
 {			
-	if ($(this).val()==="pays") { showLocality(); $("#swapListLocality").hide();$("#filtreregions").hide();	$("#filtredepartements").hide();	$("#filtrecollectivites").hide();	$("#filtrecentres").hide();$pays.change();}
-	else if ($(this).val()==="region") { showLocality();$("#filtreregions").hide();$("#filtredepartements").hide();	$("#filtrecollectivites").hide();	$("#filtrecentres").hide();$pays.change();}
-	else if ($(this).val()==="departement") { showLocality();$("#filtredepartements").hide();$("#filtrecollectivites").hide(); $("#filtrecentres").hide();$pays.change();}
-	else if ($(this).val()==="centre") { showLocality(); $("#filtrecentres").hide();$pays.change();}
+	if ($(this).val()=="pays") { showLocality(); /*$("#swapListLocality").hide();*/$("#filtrepays").hide();$("#filtreregions").hide();	$("#filtredepartements").hide();	$("#filtrecollectivites").hide();	$("#filtrecentres").hide();$pays.change();}
+	else if ($(this).val()=="region") { showLocality();$("#filtreregions").hide();$("#filtredepartements").hide();	$("#filtrecollectivites").hide();	$("#filtrecentres").hide();$pays.change();}
+	else if ($(this).val()=="departement") { showLocality();$("#filtredepartements").hide();$("#filtrecollectivites").hide(); $("#filtrecentres").hide();$pays.change();}
+	else if ($(this).val()=="centre") { showLocality(); $("#filtrecentres").hide();$pays.change();}
 });
 
 function showLocality(){
 	$("#swapListLocality").show();
-	$("#filtreregions").show();	
-	$("#filtredepartements").show();	
-	$("#filtrecollectivites").show();	
-	$("#filtrecentres").show();	
+	$("*[id*=filtre]").show();	
 }
 
 function Annees()
 {
-	if ($("select[name*=ana_localite]").val()==="pays") { methode="getPays";}
-	if ($("select[name*=ana_localite]").val()==="region") { methode="getRegions";}
-	if ($("select[name*=ana_localite]").val()==="departement") { methode="getDepartements";}
-	if ($("select[name*=ana_localite]").val()==="centre") { methode="getCentres";}
 	$.ajax({            // DATES 
 		url: "http://www.sigegis.ugb-edu.com/main_controller/getDatesElections?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage").val(),           			         			      
 		dataType: 'json',      
@@ -111,10 +103,10 @@ $("#choixmultipleB").on("change",function()
 			
 			parametres_analyse="param="+param+"&annees="+annees+"&typeElection="+typeElection;
 
-			if ($("select[name*=ana_localite]").val()==="pays") { parametres_analyse+="&niveau=pays"; }
-			if ($("select[name*=ana_localite]").val()==="region") { parametres_analyse+="&niveau=reg";}
-			if ($("select[name*=ana_localite]").val()==="departement") {parametres_analyse+="&niveau=dep";}
-			if ($("select[name*=ana_localite]").val()==="centre") { parametres_analyse+="&niveau=cen";}		
+			if ($("select[name*=ana_localite]").val()=="pays") { parametres_analyse+="&niveau=pays"; }
+			if ($("select[name*=ana_localite]").val()=="region") { parametres_analyse+="&niveau=reg";}
+			if ($("select[name*=ana_localite]").val()=="departement") {parametres_analyse+="&niveau=dep";}
+			if ($("select[name*=ana_localite]").val()=="centre") { parametres_analyse+="&niveau=cen";}		
 			
 			$.ajax({        							    
 				url: "http://www.sigegis.ugb-edu.com/main_controller/getCandidatsAnnee",

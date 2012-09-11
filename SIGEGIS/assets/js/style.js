@@ -1,5 +1,5 @@
 
-$("input[id*='valider'],input[id*='validerLocalite']").button();
+$("input[id*='valider'],input[id*='validerLocalite'], #connection_form :submit").button();
 
 $("#ouvrir, #comparer").css("width","200px");
 
