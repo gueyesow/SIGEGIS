@@ -5,7 +5,13 @@
 
 $(document).ready(function() {
 
+$("#grid").attr("checked","checked");
 $("#menu ul li:gt(4)").remove();
+$("#menu ul li:nth-child(2) a").text("Niveau national");
+$("#menu ul li:nth-child(3) a").text("Par région");
+$("#menu ul li:nth-child(4) a").text("Par département");
+$("#menu ul li:nth-child(5) a").text("Par centre");
+
 
 chart1 = new Highcharts.Chart({
     chart: {

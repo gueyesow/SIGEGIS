@@ -49,10 +49,11 @@ class Filtering_model extends CI_Model{
 			}
 				
 			for($i=0;$i<sizeof($arrayAnnees);$i++) {
-				$requete.=" AND YEAR(election.dateElection) ='".$arrayAnnees[$i]."'";
+				if ($i==0) $requete.=" AND (YEAR(election.dateElection) ='".$arrayAnnees[$i]."'";
+				else $requete.=" OR YEAR(election.dateElection) ='".$arrayAnnees[$i]."'";
 			}
 
-			$requete.=" GROUP BY rp.idCandidature";
+			$requete.=") GROUP BY rp.idCandidature HAVING count(distinct rp.idElection)=".sizeOf($arrayAnnees);
 
 			$query=$this->db->query($requete);
 
@@ -139,7 +140,7 @@ class Filtering_model extends CI_Model{
 			}
 		} return FALSE;
 	}
-
+/*
 	function getCandidatsArray(){
 		$nomCandidat = NULL;
 
@@ -168,7 +169,7 @@ class Filtering_model extends CI_Model{
 			return FALSE;
 		}
 
-	}
+	}*/
 
 	function getDatesElections(){
 		$requete="SELECT DISTINCT YEAR(dateElection) as annee FROM election";
@@ -182,6 +183,29 @@ class Filtering_model extends CI_Model{
 
 		$elections = array();
 
+		if($query->result()){
+			foreach ($query->result() as $anneeElection) {
+				$elections[$anneeElection->annee] = $anneeElection->annee;
+			}
+			echo json_encode($elections);
+		}
+		else{
+			return FALSE;
+		}
+	}
+	
+	function getDatesElectionsAnalyse(){
+		$requete="SELECT YEAR(dateElection) as annee FROM election";
+		if(!empty($_GET["typeElection"]))
+			$requete.=" WHERE typeElection='".$_GET["typeElection"]."'";
+		if(!empty($_GET["anneeDecoupage"]))
+			$requete.=" AND anneeDecoupage=".$_GET["anneeDecoupage"];
+	
+		$requete.=" ORDER BY dateElection asc";
+		$query=$this->db->query($requete);
+	
+		$elections = array();
+	
 		if($query->result()){
 			foreach ($query->result() as $anneeElection) {
 				$elections[$anneeElection->annee] = $anneeElection->annee;

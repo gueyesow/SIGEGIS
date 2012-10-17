@@ -6,7 +6,7 @@
 			<label for="presidentielle">Election présidentielle</label><br /> 
 			<input id="legislative" type="radio" name="radio" />
 			<label for="legislative">Election législative</label><br /> 
-			<input id="locale" type="radio" name="radio2" />
+			<input id="locale" type="radio" name="radio" />
 			<label for="locale">Election locale</label><br />
 		</fieldset>
 
@@ -20,7 +20,7 @@
 			<label for="pie">Diagramme à secteurs</label><br /> 							
 			<input type="checkbox" id="line" name="line" />
 			<label for="line">Courbes</label><br />
-			<input type="checkbox" id="grid" name="grid" checked="checked" />
+			<input type="checkbox" id="grid" name="grid" />
 			<label for="grid">Tableau</label>
 		</fieldset>
 

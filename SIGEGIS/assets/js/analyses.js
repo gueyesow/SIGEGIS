@@ -136,11 +136,12 @@ $(document).ready(function() {
 	/**
 	 * CHOIX DU MODE DE REPRESENTATION DES DONNEES
 	 */
-	var numberOfClickForLine=0;	
+	var numberOfClickForLine=0;
+	var numberOfClickForGrid=0;	
 	$("#types_affichage input").on( "change",function() {									
 		if(!$("#bar")[0].checked) {$("*[id*='chartdiv1'],*[id*='chartdiv2']").hide("animated");} else  if($("#bar")[0].checked) {$("*[id*='chartdiv1']").show("animated");if(save) $("*[id*='chartdiv2']").show("animated");}
 		if(!$("#line")[0].checked) {$("*[id*='chartdiv3'],*[id*='chartdiv4']").hide("animated");} else  if($("#line")[0].checked) { $("*[id='chartdiv3']").show("animated"); if(save && $("#chartdiv4").text()!="") $("*[id='chartdiv4']").show("animated");  if (numberOfClickForLine==0) {$("#"+lastPressedButton).click();numberOfClickForLine++;}/*Recharger les charts*/}
-		if(!$("#grid")[0].checked) {$("*[id*='theGrid']").hide("animated");} else  if($("#grid")[0].checked) {$("*[id*='theGrid']").show("animated");$("#grid").attr("checked","checked");}
+		if(!$("#grid")[0].checked) {$("*[id*='theGrid']").hide("animated");} else  if($("#grid")[0].checked) {$("*[id*='theGrid']").show("animated");if (numberOfClickForGrid==0) {$("#"+lastPressedButton).click();numberOfClickForGrid++;}}
 	});
 		
 	

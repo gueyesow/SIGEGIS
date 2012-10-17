@@ -13,7 +13,7 @@
 
 	<?php echo $menu;?>		
 
-		<div id="zone_des_filtres">
+	<div id="zone_des_filtres">
 		<form>
 			<?php 
 			foreach ($filtres as $filtre)
@@ -24,7 +24,7 @@
 	</div>
 	<br />
 	<br />
-
+	
 	<table id="wrapper-table">
 		<tr>
 			<td id="left-sidebar">
@@ -36,31 +36,16 @@
 				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
 			<td id="content">
-				<div>
-					<h1 id="titre"></h1>
-					
-						<h1>Connexion</h1>
-					   <p id="login_errors"><?php echo validation_errors(); ?></p>
-					   <?php echo form_open('verifylogin',array("id"=>"connection_form")); ?>
-					   <table><tr><td>
-					     <label for="username">Identifiant:</label></td><td>
-					     <input type="text" size="20" id="username" name="username"/></td></tr><tr><td>
-					     <label for="password">Mot de passe:</label></td><td>
-					     <input type="password" size="20" id="password" name="password"/></td></tr>
-					     <tr><td colspan="2">					     
-					     <input type="submit" value="Login"/></td></tr></table>
-					   </form>
-
-					<div style='clear: both;'></div>
+				<div id="theGrid">
+					<table id="list"></table>
+					<div id="pager"></div>
 				</div>
+				<table id="listeCandidats">
+				<tr><th>Prénom</th><th>Nom</th></tr>
+				</table>
 			</td>
 		</tr>
 	</table>
-	
-	<script type="text/javascript">
-		$("#left-sidebar input, #left-sidebar button, select").attr("disabled","disabled");
-		$("#menu li:gt(0)").hide();
-	</script>
 	
 	<?php echo $footer;?>
 	
@@ -72,4 +57,3 @@
 		
 </body>
 </html>
-   

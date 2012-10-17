@@ -16,27 +16,29 @@
 		else {balise="#list";pager="#pager";}
 		
 	if ($(balise).text()!="") $(balise).setGridParam({url: url,page:1}).trigger("reloadGrid");
-	else{ 
-	$(balise).jqGrid({		
-		autowidth:true,
-		url: url,
-	    datatype: 'xml',
-	    mtype: 'GET',
-	    colNames:['Nom du candidat','Lieu de vote','Année','Nombre de voix'],
-	    colModel :[ 
-	      {name:'nomCandidat', index:'nomCandidat'},
-	      {name:'lieuDeVote', index:'lieuDeVote', width:80},
-	      {name:'annee', index:'annee', width:80},
-	      {name:'nbVoix', index:'nbVoix', width:80, formatter:'number', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}}  
-	    ],
-	    pager: pager,
-	    rowNum:20,
-	    rowList:[20,30,50,100,200],	    
-	    viewrecords: true,
-	    gridview: true,
-	}).navGrid(pager,{edit:false,add:false,del:false,search:false});
-	$(".ui-jqgrid-bdiv").removeAttr("style");
-	}
+	else{
+		$(balise).jqGrid({		
+			autowidth:true,
+			url: url,
+		    datatype: 'xml',
+		    mtype: 'GET',
+		    colNames:['Nom du candidat','Lieu de vote','Année','Nombre de voix'],
+		    colModel :[ 
+		      {name:'nomCandidat', index:'nomCandidat'},
+		      {name:'lieuDeVote', index:'lieuDeVote', width:80},
+		      {name:'annee', index:'annee', width:80},
+		      {name:'nbVoix', index:'nbVoix', width:80, formatter:'number', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}}  
+		    ],
+		    pager: pager,
+		    rowNum:20,
+		    rowList:[20,30,50,100,200],	    
+		    viewrecords: true,
+		    gridview: true,
+		}).navGrid(pager,{edit:false,add:false,del:false,search:false});
+		
+		$(".ui-jqgrid-bdiv").removeAttr("style");
+		$("*[id*=theGrid]").hide();
+	}	
 	}
 
 function refreshChart(theChart,json){

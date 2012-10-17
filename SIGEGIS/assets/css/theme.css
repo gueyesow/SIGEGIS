@@ -11,7 +11,8 @@ h1	{
 
 a 	{
 	margin: 5px;
-	font-size: 16px;
+	/*font-size: 16px;*/
+	font-size: 1.5em;
 	color: blue;
 	}
 
@@ -24,6 +25,10 @@ label {
 	font-size: 12px;
 	}
 	
+#ui-datepicker-div{
+	width: 300px;
+	}
+
 table {
 	
 	border-collapse: collapse;
@@ -89,6 +94,7 @@ fieldset {
 
 #wrapper{
 	width: 98%;
+	min-width:1024px;
 	margin: auto;
 	}
 

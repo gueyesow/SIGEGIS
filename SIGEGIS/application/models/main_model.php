@@ -10,28 +10,31 @@ class Main_model extends CI_Model{
 private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
 private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
 private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
+private $typeElection=null;
+private $niveau=null;
+private $titreElection="";
 
+public function __construct(){
+	if(!empty($_GET["typeElection"])) {
+		$this->typeElection=$_GET["typeElection"];	
+		if ($this->typeElection=="presidentielle") $this->titreElection="présidentielle";
+		elseif ($this->typeElection=="legislative") $this->titreElection="législative";
+		elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
+		else $this->titreElection=$this->typeElection;
+	}
+	if(!empty($_GET["niveau"]))	$this->niveau=$_GET["niveau"];
+	else $this->niveau=null;	
+}
 	/**
-	 * Cette fonction retourne le code JavaScript du Column chart
-	 * @return string
-	 * @param string $balise Le nom du conteneur Html
+	 * Cette fonction retourne les données pour l'histogramme
+	 * @return JSON object
 	 */	
-	public function getBarVisualiser(){
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-		else return;
+	public function getBarVisualiser(){						
 		
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection;
-		
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
-		
-		if ($niveau=="cen") $nomLieu="nomCentre,";
-		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-		elseif ($niveau=="reg") $nomLieu="nomRegion,";
-		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		if ($this->niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 		else $nomLieu="";
 		
 		if(!empty($_GET['param'])){
@@ -42,32 +45,32 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		$params=explode(",",$parametres);
 		$v=0;
 		
-		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, $nomLieu nomSource, SUM( nbVoix ) as nbVoix
-		FROM {$this->tables[$typeElection]} rp
+		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, $nomLieu nomSource,partiActuel, SUM( nbVoix ) as nbVoix
+		FROM {$this->tables[$this->typeElection]} rp
 		LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN election ON rp.idElection = election.idElection
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 						
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+		if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays")
+		if ($this->niveau=="reg" OR $this->niveau=="pays")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays")
+		if ($this->niveau=="pays")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 		
 		
-		if ($niveau=="cen") $parametres3="centre.idCentre";
-		elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-		elseif ($niveau=="reg") $parametres3="region.idRegion";
-		elseif ($niveau=="pays") $parametres3="pays.idPays";
+		if ($this->niveau=="cen") $parametres3="centre.idCentre";
+		elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+		elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+		elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 		else $parametres3="null";
 		
 		$colonnesBDD=array();
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
-		if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+		if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 		$colonnesBDD[]=$parametres3;
 		
 		for($i=0;$i<sizeof($params);$i++) {
@@ -85,28 +88,28 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		//			TITRES DES DIAGRAMMES			//
 		// ----------------------------------------	//
 		$titre_niveau="Election ";
+	
+		$titre_niveau.=" $this->titreElection ".$resultats[0]->annee.": résultats ";
 		
-		$titre_niveau.=" $titreElection ".$resultats[0]->annee.": résultats ";
-		
-		if ($niveau=="cen") {
+		if ($this->niveau=="cen") {
 			$titre_niveau.="par centre ";$sous_titre="Centre: ";
 		}
-		elseif ($niveau=="dep") {
+		elseif ($this->niveau=="dep") {
 			$titre_niveau.="départementaux ";$sous_titre="Département: ";
 		}
-		elseif($niveau=="reg") {
+		elseif($this->niveau=="reg") {
 			$titre_niveau.="régionaux ";$sous_titre="Région: ";
 		}
-		elseif($niveau=="pays") {
+		elseif($this->niveau=="pays") {
 			$titre_niveau.="par pays ";$sous_titre="Pays: ";
 		}
 		else  $titre_niveau.="globaux ";
 		
 		
-		if ($niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
-		elseif ($niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
-		elseif ($niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
-		elseif ($niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
+		if ($this->niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
+		elseif ($this->niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
+		elseif ($this->niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
+		elseif ($this->niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
 		else $sous_titre="";
 		$titre=$titre_niveau;
 		
@@ -118,7 +121,7 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		$abscisse=array();$ordonnee=array();
 
 		foreach ($resultats as $resultat){
-			$abscisse[]=$resultat->nomCandidat;
+			$abscisse[]=$resultat->nomCandidat."<br /><b>".$resultat->partiActuel."</b>";
 			$ordonnee[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}");			
 		}
 		
@@ -135,7 +138,7 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		$rendu["sous_titre"]=$sous_titre;
 		$rendu["abscisse"]=$abscisse;
 		$rendu["ordonnee"]=$ordonnee;
-		$rendu["unite"]=$unite;
+		$rendu["unite"]=$unite;	
 		
 		echo json_encode($rendu);	
 		
@@ -143,23 +146,12 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		} // ...............  Fin de getBarVisualiser() ...............
 	
 	
-	public function getPieVisualiser(){
+	public function getPieVisualiser(){			
 		
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-		else return;
-		
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection;
-		
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
-		
-		if ($niveau=="cen") $nomLieu="nomCentre,";
-		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-		elseif ($niveau=="reg") $nomLieu="nomRegion,";
-		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		if ($this->niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 		else $nomLieu="";
 
 		if(!empty($_GET['param'])){
@@ -171,24 +163,24 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		$v=0;
 
 		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, $nomLieu nomSource, SUM( nbVoix ) as nbVoix
-		FROM {$this->tables[$typeElection]} rp
+		FROM {$this->tables[$this->typeElection]} rp
 		LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN election ON rp.idElection = election.idElection
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+		if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays")
+		if ($this->niveau=="reg" OR $this->niveau=="pays")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays")
+		if ($this->niveau=="pays")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
-		if ($niveau=="cen") $parametres3="centre.idCentre";
-		elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-		elseif ($niveau=="reg") $parametres3="region.idRegion";
-		elseif ($niveau=="pays") $parametres3="pays.idPays";
+		if ($this->niveau=="cen") $parametres3="centre.idCentre";
+		elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+		elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+		elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 		else $parametres3="null";
 
 		$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
@@ -209,28 +201,28 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		// ----------------------------------------	//
 		$titre_niveau="Election ";
 		
-		$titre_niveau.=" $titreElection ".$resultats[0]->annee.": résultats ";
+		$titre_niveau.=" $this->titreElection ".$resultats[0]->annee.": résultats ";
 		
-		if ($niveau=="cen") {
+		if ($this->niveau=="cen") {
 			$titre_niveau.="par centre ";$sous_titre="Centre: ";
 		}
-		elseif ($niveau=="dep") {
+		elseif ($this->niveau=="dep") {
 			$titre_niveau.="départementaux ";$sous_titre="Département: ";
 		}
-		elseif($niveau=="reg") {
+		elseif($this->niveau=="reg") {
 			$titre_niveau.="régionaux ";$sous_titre="Région: ";
 		}
-		elseif($niveau=="pays") {
+		elseif($this->niveau=="pays") {
 			$titre_niveau.="par pays ";$sous_titre="Pays: ";
 		}
 		else  $titre_niveau.="globaux ";				
 		
 
 
-		if ($niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
-		elseif ($niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
-		elseif ($niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
-		elseif ($niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
+		if ($this->niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
+		elseif ($this->niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
+		elseif ($this->niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
+		elseif ($this->niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
 		else $sous_titre="";
 		$titre=$titre_niveau;
 
@@ -259,15 +251,8 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getGridVisualiser(){
-	
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-		else return;
-	
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
-	
-	
+	public function getGridVisualiser(){		
+		
 		$page = $_GET['page'];
 		$limit = $_GET['rows'];
 		$sidx = $_GET['sidx'];
@@ -282,31 +267,31 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 			$v=0;
 			$parametres3=null;
 			
-			if ($niveau=="cen") $parametres3="centre.idCentre";
-			elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-			elseif ($niveau=="reg") $parametres3="region.idRegion";
-			elseif ($niveau=="pays") $parametres3="pays.idPays";
+			if ($this->niveau=="cen") $parametres3="centre.idCentre";
+			elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+			elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+			elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 			
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
 			$colonnesBDD[]="YEAR(election.dateElection)";
-			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 			$colonnesBDD[]=$parametres3;			
 			
 			$requeteTOTAL="SELECT SUM( nbVoix ) ";
 
-			$joinPART=" FROM {$this->tables[$typeElection]} rp
+			$joinPART=" FROM {$this->tables[$this->typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 			
-			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+			if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 			$joinPART.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays")
+			if ($this->niveau=="reg" OR $this->niveau=="pays")
 			$joinPART.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays")
+			if ($this->niveau=="pays")
 			$joinPART.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
 			$requeteTOTAL.=$joinPART;
@@ -327,11 +312,11 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 					
 	
 			$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, nomCandidat,nomSource
-			FROM resultatspresidentielles rp
+			FROM {$this->tables[$this->typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
-			LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$typeElection'";
+			LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$this->typeElection'";
 		
 			$requeteCount.=" GROUP BY rp.idCandidature) as S";
 		
@@ -379,12 +364,6 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 	} // ...............  Fin de getGrid() ...............
 	
 	public function exportResultatsToCSV(){
-		
-			if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-		else return;
-	
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
 	
 		$sord = $_GET['sord'];
 	
@@ -394,31 +373,31 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 			$v=0;
 			$parametres3=null;
 			
-			if ($niveau=="cen") $parametres3="centre.idCentre";
-			elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-			elseif ($niveau=="reg") $parametres3="region.idRegion";
-			elseif ($niveau=="pays") $parametres3="pays.idPays";
+			if ($this->niveau=="cen") $parametres3="centre.idCentre";
+			elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+			elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+			elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 			
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
 			$colonnesBDD[]="YEAR(election.dateElection)";
-			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 			$colonnesBDD[]=$parametres3;			
 			
 			$requeteTOTAL="SELECT SUM( nbVoix ) ";
 
-			$joinPART=" FROM {$this->tables[$typeElection]} rp
+			$joinPART=" FROM {$this->tables[$this->typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 			
-			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+			if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 			$joinPART.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays")
+			if ($this->niveau=="reg" OR $this->niveau=="pays")
 			$joinPART.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays")
+			if ($this->niveau=="pays")
 			$joinPART.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
 			$requeteTOTAL.=$joinPART;
@@ -461,21 +440,10 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 	
 		public function getBarParticipation(){
 	
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-		else return;
-	
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection;
-	
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
-	
-		if ($niveau=="cen") $nomLieu="nomCentre,";
-		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-		elseif ($niveau=="reg") $nomLieu="nomRegion,";
-		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		if ($this->niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 		else $nomLieu="'Participation au niveau  national' as nomLieu,";
 	
 		if(!empty($_GET['param'])){
@@ -488,30 +456,30 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		$v=0;
 	
 		$requete="SELECT rp.idElection,YEAR(dateElection) as annee, $nomLieu nomSource,sum(nbInscrits) as inscrits,sum(nbVotants) as votants,sum(nbBulletinsNuls) as nuls,sum(nbExprimes) as exprimes,(sum(nbInscrits)-sum(nbVotants)) as abstention
-		FROM {$this->tablesParticipation[$typeElection]} rp
+		FROM {$this->tablesParticipation[$this->typeElection]} rp
 		LEFT JOIN election ON rp.idElection = election.idElection		
 		LEFT JOIN source ON rp.idSource = source.idSource	
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 	
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+		if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays")
+			if ($this->niveau=="reg" OR $this->niveau=="pays")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays")
+			if ($this->niveau=="pays")
 					$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 	
 	
-					if ($niveau=="cen") $parametres3="centre.idCentre";
-					elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-					elseif ($niveau=="reg") $parametres3="region.idRegion";
-					elseif ($niveau=="pays") $parametres3="pays.idPays";
+					if ($this->niveau=="cen") $parametres3="centre.idCentre";
+					elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+					elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+					elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 					else $parametres3="null";
 	
 					$colonnesBDD=array();
 					$colonnesBDD[]="rp.idSource";
 					$colonnesBDD[]="YEAR(election.dateElection)";
-					if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+					if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 					$colonnesBDD[]=$parametres3;
 	
 					for($i=0;$i<sizeof($params);$i++) {
@@ -532,26 +500,26 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		
 		$titre_niveau.=" $titreElection ".$resultats[0]->annee." | Source: $source";
 		
-		if ($niveau=="cen") {
+		if ($this->niveau=="cen") {
 			/*$titre_niveau.=": résultats par centre ";*/$sous_titre="Centre: ";
 		}
-		elseif ($niveau=="dep") {
+		elseif ($this->niveau=="dep") {
 			/*$titre_niveau.=": résultats départementaux ";*/$sous_titre="Département: ";
 		}
-		elseif($niveau=="reg") {
+		elseif($this->niveau=="reg") {
 			/*$titre_niveau.=": résultats régionaux ";*/$sous_titre="Région: ";
 		}
-		elseif($niveau=="pays") {
+		elseif($this->niveau=="pays") {
 			/*$titre_niveau.=": résultats par pays ";*/$sous_titre="Pays: ";
 		}
 		//else  $titre_niveau.=": résultats globaux ";				
 		
 	
 	
-		if ($niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
-		elseif ($niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
-		elseif ($niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
-		elseif ($niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
+		if ($this->niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
+		elseif ($this->niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
+		elseif ($this->niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
+		elseif ($this->niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
 		else $sous_titre="";
 		$titre=$titre_niveau;
 	
@@ -602,14 +570,7 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 	* @return string
 	* @param string $balise Le nom du conteneur Html
 	*/
-	public function getGridParticipation(){
-	
-	if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-	else return;
-	
-	if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-	else $niveau=null;
-	
+	public function getGridParticipation(){	
 	
 	$page = $_GET['page'];
 	$limit = $_GET['rows'];
@@ -618,10 +579,10 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 	
 	if(!$sidx) $sidx =1;
 	
-	if ($niveau=="cen") $nomLieu="nomCentre as nomLieu,";
-	elseif ($niveau=="dep") $nomLieu="nomDepartement as nomLieu,";
-	elseif ($niveau=="reg") $nomLieu="nomRegion as nomLieu,";
-	elseif ($niveau=="pays") $nomLieu="nomPays as nomLieu,";
+	if ($this->niveau=="cen") $nomLieu="nomCentre as nomLieu,";
+	elseif ($this->niveau=="dep") $nomLieu="nomDepartement as nomLieu,";
+	elseif ($this->niveau=="reg") $nomLieu="nomRegion as nomLieu,";
+	elseif ($this->niveau=="pays") $nomLieu="nomPays as nomLieu,";
 	else $nomLieu="'Participation au niveau  national' as nomLieu,";
 	
 	if(!empty($_GET['param'])){
@@ -631,29 +592,29 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 	$parametres3=null;
 	
 	$requete="SELECT rp.idElection,YEAR(dateElection) as annee, $nomLieu nomSource,sum(nbInscrits) as inscrits,sum(nbVotants) as votants,sum(nbBulletinsNuls) as nuls,sum(nbExprimes) as exprimes,(sum(nbInscrits)-sum(nbVotants)) as abstention
-	FROM {$this->tablesParticipation[$typeElection]} rp
+	FROM {$this->tablesParticipation[$this->typeElection]} rp
 	LEFT JOIN election ON rp.idElection = election.idElection		
 	LEFT JOIN source ON rp.idSource = source.idSource	
 	LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 	
-	if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+	if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 	$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 	LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-	if ($niveau=="reg" OR $niveau=="pays")
+	if ($this->niveau=="reg" OR $this->niveau=="pays")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays")
+			if ($this->niveau=="pays")
 				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 	
-				if ($niveau=="cen") $parametres3="centre.idCentre";
-				elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-				elseif ($niveau=="reg") $parametres3="region.idRegion";
-				elseif ($niveau=="pays") $parametres3="pays.idPays";
+				if ($this->niveau=="cen") $parametres3="centre.idCentre";
+				elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+				elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+				elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 				else $parametres3="null";
 
 				$colonnesBDD=array();
 				$colonnesBDD[]="rp.idSource";
 				$colonnesBDD[]="YEAR(election.dateElection)";
-				if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+				if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 				$colonnesBDD[]=$parametres3;
 
 				for($i=0;$i<sizeof($params);$i++) {
@@ -709,21 +670,15 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		
 		public function getComboParticipation(){
 		
-			if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-			else return;
-		
-			if ($typeElection=="presidentielle") $titreElection="présidentielle";
-			elseif ($typeElection=="legislative") $titreElection="législative";
-			elseif ($typeElection=="regionale") $titreElection="régionale";
+			if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
+			elseif ($this->typeElection=="legislative") $titreElection="législative";
+			elseif ($this->typeElection=="regionale") $titreElection="régionale";
 			else $titreElection=$typeElection;
 		
-			if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-			else $niveau=null;
-		
-			if ($niveau=="cen") $nomLieu="nomCentre,";
-			elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-			elseif ($niveau=="reg") $nomLieu="nomRegion,";
-			elseif ($niveau=="pays") $nomLieu="nomPays,";
+			if ($this->niveau=="cen") $nomLieu="nomCentre,";
+			elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+			elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+			elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 			else $nomLieu="'Participation au niveau  national' as nomLieu,";
 		
 			if(!empty($_GET['param'])){
@@ -735,26 +690,26 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 			$v=0;
 		
 			$requete="SELECT rp.idElection,YEAR(dateElection) as annee, $nomLieu nomSource,sum(nbInscrits) as inscrits,sum(nbVotants) as votants,sum(nbBulletinsNuls) as nuls,sum(nbExprimes) as exprimes,(sum(nbInscrits)-sum(nbVotants)) as abstention
-			FROM {$this->tablesParticipation[$typeElection]} rp
+			FROM {$this->tablesParticipation[$this->typeElection]} rp
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 		
 		
 		
-			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+			if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-				if ($niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="reg" OR $this->niveau=="pays")
 				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-				if ($niveau=="pays")
+				if ($this->niveau=="pays")
 				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 		
 		
-				if ($niveau=="cen") $parametres3="centre.idCentre";
-				elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-				elseif ($niveau=="reg") $parametres3="region.idRegion";
-				elseif ($niveau=="pays") $parametres3="pays.idPays";
+				if ($this->niveau=="cen") $parametres3="centre.idCentre";
+				elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+				elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+				elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 				else $parametres3="null";
 		
 				$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
@@ -775,24 +730,24 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 				$titre_niveau="Election $titreElection ".$resultats[0]->annee;
 				$titre_niveau.=": Taux de participation ";
 		
-				if ($niveau=="cen") {
+				if ($this->niveau=="cen") {
 				$titre_niveau.="par centre ";$sous_titre="Centre: ";
 				}
-				elseif ($niveau=="dep") {
-						$titre_niveau.="départementaux ";$sous_titre="Département: ";
+				elseif ($this->niveau=="dep") {
+						$titre_niveau.="par département ";$sous_titre="Département: ";
 				}
-				elseif($niveau=="reg") {
-				$titre_niveau.="régionaux ";$sous_titre="Région: ";
+				elseif($this->niveau=="reg") {
+				$titre_niveau.="par région";$sous_titre="Région: ";
 				}
-				elseif($niveau=="pays") {
+				elseif($this->niveau=="pays") {
 				$titre_niveau.="par pays ";$sous_titre="Pays: ";
 		}
 		else  $titre_niveau.="au niveau national ";
 		
-		if ($niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
-				elseif ($niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
-				elseif ($niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
-				elseif ($niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
+		if ($this->niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
+				elseif ($this->niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
+				elseif ($this->niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
+				elseif ($this->niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
 				else $sous_titre="";
 				$titre=$titre_niveau;
 		
@@ -843,12 +798,11 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		
 
 		public function getPoidsElectoralRegions(){
-			if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-			else return;
+			
 			if (!empty($_GET['annee']) AND !empty($_GET['tour'])) {$annee=$_GET['annee'];$tour=$_GET['tour'];} else return;
 			
 			$requete="SELECT nomRegion, SUM( nbInscrits ) as inscrits
-			FROM {$this->tablesParticipation[$typeElection]} rp
+			FROM {$this->tablesParticipation[$this->typeElection]} rp
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre 
 			LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
@@ -863,9 +817,9 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 			//			TITRES DES DIAGRAMMES			//
 			// ----------------------------------------	//
 			$titre_niveau="Election ";
-			if ($typeElection=="presidentielle") $titreElection="présidentielle";
-			elseif ($typeElection=="legislative") $titreElection="législative";
-			elseif ($typeElection=="regionale") $titreElection="régionale";
+			if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
+			elseif ($this->typeElection=="legislative") $titreElection="législative";
+			elseif ($this->typeElection=="regionale") $titreElection="régionale";
 			else $titreElection=$typeElection;
 			$titre_niveau.=" $titreElection ".$annee;
 			$sous_titre="Poids électoral des régions"; 		
@@ -898,16 +852,10 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 		
 		public function exportStatisticsToCSV(){
 		
-			if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-			else return;
-		
-			if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-			else $niveau=null;
-
-			if ($niveau=="cen") $nomLieu="nomCentre as nomLieu,";
-			elseif ($niveau=="dep") $nomLieu="nomDepartement as nomLieu,";
-			elseif ($niveau=="reg") $nomLieu="nomRegion as nomLieu,";
-			elseif ($niveau=="pays") $nomLieu="nomPays as nomLieu,";
+			if ($this->niveau=="cen") $nomLieu="nomCentre as nomLieu,";
+			elseif ($this->niveau=="dep") $nomLieu="nomDepartement as nomLieu,";
+			elseif ($this->niveau=="reg") $nomLieu="nomRegion as nomLieu,";
+			elseif ($this->niveau=="pays") $nomLieu="nomPays as nomLieu,";
 			else $nomLieu="'Participation au niveau  national' as nomLieu,";
 		
 			if(!empty($_GET['param'])){
@@ -917,23 +865,23 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 				$parametres3=null;
 		
 				$requete="SELECT rp.idElection,YEAR(dateElection) as annee, $nomLieu nomSource,sum(nbInscrits) as inscrits,sum(nbVotants) as votants,sum(nbBulletinsNuls) as nuls,sum(nbExprimes) as exprimes,(sum(nbInscrits)-sum(nbVotants)) as abstention
-				FROM {$this->tablesParticipation[$typeElection]} rp
+				FROM {$this->tablesParticipation[$this->typeElection]} rp
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 		
-				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 					$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 					LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-					if ($niveau=="reg" OR $niveau=="pays")
+					if ($this->niveau=="reg" OR $this->niveau=="pays")
 							$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-							if ($niveau=="pays")
+							if ($this->niveau=="pays")
 									$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 		
-									if ($niveau=="cen") $parametres3="centre.idCentre";
-									elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-									elseif ($niveau=="reg") $parametres3="region.idRegion";
-									elseif ($niveau=="pays") $parametres3="pays.idPays";
+									if ($this->niveau=="cen") $parametres3="centre.idCentre";
+									elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+									elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+									elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 									else $parametres3="null";
 		
 		

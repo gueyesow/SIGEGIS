@@ -2,7 +2,7 @@
 
 class Main_controller extends CI_Controller {
 
-	function __construct(){
+	public function __construct(){
 		// database et assets_helper sont chargés automatiquement
 		parent::__construct();
 		$this->load->model("main_model","basicModel");

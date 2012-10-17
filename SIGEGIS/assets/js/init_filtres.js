@@ -39,7 +39,7 @@
 			else if($.getUrlVar("niveau")==="pays") {niveau="par pays";}
 			else if ($.getUrlVar("niveau")==="globaux") niveau="globaux";
 			
-			if (! $("#ana_decoupage").length && $.getUrlVar("type")) $("#titre").append("Election "+titres[type]+" "+$elections.val()+": résultats "+niveau);						
+			if (! $("#ana_decoupage").length && $.getUrlVar("type")) $("#titre").append("Election "+titres[type]+" "+$elections.val()+": résultats "+niveau);			
 		}       
 	});
 	
@@ -56,10 +56,12 @@
 							$.each(json, function(index, value) {         
 								$tours.append('<option value="'+ index +'">'+ value +'</option>');							
 							});
-							//alert(typeElection);							
+							
 							$tours.change();
 							
 							if (! $("#ana_decoupage").length) $("#titre").text("Election "+titres[type]+" "+$elections.val()+": résultats "+niveau);
+							
+							if ($("#poidsElectoralRegions").length>0) $("#titre").text("Election "+titres[type]+" "+$elections.val()+": taux de participation");
 							
 							$('#menu ul li  a').each(function(){								
 									
