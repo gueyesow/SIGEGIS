@@ -61,7 +61,7 @@ class Analysis_model extends CI_Model{
 			
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat,rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat,rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
@@ -225,7 +225,7 @@ class Analysis_model extends CI_Model{
 
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
@@ -340,7 +340,7 @@ class Analysis_model extends CI_Model{
 	
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
@@ -405,9 +405,7 @@ class Analysis_model extends CI_Model{
 		$titre="";
 		$sous_titre="";
 		$unite="";
-		$abscisse="";
-		$nomCandidat="";
-		
+		$abscisse="";		
 
 		$couleur=0;
 		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
@@ -454,7 +452,7 @@ class Analysis_model extends CI_Model{
 			foreach ($listeCandidats as $leCandidat){
 
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
@@ -608,7 +606,7 @@ class Analysis_model extends CI_Model{
 			foreach ($listeCandidats as $leCandidat){
 
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
@@ -725,7 +723,7 @@ class Analysis_model extends CI_Model{
 			foreach ($listeCandidats as $leCandidat){
 	
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource

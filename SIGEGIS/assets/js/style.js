@@ -1,7 +1,7 @@
 
-$("input[id*='valider'],input[id*='validerLocalite'], #connection_form :submit, *[id*=voir_]").button();
+$("input[id*='valider'],input[id*='validerLocalite'], #connection_form :submit, .boutonAdmin").button();
 
-$("#ouvrir, #comparer,*[id*=voir_]").css("width","200px");
+$("#ouvrir, #comparer, .boutonAdmin").css("width","200px");
 
 $('#menu li a').hover(   
 		  

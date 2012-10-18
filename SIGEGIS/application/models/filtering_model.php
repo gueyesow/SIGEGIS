@@ -17,7 +17,7 @@ class Filtering_model extends CI_Model{
 
 		if ( !empty($_GET['param']) AND !empty($_GET["annees"]) AND !empty($_GET["niveau"])) {
 			
-			$requete="SELECT rp.idCandidature, nomCandidat
+			$requete="SELECT rp.idCandidature, CONCAT(prenom, ' ', nom) as nomCandidat
 			FROM {$this->tables[$typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource
@@ -89,7 +89,7 @@ class Filtering_model extends CI_Model{
 						
 			$typeElection=$params[3]; // 4eme parametre
 			
-			$requete="SELECT rp.idCandidature, nomCandidat
+			$requete="SELECT rp.idCandidature, CONCAT(prenom, ' ', nom) as nomCandidat
 			FROM {$this->tables[$typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource

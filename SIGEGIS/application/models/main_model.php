@@ -45,7 +45,7 @@ public function __construct(){
 		$params=explode(",",$parametres);
 		$v=0;
 		
-		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, $nomLieu nomSource,partiActuel, SUM( nbVoix ) as nbVoix
+		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, '', nom) as nomCandidat, $nomLieu nomSource,parti, SUM( nbVoix ) as nbVoix
 		FROM {$this->tables[$this->typeElection]} rp
 		LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 		LEFT JOIN source ON rp.idSource = source.idSource
@@ -121,7 +121,7 @@ public function __construct(){
 		$abscisse=array();$ordonnee=array();
 
 		foreach ($resultats as $resultat){
-			$abscisse[]=$resultat->nomCandidat."<br /><b>".$resultat->partiActuel."</b>";
+			$abscisse[]=$resultat->nomCandidat."<br /><b>".$resultat->parti."</b>";
 			$ordonnee[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}");			
 		}
 		
@@ -162,7 +162,7 @@ public function __construct(){
 		$params=explode(",",$parametres);
 		$v=0;
 
-		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, nomCandidat, $nomLieu nomSource, SUM( nbVoix ) as nbVoix
+		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, '', nom) as nomCandidat, $nomLieu nomSource, SUM( nbVoix ) as nbVoix
 		FROM {$this->tables[$this->typeElection]} rp
 		LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 		LEFT JOIN source ON rp.idSource = source.idSource
@@ -304,14 +304,14 @@ public function __construct(){
 			}
 			$requeteTOTAL.=$wherePART;
 			
-			$requete="SELECT rp.idCandidature, nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
+			$requete="SELECT rp.idCandidature, CONCAT(prenom, '', nom) as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
 			$requete.=$joinPART.$wherePART;
 			
 
 			
 					
 	
-			$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, nomCandidat,nomSource
+			$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, CONCAT(prenom, '', nom) as nomCandidat,nomSource
 			FROM {$this->tables[$this->typeElection]} rp
 			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 			LEFT JOIN source ON rp.idSource = source.idSource
@@ -410,10 +410,10 @@ public function __construct(){
 			}
 			$requeteTOTAL.=$wherePART;
 			
-			$requete="SELECT rp.idCandidature, nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
+			$requete="SELECT rp.idCandidature, CONCAT(prenom, '', nom) as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
 			$requete.=$joinPART.$wherePART;
 			
-		$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, nomCandidat,nomSource
+		$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, CONCAT(prenom, '', nom) as nomCandidat,nomSource
 		FROM resultatspresidentielles rp
 		LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 		LEFT JOIN source ON rp.idSource = source.idSource

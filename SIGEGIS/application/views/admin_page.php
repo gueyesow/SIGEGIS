@@ -42,23 +42,23 @@
 			<tr><th>Elections, candidats et listes</th><th>Localités</th><th>Résultats</th></tr>
 			<tr>
 			<td>
-			<a id="voir_les_centres" href="<?php echo site_url("admin_controller/editLocalites")?>">Elections</a><br />
-			<a id="voir_les_centres" href="<?php echo site_url("admin_controller/editLocalites")?>">Candidats</a><br />
-			<a id="voir_les_centres" href="<?php echo site_url("admin_controller/editLocalites")?>">Partis et coalitions</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editElections?type=presidentielle")?>">Elections</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editCandidats")?>">Candidats</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editListes")?>">Partis et coalitions</a><br />
 			</td>
 			<td>
-			<a id="voir_les_pays" href="<?php echo site_url("admin_controller/editLocalites")?>">Pays</a><br />
-			<a id="voir_les_regions" href="<?php echo site_url("admin_controller/editLocalites")?>">Régions</a><br />
-			<a id="voir_les_departements" href="<?php echo site_url("admin_controller/editLocalites")?>">Départements</a><br />
-			<a id="voir_les_collectivites" href="<?php echo site_url("admin_controller/editLocalites")?>">Collectivites</a><br />
-			<a id="voir_les_centres" href="<?php echo site_url("admin_controller/editLocalites")?>">Centres</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editLocalites?typeLocalite=pays")?>">Pays</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editLocalites?typeLocalite=region")?>">Régions</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editLocalites?typeLocalite=departement")?>">Départements</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editLocalites?typeLocalite=collectivite")?>">Collectivites</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editLocalites?typeLocalite=centre")?>">Centres</a><br />
 			</td>
 			<td>
-			<a id="voir_les_centres" href="<?php echo site_url("admin_controller/editLocalites?type=presidentielle")?>">Présidentielles</a><br />
-			<a id="voir_les_centres" href="<?php echo site_url("admin_controller/editLocalites")?>">Législatives</a><br />
-			<a id="voir_les_centres" href="<?php echo site_url("admin_controller/editLocalites")?>">Municipales</a><br />
-			<a id="voir_les_centres" href="<?php echo site_url("admin_controller/editLocalites")?>">Régionales</a><br />
-			<a id="voir_les_centres" href="<?php echo site_url("admin_controller/editLocalites")?>">Rurales</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats?type=presidentielle")?>">Présidentielles</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats?type=legislative")?>">Législatives</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats")?>">Municipales</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats")?>">Régionales</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats")?>">Rurales</a><br />
 			</td>
 			</tr>
 			</table>
