@@ -141,7 +141,7 @@ $(document).ready(function() {
 	$("#types_affichage input").on( "change",function() {									
 		if(!$("#bar")[0].checked) {$("*[id*='chartdiv1'],*[id*='chartdiv2']").hide("animated");} else  if($("#bar")[0].checked) {$("*[id*='chartdiv1']").show("animated");if(save) $("*[id*='chartdiv2']").show("animated");}
 		if(!$("#line")[0].checked) {$("*[id*='chartdiv3'],*[id*='chartdiv4']").hide("animated");} else  if($("#line")[0].checked) { $("*[id='chartdiv3']").show("animated"); if(save && $("#chartdiv4").text()!="") $("*[id='chartdiv4']").show("animated");  if (numberOfClickForLine==0) {$("#"+lastPressedButton).click();numberOfClickForLine++;}/*Recharger les charts*/}
-		if(!$("#grid")[0].checked) {$("*[id*='theGrid']").hide("animated");} else  if($("#grid")[0].checked) {$("*[id*='theGrid']").show("animated");if (numberOfClickForGrid==0) {$("#"+lastPressedButton).click();numberOfClickForGrid++;}}
+		if(!$("#grid")[0].checked) {$("*[id*='theGrid']").hide("animated");} else  if($("#grid")[0].checked) {$("*[id*='theGrid']").show("animated");if (numberOfClickForGrid==0) {$("#"+lastPressedButton).click();numberOfClickForGrid++;}}		
 	});
 		
 	
@@ -149,16 +149,31 @@ $(document).ready(function() {
 	 * Au changement du type d'élection à représenter, recharger les éléments de formulaire 
 	 */	
 	$("#types_elections input").on("click",function(){
+		typeElection=$(this).attr("id");
+		if ($(this).attr("id")=="locale" && !$("#ss_locales").length)
+			$("#types_elections").append(
+				"<fieldset id='ss_locales'><legend>Elections locales</legend>"+
+				"<input id='municipale' type='radio' name='radio2' checked='checked' /><label for='municipale'>Municipales</label><br />"+
+				"<input id='regionale' type='radio' name='radio2' /><label for='regionale'>Régionales</label><br />"+
+				"<input id='rurale' type='radio' name='radio2' /><label for='rurale'>Rurales</label></fieldset>");	
+
 		if ($("#locale")[0].checked){
-			$("#elections_locales").show("animated");
-		} else $("#elections_locales").hide("animated");
+			$("#ss_locales").show("animated");
+			$("#ss_locales :checked").removeAttr("checked");
+		} else $("#ss_locales").hide("animated");
 		//------------------ RELOAD ALL --------------------//
+		$("#ana_decoupage,#ana_decoupage_localite").change();
 		$("*[id*='choix']").empty();
 		Annees();
 		$("select[name*=ana_localite]").change();
 		$pays.change();
+		$("#ss_locales :input").on("click",function(){
+			typeElection=$(this).attr("id");$("#ana_decoupage,#ana_decoupage_localite").change();
+		});
 		//------------------ 	END   	--------------------//
+		if(!$("#presidentielle")[0].checked) $("#filtretours,#filtreana_tour").hide(); else $("#tours,#ana_tour").show();
 	});
+	
 	if (!$("#locale")[0].checked) $("#elections_locales").hide("animated");
 	
 	$('#imprimer').on("click",function(){

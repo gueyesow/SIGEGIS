@@ -177,7 +177,7 @@ $("#validerLocalite").on("click",function(event) {
 	
 	paramBis=$sources.val();	
 	
-	if(typeElection==="presidentielle") paramBis+=","+$tours.val();
+	if(typeElection=="presidentielle") paramBis+=","+$tours.val();
 	
 	paramBis+=","+$elections.val()+","+typeElection;
 		

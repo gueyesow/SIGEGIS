@@ -95,7 +95,9 @@ $("#choixmultipleB").on("change",function()
 {
 		$("#choixCandidatA,#choixCandidatB").empty();
 			param="";annees="";i=0;
-			param+=$sources.val()+","+$("#ana_tour").val()+","+$("#localite").val();
+			param+=$sources.val();
+			if ($("#presidentielle")[0].checked) param+=","+$("#ana_tour").val();
+			param+=","+$("#localite").val();
 			
 			$("#choixmultipleB").children().each(function(){
 				if(annees=="") annees+=$(this).text(); else annees+=","+$(this).val();
@@ -128,7 +130,9 @@ $("#choixMultipleLocalitesB").on("change",function()
 {
 		$("#choixCandidatLocaliteA,#choixCandidatLocaliteB").empty();
 		param="";localites="";
-		param+=$sources.val()+","+$tours.val()+","+$elections.val()+","+typeElection;
+		param+=$sources.val();
+		if ($("#presidentielle")[0].checked) param+=","+$tours.val();
+		param+=","+$elections.val()+"&typeElection="+typeElection;
 		
 		$("#choixMultipleLocalitesB").children().each(function(){
 			if(localites=="") localites+=$(this).val(); else localites+=","+$(this).val();

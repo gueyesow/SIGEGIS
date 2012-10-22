@@ -7,6 +7,25 @@
 class Analysis_model extends CI_Model{
 	private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
 	private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
+	private $candidatOrListe=array("candidature"=>"idCandidature","listescoalitionspartis"=>"idListe");
+	private $tableCandidat;
+	private $typeElection;
+	private $niveau;
+	
+public function __construct(){
+	if(!empty($_GET["typeElection"])) {
+		$this->typeElection=$_GET["typeElection"];	
+		if ($this->typeElection=="presidentielle") $this->tableCandidat="candidature";else $this->tableCandidat="listescoalitionspartis";
+		if ($this->typeElection=="presidentielle") $this->titreElection="présidentielle";
+		elseif ($this->typeElection=="legislative") $this->titreElection="législative";
+		elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
+		else $this->titreElection=$this->typeElection;		
+	}
+		
+	if(!empty($_GET['niveau'])) $this->niveau=$_GET['niveau'];
+}
+	
+	
 	/**
 	 * Cette fonction retourne le code JavaScript du Column chart
 	 * @return string
@@ -21,13 +40,12 @@ class Analysis_model extends CI_Model{
 		$abscisse="";
 
 
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-		else return;
+		if(!empty($_GET["typeElection"])) $this->typeElection=$_GET["typeElection"];	else return;
 		
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection."";		
+		if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($this->typeElection=="legislative") $titreElection="législative";
+		elseif ($this->typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$this->typeElection."";		
 
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
@@ -54,16 +72,19 @@ class Analysis_model extends CI_Model{
 				
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
-			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 			$colonnesBDD[]=$parametres3;
 			
 			$couleur=0;
 			
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat,rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM {$this->tables[$typeElection]} rp
-				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
+				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+				else $requete.="nomListe";
+				$requete.=" as nomCandidat,rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				FROM {$this->tables[$this->typeElection]} rp
+				LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
@@ -188,13 +209,13 @@ class Analysis_model extends CI_Model{
 		$unite="";
 		$abscisse="";
 
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		if(!empty($_GET["typeElection"])) $this->typeElection=$_GET["typeElection"];
 		else return;
 		
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection;		
+		if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($this->typeElection=="legislative") $titreElection="législative";
+		elseif ($this->typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$this->typeElection;		
 
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
@@ -220,13 +241,13 @@ class Analysis_model extends CI_Model{
 
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
-			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 			$colonnesBDD[]=$parametres3;		
 
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM {$this->tables[$typeElection]} rp
+				FROM {$this->tables[$this->typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
@@ -306,13 +327,13 @@ class Analysis_model extends CI_Model{
 		$unite="";
 		$abscisse="";
 	
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		if(!empty($_GET["typeElection"])) $this->typeElection=$_GET["typeElection"];
 		else return;
 	
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection;
+		if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($this->typeElection=="legislative") $titreElection="législative";
+		elseif ($this->typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$this->typeElection;
 	
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
@@ -341,7 +362,7 @@ class Analysis_model extends CI_Model{
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM {$this->tables[$typeElection]} rp
+				FROM {$this->tables[$this->typeElection]} rp
 				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
@@ -408,13 +429,11 @@ class Analysis_model extends CI_Model{
 		$abscisse="";		
 
 		$couleur=0;
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-		else return;
-		
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection;		
+	
+		if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($this->typeElection=="legislative") $titreElection="législative";
+		elseif ($this->typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$this->typeElection;		
 
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
@@ -444,7 +463,7 @@ class Analysis_model extends CI_Model{
 
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
-			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 			$colonnesBDD[]="YEAR(election.dateElection)";
 			$colonnesBDD[]="election.typeElection";
 						
@@ -452,9 +471,12 @@ class Analysis_model extends CI_Model{
 			foreach ($listeCandidats as $leCandidat){
 
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM {$this->tables[$typeElection]} rp
-				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
+				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+				else $requete.="nomListe";
+				$requete.=" as nomCandidat, rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				FROM {$this->tables[$this->typeElection]} rp
+				LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
@@ -565,13 +587,13 @@ class Analysis_model extends CI_Model{
 		$abscisse="";
 
 
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		if(!empty($_GET["typeElection"])) $this->typeElection=$_GET["typeElection"];
 		else return;
 		
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection;		
+		if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($this->typeElection=="legislative") $titreElection="législative";
+		elseif ($this->typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$this->typeElection;		
 
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
@@ -599,16 +621,19 @@ class Analysis_model extends CI_Model{
 
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
-			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 			$colonnesBDD[]="YEAR(election.dateElection)";
 			$colonnesBDD[]="election.typeElection";
 
 			foreach ($listeCandidats as $leCandidat){
 
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM {$this->tables[$typeElection]} rp
-				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
+				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+				else $requete.="nomListe";
+				$requete.=" as nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				FROM {$this->tables[$this->typeElection]} rp
+				LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
@@ -686,13 +711,13 @@ class Analysis_model extends CI_Model{
 		$abscisse="";
 	
 	
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
+		if(!empty($_GET["typeElection"])) $this->typeElection=$_GET["typeElection"];
 		else return;
 	
-		if ($typeElection=="presidentielle") $titreElection="présidentielle";
-		elseif ($typeElection=="legislative") $titreElection="législative";
-		elseif ($typeElection=="regionale") $titreElection="régionale";
-		else $titreElection=$typeElection;
+		if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
+		elseif ($this->typeElection=="legislative") $titreElection="législative";
+		elseif ($this->typeElection=="regionale") $titreElection="régionale";
+		else $titreElection=$this->typeElection;
 	
 		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
 		else $niveau=null;
@@ -718,14 +743,21 @@ class Analysis_model extends CI_Model{
 			elseif ($niveau=="pays") $parametres3="pays.nomPays";
 			else $parametres3="null";
 	
-			$colonnesBDD=array("rp.idSource","election.tour","YEAR(election.dateElection)","election.typeElection");
+			$colonnesBDD=array();
+			$colonnesBDD[]="rp.idSource";
+			if ($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			$colonnesBDD[]="YEAR(election.dateElection)";
+			$colonnesBDD[]="election.typeElection";
 	
 			foreach ($listeCandidats as $leCandidat){
 	
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
-				FROM {$this->tables[$typeElection]} rp
-				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
+				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+				else $requete.="nomListe";
+				$requete.=" as nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				FROM {$this->tables[$this->typeElection]} rp
+				LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";

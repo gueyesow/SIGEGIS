@@ -48,7 +48,7 @@
 	
 	$elections.on('change', function() // DECLENCHE TOURS 
 	{
-		if($.getUrlVar("type")=="presidentielle"){
+		//if($("presidentielle")[0].checked){
 				val = $(this).val();   
 				if(val != '') {            					           
 					$.ajax({            
@@ -99,9 +99,9 @@
 							});
 						}           
 					});       
-				}     
+			//	}     
 		} // SI PRESIDENTIELLE SINON
-		else {
+		else {			
 			val1 = $elections.val();
 			
 			if(val1 != '') {               

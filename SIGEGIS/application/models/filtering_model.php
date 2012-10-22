@@ -3,6 +3,23 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Filtering_model extends CI_Model{
 	private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
 	private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
+	private $candidatOrListe=array("candidature"=>"idCandidature","listescoalitionspartis"=>"idListe");
+	private $tableCandidat;
+	private $typeElection;
+	private $niveau;
+	
+	public function __construct(){
+		if(!empty($_GET["typeElection"])) {
+			$this->typeElection=$_GET["typeElection"];
+			if ($this->typeElection=="presidentielle") $this->tableCandidat="candidature";else $this->tableCandidat="listescoalitionspartis";
+			if ($this->typeElection=="presidentielle") $this->titreElection="présidentielle";
+			elseif ($this->typeElection=="legislative") $this->titreElection="législative";
+			elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
+			else $this->titreElection=$this->typeElection;
+		}
+	
+		if(!empty($_GET['niveau'])) $this->niveau=$_GET['niveau'];
+	}
 
 	function getCandidatsAnnee(){
 		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
@@ -17,9 +34,12 @@ class Filtering_model extends CI_Model{
 
 		if ( !empty($_GET['param']) AND !empty($_GET["annees"]) AND !empty($_GET["niveau"])) {
 			
-			$requete="SELECT rp.idCandidature, CONCAT(prenom, ' ', nom) as nomCandidat
+			$requete="SELECT rp.idCandidature, ";
+			if($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
+			else $requete.="nomListe";
+			$requete.=" as nomCandidat
 			FROM {$this->tables[$typeElection]} rp
-			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+			LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
@@ -41,7 +61,10 @@ class Filtering_model extends CI_Model{
 			elseif ($_GET["niveau"]=="reg") $parametres3="region.idRegion";
 			elseif ($_GET["niveau"]=="pays") $parametres3="pays.idPays";
 				
-			$colonnesBDD=array("rp.idSource","election.tour",$parametres3);
+			$colonnesBDD=array();
+			$colonnesBDD[]="rp.idSource";
+			if ($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			$colonnesBDD[]=$parametres3;
 
 			for($i=0;$i<sizeof($params);$i++) {
 				if($v++)$requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
@@ -85,13 +108,14 @@ class Filtering_model extends CI_Model{
 
 			$parametres=$_GET['param'];
 			$params=explode(",",$parametres);
-			$v=0;
-						
-			$typeElection=$params[3]; // 4eme parametre
+			$v=0;						
 			
-			$requete="SELECT rp.idCandidature, CONCAT(prenom, ' ', nom) as nomCandidat
-			FROM {$this->tables[$typeElection]} rp
-			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+			$requete="SELECT rp.idCandidature, ";
+			if($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
+			else $requete.="nomListe";
+			$requete.=" as nomCandidat
+			FROM {$this->tables[$this->typeElection]} rp
+			LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
@@ -104,7 +128,11 @@ class Filtering_model extends CI_Model{
 			if ($_GET["niveau"]=="pays")
 				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";			
 
-			$colonnesBDD=array("rp.idSource","election.tour","YEAR(election.dateElection)","election.typeElection");
+			$colonnesBDD=array();
+			$colonnesBDD[]="rp.idSource";
+			if ($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			$colonnesBDD[]="YEAR(election.dateElection)";
+			$colonnesBDD[]="election.typeElection";
 
 			for($i=0;$i<sizeof($params);$i++) {
 				if($v++)$requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
