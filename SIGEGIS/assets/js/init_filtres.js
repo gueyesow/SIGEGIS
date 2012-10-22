@@ -27,9 +27,7 @@
 			if($.getUrlVar("year")) $("#elections option[value="+$.getUrlVar("year")+"]").attr("selected","selected");
 			else $("#elections option:last").attr("selected","selected");
 
-			$elections.change();
-			
-			titres={"presidentielle":"présidentielle","legislative":"législative","municipale":"municipales","regionale":"régionales"};
+			$elections.change();						
 			
 			if(type=""+$.getUrlVar("type")) {if (titre==="presidentielle") $titre="";}
 			
@@ -43,8 +41,14 @@
 		}       
 	});
 	
+	$sources.on('change', function() // DECLENCHE TOURS 
+	{
+		$elections.change();
+	});
+	
 	$elections.on('change', function() // DECLENCHE TOURS 
-			{
+	{
+		if($.getUrlVar("type")=="presidentielle"){
 				val = $(this).val();   
 				if(val != '') {            					           
 					$.ajax({            
@@ -65,13 +69,12 @@
 							
 							$('#menu ul li  a').each(function(){								
 									
-							if( $(this).text()!=$('#menu a:first').text()  && $(this).text()!=$('#menu a:last').text())
-								if( $(this).attr("href").indexOf("year")===-1 )	
-								{
+							if( $(this).text()!=$('#menu a:first').text()  && $(this).text()!=$('#menu a:last').text() && $(this).text()!=$('#menu a:eq(8)').text()){
+								if( $(this).attr("href").indexOf("year")==-1 )	
 									$(this).attr("href",$(this).attr("href")+"&year="+$elections.val());
-								}
 								else 
 									$(this).attr("href",$(this).attr("href").substr(0,$(this).attr("href").indexOf('year')+5)+$elections.val());
+							}
 								
 								
 								url=$(this).attr("href");
@@ -96,7 +99,27 @@
 							});
 						}           
 					});       
-				}    
+				}     
+		} // SI PRESIDENTIELLE SINON
+		else {
+			val1 = $elections.val();
+			
+			if(val1 != '') {               
+				$.ajax({            
+					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPays',
+					data: 'paramAnnee='+ val1,
+					dataType: 'json',      
+					success: function(json) {      
+						$pays.empty();
+						$.each(json, function(index, value) {         
+							$pays.append('<option value="'+ index +'">'+ value +'</option>');     
+						});
+						$pays.change();         
+					}           
+				});       
+			}    
+			$pays.change();
+		}
 	});		
 	
 	$tours.on('change', function()   // DECLENCHE PAYS
@@ -121,7 +144,7 @@
 	
 	$pays.on('change', function() // DECLENCHE REGIONS   
 			{
-				val1 = $(this).val();      
+				val1 = $(this).val();     
 				if(val1 != '') {           
 					           
 					$.ajax({            

@@ -13,11 +13,14 @@ private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0
 private $typeElection=null;
 private $niveau=null;
 private $titreElection="";
+private $candidatOrListe=array("candidature"=>"idCandidature","listescoalitionspartis"=>"idListe");
+private $tableCandidat;
 
 public function __construct(){
 	if(!empty($_GET["typeElection"])) {
-		$this->typeElection=$_GET["typeElection"];	
-		if ($this->typeElection=="presidentielle") $this->titreElection="présidentielle";
+		$this->typeElection=$_GET["typeElection"];
+		if ($this->typeElection=="presidentielle") $this->tableCandidat="candidature";else $this->tableCandidat="listescoalitionspartis";
+		if ($this->typeElection=="presidentielle") {$this->titreElection="présidentielle";$this->tableCandidat="candidature";}
 		elseif ($this->typeElection=="legislative") $this->titreElection="législative";
 		elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
 		else $this->titreElection=$this->typeElection;
@@ -45,9 +48,12 @@ public function __construct(){
 		$params=explode(",",$parametres);
 		$v=0;
 		
-		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, '', nom) as nomCandidat, $nomLieu nomSource,parti, SUM( nbVoix ) as nbVoix
+		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
+		if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+		else $requete.="nomListe";
+		$requete.=" as nomCandidat, $nomLieu nomSource,partis, SUM( nbVoix ) as nbVoix
 		FROM {$this->tables[$this->typeElection]} rp
-		LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+		LEFT JOIN $this->tableCandidat ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN election ON rp.idElection = election.idElection
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
@@ -120,8 +126,8 @@ public function __construct(){
 		$i=0;$j=0;
 		$abscisse=array();$ordonnee=array();
 
-		foreach ($resultats as $resultat){
-			$abscisse[]=$resultat->nomCandidat."<br /><b>".$resultat->parti."</b>";
+		foreach ($resultats as $resultat){//ici
+			$abscisse[]=$resultat->nomCandidat."<br />".preg_replace("`$params[1]:([a-zA-Z0-9\/\\ ]*);`isU", "$1", $resultat->partis);
 			$ordonnee[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}");			
 		}
 		
@@ -162,9 +168,12 @@ public function __construct(){
 		$params=explode(",",$parametres);
 		$v=0;
 
-		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, '', nom) as nomCandidat, $nomLieu nomSource, SUM( nbVoix ) as nbVoix
+		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
+		if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+		else $requete.="nomListe";
+		$requete.="  as nomCandidat, $nomLieu nomSource, SUM( nbVoix ) as nbVoix
 		FROM {$this->tables[$this->typeElection]} rp
-		LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+		LEFT JOIN $this->tableCandidat ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN election ON rp.idElection = election.idElection
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
@@ -183,7 +192,11 @@ public function __construct(){
 		elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 		else $parametres3="null";
 
-		$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
+		$colonnesBDD=array();
+		$colonnesBDD[]="rp.idSource";
+		$colonnesBDD[]="YEAR(election.dateElection)";
+		if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+		$colonnesBDD[]=$parametres3;	
 
 		for($i=0;$i<sizeof($params);$i++) {
 			if($v++){
@@ -281,7 +294,7 @@ public function __construct(){
 			$requeteTOTAL="SELECT SUM( nbVoix ) ";
 
 			$joinPART=" FROM {$this->tables[$this->typeElection]} rp
-			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+			LEFT JOIN $this->tableCandidat ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
@@ -304,16 +317,21 @@ public function __construct(){
 			}
 			$requeteTOTAL.=$wherePART;
 			
-			$requete="SELECT rp.idCandidature, CONCAT(prenom, '', nom) as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
+			$requete="SELECT rp.idCandidature, ";
+			if ($this->typeElection=="presidentielle") $requete.=" CONCAT(prenom, '', nom)";
+			else $requete.=" nomListe";
+			$requete.=" as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
 			$requete.=$joinPART.$wherePART;
 			
 
 			
 					
 	
-			$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, CONCAT(prenom, '', nom) as nomCandidat,nomSource
+			$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, ";
+			if ($this->typeElection=="presidentielle") $requeteCount.=" CONCAT(prenom, '', nom)";
+			else $requeteCount.=" nomListe"; $requeteCount.=" as nomCandidat,nomSource
 			FROM {$this->tables[$this->typeElection]} rp
-			LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+			LEFT JOIN $this->tableCandidat ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$this->typeElection'";
@@ -356,6 +374,7 @@ public function __construct(){
 	$s .= "<cell>". $row->nomCandidat ."</cell>";
 	$s .= "<cell>". $row->nbVoix ."</cell>";
 	$s .= "<cell>". $row->pourcentage ."</cell>";
+	$s .= "<cell>". $row->nomSource ."</cell>";
 	$s .= "</row>";
 	}
 	$s .= "</rows>";

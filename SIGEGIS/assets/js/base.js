@@ -53,6 +53,7 @@ function slideSmoothly(id){
 	var $tours = $('#tours');
 	var mode = "";
 	var types_election=["presidentielle","legislative","locale","regionale","municipale","rurale"];
+	var titres={"presidentielle":"présidentielle","legislative":"législative","municipale":"municipale","regionale":"régionale","rurale":"rurale"};
 	var types_affichage=["map","bar","pie","grid"];
 	
 	// ---------------------------------------- //

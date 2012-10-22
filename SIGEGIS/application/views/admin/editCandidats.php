@@ -1,3 +1,4 @@
+<?php if(!$this->session->userdata('logged_in')) show_error("ACCES NON AUTORISE");?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -36,6 +37,14 @@
 				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
 			<td id="content">
+				<form>
+				    <div id="radio">
+				        <input type="radio" id="allCandidats" name="radio" /><label for="allCandidats">Tous les candidats</label>
+				        <input type="radio" id="notAllCandidats" name="radio" checked="checked" /><label for="notAllCandidats">Filtrer les candidats</label>
+				    </div>
+				</form>					
+				<br /><br />
+			
 				<div id="theGrid">
 					<table id="list"></table>
 					<div id="pager"></div>

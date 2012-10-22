@@ -418,7 +418,8 @@ class Filtering_model extends CI_Model{
 
 		if($query->result()){
 			foreach ($query->result() as $tour) {
-				$tours[$tour->tour] = ($tour->tour=="premier_tour")?"Premier tour":"Second tour";
+				if ($tour->tour=="premier_tour") $tours[$tour->tour] = "Premier tour";
+				elseif ($tour->tour=="second_tour") $tours[$tour->tour] = "Second tour";
 			}
 			echo json_encode($tours);
 		}else{

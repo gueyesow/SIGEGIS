@@ -17,7 +17,7 @@ $(document).ready(function() {
 		$titre=data.titre;
 		$sous_titre=data.sous_titre;
 		if($.getUrlVar("niveau")!="globaux") $sous_titre+=" | ";
-		$sous_titre+="Source: "+$sources.text();
+		$sous_titre+="Source: "+$("#sources :selected").text();
 		$unite=data.unite;
 		$abscisse=data.abscisse;
 		$ordonnee=data.ordonnee;
@@ -184,26 +184,25 @@ $("#types_affichage input").on( "change",function() {
 	
 	
 	if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
-	
-/*	if( $.getUrlVar("year") && $.getUrlVar("year")===$elections.val() )
-		mode+="&year="+$.getUrlVar("year");
-	else
-		mode+="&year="+$elections.val();*/						
 
 	window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+$.getUrlVar("type")+mode;
+	$("#ss_locales :input").on("click",function(){
+		if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+this+mode;
+		else window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+this;
+	});
 });
 
 // Affiner les options pour les élections locales (regionales,municipales,rurales)    
 $.each(types_election,function(){  
-	if ($.getUrlVar("type")===""+this){
+	if ($.getUrlVar("type")==""+this){
 		$("#"+this).attr("checked","checked");
 		if(""+this==="locale"||""+this==="municipale"||""+this==="regionale"||""+this==="rurale") {
 			$("#types_elections").append(
-				"<fieldset><legend>Elections locales</legend>"+
+				"<fieldset id='ss_locales'><legend>Elections locales</legend>"+
 				"<input id='municipale' type='radio' name='radio3' /><label for='municipale'>Municipales</label><br />"+
 				"<input id='regionale' type='radio' name='radio3' /><label for='regionale'>Régionales</label><br />"+
 				"<input id='rurale' type='radio' name='radio3' /><label for='rurale'>Rurales</label></fieldset>");
-			$("#locale").attr("checked","checked");
+			$("#locale").attr("checked","checked");$("#"+this).attr("checked","checked");
 		}
 	}
 });
@@ -215,7 +214,7 @@ $("#types_elections input").on( "change",function() {
 		if (idelection===""+this ){
 			$("#types_affichage input").each(function(){
 				idmode=""+$(this).attr("id");
-				valeur=($(this).attr("checked")==="checked")?"yes":"no";		
+				valeur=($(this).attr("checked")=="checked")?"yes":"no";		
 				mode+="&"+idmode+"="+valeur;	
 			});
 			if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
@@ -223,7 +222,10 @@ $("#types_elections input").on( "change",function() {
 				if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+this+mode;
 				else window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+this;				
 			}
-			//else alert(this);
+			$("#ss_locales :input").on("click",function(){
+				if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+$(this).attr("id")+mode;
+				else window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+$(this).attr("id");
+			});
 		}
 	});
 });
@@ -263,11 +265,12 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		autowidth:true,
 	    datatype: 'xml',
 	    mtype: 'GET',
-	    colNames:['Nom du candidat','Voix','% exprimés'],
+	    colNames:['Nom du candidat','Voix','% exprimés','Source'],
 	    colModel :[ 
 	      {name:'nomCandidat', index:'nomCandidat',search:true}, 
 	      {name:'nbVoix', index:'nbVoix', width:80,formatter:'number', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}},
-	      {name:'pourcentage', index:'pourcentage', width:80,formatter:'number', formatoptions:{decimalPlaces: 2}}
+	      {name:'pourcentage', index:'pourcentage', width:80,formatter:'number', formatoptions:{decimalPlaces: 2}},
+	      {name:'nomSource', index:'nomSource', width:80, search:true}
 	    ],
 	    pager: '#pager',
 	    rowNum:20,
@@ -364,12 +367,12 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 				});
 			});			
 		}
-		else if($.getUrlVar("niveau")==="globaux")  
+		else if($.getUrlVar("niveau")=="globaux")  
 		{
 			$pays.on("change",function(){
 				
 				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")==="presidentielle") param+=","+$tours.val();
+				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
 				param+=",null";
 	
 				$url='http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?param='+param+'&typeElection='+$.getUrlVar("type");

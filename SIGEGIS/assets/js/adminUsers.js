@@ -1,36 +1,30 @@
-$(document).ready(function() {		
+$(document).ready(function() {
 	$("#menu ul li:not(':first,:gt(7)')").hide();
 	$("#list").jqGrid({
-		autowidth:true,			
+		autowidth:true,
+		url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridUsers",
 	    datatype: 'xml',
 	    mtype: 'POST',
-	    colNames:['ID Election','Date','Type','Tour','Découpage administratif'],
+	    colNames:['ID','Identifiant','Mot de passe','Nouveau mot de passe','Rang'],
 	    colModel :[
-		{name:'idElection', index:'idResultat', editable:true},
-		{name:'dateElection', index:'dateElection', sorttype:'date', formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, editable:true, editrules:{required:true}},
-		{name:'typeElection', index:'typeElection', editable:true, editrules:{required:true}},
-		{name:'tour', index:'tour', editable:true, editrules:{required:true}},
-		{name:'anneeDecoupage', index:'anneeDecoupage', editable:true, editrules:{required:true}}
+		{name:'id', index:'id', editable:true},
+		{name:'username', index:'username', editable:true, editrules:{required:true}},
+		{name:'oldpassword', index:'password', editable:true, edittype:'password', editrules:{required:true}, editoptions:{size:'30'}},
+		{name:'newpassword', index:'password', editable:true, hidden:true, edittype:'password',  editoptions:{size:'30'},editrules:{edithidden:true}},		
+		{name:'level', index:'level', editable:true, edittype:'select', editrules:{required:true},editoptions:{value:"1:Admin;2:Opérateur;3:Visiteur"}}
 	    ],
 	    pager: '#pager',
 	    rowNum:20,
 	    rowList:[20,30,50,100,1000],
-	    sortname: 'idElection',
+	    sortname: 'id',
 	    sortorder: 'asc',	    
 	    ondblClickRow: function(id) 	{
 	    	$("#list").editGridRow(id,{closeAfterEdit:true});
 		},
+		editurl:"http://www.sigegis.ugb-edu.com/admin_controller/userCRUD",
 	    viewrecords: true,
 	    gridview: true
-	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true},{closeAfterAdd:true});
-
-	$elections.on("change",function(){		
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD", page:1}).trigger("reloadGrid");		
-	});
-	$tours.on("change",function(){		
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD", page:1}).trigger("reloadGrid");
-	});
-	
+	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true, width:300},{closeAfterAdd:true});
 	
 	$("#types_elections input").on("click",function(){
 		

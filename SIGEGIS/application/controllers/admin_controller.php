@@ -46,7 +46,7 @@ class Admin_controller extends CI_Controller {
  public function editResultats()
  {
  	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","admin","tooltips","style");
- 	$top['title'] = 'SIGeGIS&gt;Modifier une localité';
+ 	$top['title'] = 'SIGeGIS&gt;Modifier les résultats d\'une élection';
  	$top['styles'][] = 'theme';
  	$data['head'] = $this->load->view('top',$top,true);
  	$data['menu'] = $this->load->view('menu',$top,true);
@@ -54,6 +54,19 @@ class Admin_controller extends CI_Controller {
  	$data['footer'] = $this->load->view('footer',null,true);
  	$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
  	$this->load->view('admin/editResultats', $data); 
+ }
+ 
+ public function editParticipations()
+ {
+ 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminParticipations","tooltips","style");
+ 	$top['title'] = 'SIGeGIS&gt;Modifier taux de participation';
+ 	$top['styles'][] = 'theme';
+ 	$data['head'] = $this->load->view('top',$top,true);
+ 	$data['menu'] = $this->load->view('menu',$top,true);
+ 	$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
+ 	$data['footer'] = $this->load->view('footer',null,true);
+ 	$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+ 	$this->load->view('admin/editParticipations', $data);
  }
  
  public function editElections()
@@ -69,6 +82,32 @@ class Admin_controller extends CI_Controller {
  	$this->load->view('admin/editElections', $data);
  }
 
+ public function editSources()
+ {
+ 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminSources","tooltips","style");
+ 	$top['title'] = 'SIGeGIS&gt;Sources';
+ 	$top['styles'][] = 'theme';
+ 	$data['head'] = $this->load->view('top',$top,true);
+ 	$data['menu'] = $this->load->view('menu',$top,true);
+ 	$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
+ 	$data['footer'] = $this->load->view('footer',null,true);
+ 	$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+ 	$this->load->view('admin/editSources', $data);
+ }
+ 
+ public function editUsers()
+ {
+ 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminUsers","tooltips","style");
+ 	$top['title'] = 'SIGeGIS&gt;Utilisateurs';
+ 	$top['styles'][] = 'theme';
+ 	$data['head'] = $this->load->view('top',$top,true);
+ 	$data['menu'] = $this->load->view('menu',$top,true);
+ 	$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
+ 	$data['footer'] = $this->load->view('footer',null,true);
+ 	$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+ 	$this->load->view('admin/editUsers', $data);
+ }
+ 
  public function editCandidats()
  {
  	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminCandidats","tooltips","style");
@@ -85,7 +124,7 @@ class Admin_controller extends CI_Controller {
  public function editListes()
  {
  	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminListes","tooltips","style");
- 	$top['title'] = 'SIGeGIS&gt;Elections';
+ 	$top['title'] = 'SIGeGIS&gt;Listes de partis et de coalitions';
  	$top['styles'][] = 'theme';
  	$data['head'] = $this->load->view('top',$top,true);
  	$data['menu'] = $this->load->view('menu',$top,true);
@@ -109,13 +148,27 @@ class Admin_controller extends CI_Controller {
  	$this->load->view('admin/editLocalites', $data);
  }
  
- public function updateGrid()
+ public function getGridVisualiser()
  {
  	$this->adminModel->getGridVisualiser();
+ }
+ public function getGridParticipation()
+ {
+ 	$this->adminModel->getGridParticipation();
  }
  public function getGridElections()
  {
  	$this->adminModel->getGridElections();
+ }
+ 
+ public function getGridUsers()
+ {
+ 	$this->adminModel->getGridUsers();
+ }
+ 
+ public function getGridSources()
+ {
+ 	$this->adminModel->getGridSources();
  }
 
  public function getGridLocalites()
@@ -133,14 +186,34 @@ class Admin_controller extends CI_Controller {
  	$this->adminModel->getGridCoalitionsPartis();
  }
  
- public function presidentielleCRUD()
+ public function resultatCRUD()
  {
- 	$this->adminModel->presidentielleCRUD();
+ 	$this->adminModel->resultatCRUD();
+ }
+ 
+ public function participationCRUD()
+ {
+ 	$this->adminModel->participationCRUD();
  }
  
  public function electionCRUD()
  {
  	$this->adminModel->electionCRUD();
+ }
+ 
+ public function sourceCRUD()
+ {
+ 	$this->adminModel->sourceCRUD();
+ }
+ 
+ public function userCRUD()
+ {
+ 	$this->adminModel->userCRUD();
+ }
+ 
+ public function localiteCRUD()
+ {
+ 	$this->adminModel->localiteCRUD();
  }
  
  public function listeCRUD()

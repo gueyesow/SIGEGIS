@@ -37,19 +37,35 @@
 				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
 			<td id="content">
-				<form>
+			<form>
+			<table width="100%">
+			<tr>
+			<td>
 				    <div id="radio">
-				        <input type="radio" id="allListes" name="radio" />
-				        <label for="allListes">Toutes les listes</label>
-				        <input type="radio" id="notAllListes" name="radio" checked="checked" />
-				        <label for="notAllListes">Filtrer les listes</label>
-				    </div>
-				</form>					
-				<br /><br />
+				        <input type="radio" id="button_epresidentielle" name="radio" />
+				        <label for="button_epresidentielle">Présidentielles</label>
+				        <input type="radio" id="button_elegislative" name="radio" />
+				        <label for="button_elegislative">Législatives</label>
+				        <input type="radio" id="button_eregionale" name="radio" />
+				        <label for="button_eregionale">Régionales</label>
+				        <input type="radio" id="button_emunicipale" name="radio" />
+				        <label for="button_emunicipale">Municipales</label>
+				        <input type="radio" id="button_erurale" name="radio" />
+				        <label for="button_erurale">Rurales</label>
+				    </div></td><td>
+				    <div id="radio2">
+				    	<input type="radio" id="button_centre" name="radio" />
+				        <label for="button_centre">Niveau centre</label>
+				        <input type="radio" id="button_departement" name="radio" />
+				        <label for="button_departement">Niveau département</label>
+				    </div></td></tr></table>
+				</form><br /><br />
+				<h1>TAUX DE PARTICIPATION</h1>
+				<h3 id="titre"></h3>
 				<div id="theGrid">
 					<table id="list"></table>
 					<div id="pager"></div>
-				</div>
+				</div>				
 			</td>
 		</tr>
 	</table>

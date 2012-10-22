@@ -10,5 +10,9 @@
 		<li><a href="<?php echo site_url("main_controller/participation?type=".$typeElection."&amp;niveau=globaux");?>">Statistiques</a></li>
 		<li><a href="<?php echo site_url("main_controller/exemples");?>">Exemples</a></li>
 		<li><a href="<?php echo site_url("main_controller/apropos");?>">A propos</a></li>
+		<?php if($this->session->userdata('logged_in')) {?>
+		<li><a href="<?php echo site_url("admin_controller");?>">Administration</a></li>
+		<li><a class="actif" href="<?php echo site_url("admin_controller/logout");?>">Déconnexion</a></li>
+		<?php }?>
 	</ul>
 </div>

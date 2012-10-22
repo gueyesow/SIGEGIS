@@ -1,3 +1,4 @@
+<?php if(!$this->session->userdata('logged_in')) show_error("ACCES NON AUTORISE");?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -32,19 +33,21 @@
 			
 			<?php echo $options_menu;?>
 				
-				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img height="58px" src="../../assets/images/print.png" alt="Imprimer toute la page"/></button><br />
-				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button><br />
+				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img height="58px" src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
+				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
 				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button><br />
 			</td>
 			<td id="content">
 			<h2>Modifications des données</h2>
 			<table>
-			<tr><th>Elections, candidats et listes</th><th>Localités</th><th>Résultats</th></tr>
+			<tr><th>Elections, candidats et listes</th><th>Localités</th><th>Résultats</th><th>Participation</th></tr>
 			<tr>
 			<td>
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editSources")?>">Sources</a><br />
 			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editElections?type=presidentielle")?>">Elections</a><br />
 			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editCandidats")?>">Candidats</a><br />
 			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editListes")?>">Partis et coalitions</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editUsers")?>">Gestion des droits</a><br />
 			</td>
 			<td>
 			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editLocalites?typeLocalite=pays")?>">Pays</a><br />
@@ -54,64 +57,21 @@
 			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editLocalites?typeLocalite=centre")?>">Centres</a><br />
 			</td>
 			<td>
-			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats?type=presidentielle")?>">Présidentielles</a><br />
-			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats?type=legislative")?>">Législatives</a><br />
-			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats")?>">Municipales</a><br />
-			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats")?>">Régionales</a><br />
-			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats")?>">Rurales</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats?type=presidentielle&amp;niveau=cen")?>">Présidentielles</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats?type=legislative&amp;niveau=cen")?>">Législatives</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats?type=regionale&amp;niveau=cen")?>">Régionales</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats?type=municipale&amp;niveau=cen")?>">Municipales</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editResultats?type=rurale&amp;niveau=cen")?>">Rurales</a><br />
+			</td>
+			<td>
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editParticipations?type=presidentielle&amp;niveau=cen")?>">Présidentielles</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editParticipations?type=legislative&amp;niveau=cen")?>">Législatives</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editParticipations?type=regionale&amp;niveau=cen")?>">Régionales</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editParticipations?type=municipale&amp;niveau=cen")?>">Municipales</a><br />
+			<a class="boutonAdmin" href="<?php echo site_url("admin_controller/editParticipations?type=rurale&amp;niveau=cen")?>">Rurales</a><br />
 			</td>
 			</tr>
-			</table>
-			<h2>Importer des données</h2>
-			<div id="counter"></div>
-			<div id="nextIDs">
-			<p style="color:brown;">Prochains IDs:<br />
-			N° CEN: <b><span id="nextCEN"></span></b><br />			
-			N° COL: <b>COL<span id="nextCOL"></span></b><br />
-			N° DEP: <b>D<span id="nextDEP"></span></b><br />
-			N° REG: <b>R<span id="nextREG"></span></b><br />
-			N° PAYS: <b><span id="nextPAYS"></span></b><br />
-			</p>
-			</div>
-			<div id="les_localites"></div>
-			
-<h1>Importer des fichiers CSV</h1>
-<div>
-<table border="1" width="100%"><tr><td>ID résultat</td><td>nbVoix</td><td>Valide</td><td>ID élection</td><td>ID source</td><td>ID candidat</td><td>ID centre</td><td>ID département</td><td></td></tr></table>
-
-<label>Date de l'élection</label> <input type="text" name="dateElection" id="date" />&nbsp;&nbsp;
-<label>Type élection</label><select><option>Présidentielle</option><option>Législatives</option><option>Régionales</option><option>Municipales</option><option>Rurales</option></select>
-<label>Tour</label><select><option>Premier tour</option><option>Second tour</option></select><br/>
-<form action="upload/do_upload" enctype="multipart/form-data">
-<label for="">Sources</label>
-<input type="file" name="importSources" /><br />
-<input type="submit" value="Submit">
-</form>
-<label for="">Pays</label>
-<input type="file" name="importPays" /><br />
-<label for="">Régions</label>
-<input type="file" name="importRegions" /><br />
-<label for="">Départements</label>
-<input type="file" name="importDepartements" /><br />
-<label for="">Collectivités</label>
-<input type="file" name="importCollectivites" /><br />
-<label for="">Centres</label>
-<input type="file" name="importCentres" /><br />
-<label for="">Candidats</label>
-<input type="file" name="importCandidats" /><br />
-<label for="">Bureaux annulés</label>
-<input type="file" name="importBueauxAnnules" /><br />
-<label for="">Résultats présidentielles</label>
-<input type="file" name="importResultatsPresidentielles" /><br />
-<label for="">Résultats législatives</label>
-<input type="file" name="importResultatsLegislatives" /><br />
-<label for="">Résultats régionales</label>
-<input type="file" name="importResultatsRegionales" /><br />
-<label for="">Résultats municipales</label>
-<input type="file" name="importResultatsMunicipales" /><br />
-<label for="">Résultats rurales</label>
-<input type="file" name="importResultatsRurales" /><br />
-</div>
+			</table>			
 <script type="text/javascript">
 $("#date").datepicker({
 	showOn: 'button',

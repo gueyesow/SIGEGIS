@@ -36,16 +36,7 @@
 				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
 				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
-			<td id="content">
-				<form>
-				    <div id="radio">
-				        <input type="radio" id="allListes" name="radio" />
-				        <label for="allListes">Toutes les listes</label>
-				        <input type="radio" id="notAllListes" name="radio" checked="checked" />
-				        <label for="notAllListes">Filtrer les listes</label>
-				    </div>
-				</form>					
-				<br /><br />
+			<td id="content">			
 				<div id="theGrid">
 					<table id="list"></table>
 					<div id="pager"></div>

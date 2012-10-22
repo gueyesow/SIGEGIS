@@ -1,6 +1,8 @@
 
 $("input[id*='valider'],input[id*='validerLocalite'], #connection_form :submit, .boutonAdmin").button();
 
+$("#radio,#radio2").buttonset();
+
 $("#ouvrir, #comparer, .boutonAdmin").css("width","200px");
 
 $('#menu li a').hover(   
