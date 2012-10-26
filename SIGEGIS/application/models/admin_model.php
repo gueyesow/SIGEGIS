@@ -168,9 +168,7 @@ public function __construct(){
 		if( $totalRows > 0 && $limit > 0) {
 		$total_pages = ceil($totalRows/$limit);
 	}
-	else {
-	$total_pages = 0;
-	}
+	else $total_pages = 0;
 	
 	if ($page > $total_pages) $page=$total_pages;
 	
@@ -217,7 +215,8 @@ public function __construct(){
 	
 		if(!$sidx) $sidx =1;
 					
-		$requete="SELECT * FROM election WHERE typeElection='$this->typeElection'";		
+		$requete="SELECT * FROM election";
+		if ($this->typeElection!="all") $requete.= " WHERE typeElection='$this->typeElection'";		
 		
 		$totalRows=$this->db->query($requete)->num_rows();
 		
@@ -406,7 +405,7 @@ public function __construct(){
 	public function getGridCoalitionsPartis(){
 	
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
-		$annee= $_GET['annee'];
+		$annee= mysql_real_escape_string($_GET['annee']);
 		
 		if(!$sidx) $sidx =1;
 		
@@ -691,12 +690,12 @@ public function __construct(){
 	
 		if($_POST['oper']=='add')
 		{
-			$data['password']=MD5($newPassword);
+			$data['password']=$this->encrypt->sha1($newPassword);
 			$this->db->insert("users", $data);
 		}
 		if($_POST['oper']=='edit')
 		{
-			if(!empty($newPassword)) $data['password']=MD5($newPassword);
+			if(!empty($newPassword)) $data['password']=$this->encrypt->sha1($newPassword);
 			else $data['password']=$oldPassword;
 			$this->db->update("users", $data, array('id' => $id));			
 		}

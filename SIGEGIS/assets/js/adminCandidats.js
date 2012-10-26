@@ -15,7 +15,7 @@ $(document).ready(function() {
 		{name:'dateNaissance', index:'dateNaissance', editable:true},
 		{name:'lieuNaissance', index:'lieuNaissance', editable:true},
 		{name:'partis', index:'partis', editable:true, editrules:{required:true}, edittype:'textarea', editoptions:{rows:"5",cols:"40"}},
-		{name:'commentaires', index:'commentaires', width:150, editable:true, edittype:'textarea', editoptions:{rows:"10",cols:"90"}}		
+		{name:'commentaires', index:'commentaires', width:150, editable:true, edittype:'textarea', editoptions:{rows:"10",cols:"90",class:'ckeditor'}}		
 	    ],
 	    pager: '#pager',
 	    rowNum:20,

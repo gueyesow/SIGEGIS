@@ -224,7 +224,7 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = 'sigegis';
+$config['encryption_key'] = 'sigegis2012GS';
 
 /*
  |--------------------------------------------------------------------------

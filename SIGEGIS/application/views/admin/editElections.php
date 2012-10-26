@@ -37,6 +37,15 @@
 				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
 			<td id="content">
+			<form>
+				    <div id="radio">
+				        <input type="radio" id="allListes" name="radio" />
+				        <label for="allListes">Toutes les élections</label>
+				        <input type="radio" id="notAllListes" name="radio" checked="checked" />
+				        <label for="notAllListes">Filtrer les élections</label>
+				    </div>
+				</form>					
+				<br /><br />
 				<div id="theGrid">
 					<table id="list"></table>
 					<div id="pager"></div>

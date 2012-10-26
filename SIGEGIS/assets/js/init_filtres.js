@@ -80,7 +80,7 @@
 								url=$(this).attr("href");
 								year="";chaine="";
 																
-								if( $(this).text()!=$('#menu ul li a:first').text() && $(this).text()!=$('#menu ul li a:last').text()){
+								if( $(this).text()!=$('#menu a:first').text()  && $(this).text()!=$('#menu a:last').text() && $(this).text()!=$('#menu a:eq(8)').text()){
 									if( $.getUrlVar("map") && $.getUrlVar("grid") && $.getUrlVar("pie") && $.getUrlVar("bar") ) 
 										{url+="&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid");}
 
@@ -101,7 +101,8 @@
 					});       
 			//	}     
 		} // SI PRESIDENTIELLE SINON
-		else {			
+		
+		if(!$("#presidentielle")[0].checked){
 			val1 = $elections.val();
 			
 			if(val1 != '') {               

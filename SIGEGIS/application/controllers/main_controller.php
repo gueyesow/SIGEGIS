@@ -186,6 +186,9 @@ class Main_controller extends CI_Controller {
 	public function exportToCSVAnalyseLocalite(){
 		$this->filteringModel->exportToCSVLocalite();
 	}	
+	public function getCandidat(){
+		$this->basicModel->getCandidat();
+	}
 }
 
 /* End of file main_controller.php */

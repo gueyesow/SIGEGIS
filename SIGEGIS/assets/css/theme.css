@@ -203,3 +203,10 @@ fieldset {
 	text-align: left;
 	margin-left: 10px;
 	}
+/****************************************************************************************************/
+#popup { /*--Masque opaque noir de fond--*/
+	font-size:12px;padding:15px;
+}
+#popup p{ /*--Masque opaque noir de fond--*/
+	/*padding:15px;*/
+}

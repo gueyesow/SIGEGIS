@@ -18,7 +18,7 @@
 		<form>
 			<?php 
 			foreach ($filtres as $filtre)
-				echo form_dropdown("$filtre","$filtre",$styles,"$labels_filtres[$filtre]");
+				echo form_dropdown($filtre,$filtre,$styles,$labels_filtres[$filtre]);
 			echo "<div style='clear:both;'></div>";
 			?>
 		</form>

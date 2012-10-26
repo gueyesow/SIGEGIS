@@ -22,7 +22,7 @@ public function __construct(){
 		else $this->titreElection=$this->typeElection;		
 	}
 		
-	if(!empty($_GET['niveau'])) $this->niveau=$_GET['niveau'];
+	if(!empty($_GET['niveau'])) $this->niveau=$_GET['niveau'];else $this->niveau=null;
 }
 	
 	
@@ -47,13 +47,13 @@ public function __construct(){
 		elseif ($this->typeElection=="regionale") $titreElection="régionale";
 		else $titreElection=$this->typeElection."";		
 
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
+		if(!empty($_GET["niveau"]))	$this->niveau=$_GET["niveau"];
+		else $this->niveau=null;
 
-		if ($niveau=="cen") $nomLieu="nomCentre,";
-		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-		elseif ($niveau=="reg") $nomLieu="nomRegion,";
-		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		if ($this->niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 		else $nomLieu="";
 			
 		if(!empty($_GET['param']) AND !empty($_GET['listeAnnees']) AND !empty($_GET['listeCandidats'])){
@@ -64,10 +64,10 @@ public function __construct(){
 				
 			$v=0;
 
-			if ($niveau=="cen") $parametres3="centre.idCentre";
-			elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-			elseif ($niveau=="reg") $parametres3="region.idRegion";
-			elseif ($niveau=="pays") $parametres3="pays.idPays";
+			if ($this->niveau=="cen") $parametres3="centre.idCentre";
+			elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+			elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+			elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 			else $parametres3="null";
 				
 			$colonnesBDD=array();
@@ -80,7 +80,7 @@ public function __construct(){
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
-				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 				else $requete.="nomListe";
 				$requete.=" as nomCandidat,rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$this->typeElection]} rp
@@ -89,12 +89,12 @@ public function __construct(){
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 					
-				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 					$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 					LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-				if ($niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="reg" OR $this->niveau=="pays")
 					$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-				if ($niveau=="pays")
+				if ($this->niveau=="pays")
 					$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 					
 				for($i=0;$i<sizeof($params);$i++) {
@@ -139,24 +139,24 @@ public function __construct(){
 		
 		$titre="Election";if(sizeof($listeAnnees)>1) $titre.="s"; $titre.=" $titreElection";if(sizeof($listeAnnees)>1) $titre.="s"; $titre.=" ".htmlentities(implode(",", $categories));
 		$titre_niveau="";
-		if ($niveau=="cen") {
+		if ($this->niveau=="cen") {
 			$titre_niveau.="par centre ";$sous_titre="Centre: ";
 		}
-		elseif ($niveau=="dep") {
+		elseif ($this->niveau=="dep") {
 			$titre_niveau.="départementaux ";$sous_titre="Département: ";
 		}
-		elseif($niveau=="reg") {
+		elseif($this->niveau=="reg") {
 			$titre_niveau.="régionaux ";$sous_titre="Région: ";
 		}
-		elseif($niveau=="pays") {
+		elseif($this->niveau=="pays") {
 			$titre_niveau.="par pays ";$sous_titre="Pays: ";
 		}
 		else  $titre_niveau.="globaux ";
 
-		if ($niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
-		elseif ($niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
-		elseif ($niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
-		elseif ($niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
+		if ($this->niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
+		elseif ($this->niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
+		elseif ($this->niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
+		elseif ($this->niveau=="pays") $sous_titre.=  $resultats[0]->nomPays;
 		else $sous_titre="";
 		//$titre=$titre_niveau;
 
@@ -209,22 +209,19 @@ public function __construct(){
 		$unite="";
 		$abscisse="";
 
-		if(!empty($_GET["typeElection"])) $this->typeElection=$_GET["typeElection"];
-		else return;
-		
 		if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
 		elseif ($this->typeElection=="legislative") $titreElection="législative";
 		elseif ($this->typeElection=="regionale") $titreElection="régionale";
 		else $titreElection=$this->typeElection;		
 
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
+		if(!empty($_GET["niveau"]))	$this->niveau=$_GET["niveau"];
+		else $this->niveau=null;
 		
 
-		if ($niveau=="cen") $nomLieu="nomCentre,";
-		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-		elseif ($niveau=="reg") $nomLieu="nomRegion,";
-		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		if ($this->niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 		else $nomLieu="";
 
 		if(!empty($_GET['param']) AND !empty($_GET['listeAnnees']) AND !empty($_GET['listeCandidats'])){
@@ -233,10 +230,10 @@ public function __construct(){
 			$listeAnnees=explode(",",$_GET['listeAnnees']);
 			$listeCandidats=explode(",",$_GET['listeCandidats']);
 
-			if ($niveau=="cen") $parametres3="centre.idCentre";
-			elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-			elseif ($niveau=="reg") $parametres3="region.idRegion";
-			elseif ($niveau=="pays") $parametres3="pays.idPays";
+			if ($this->niveau=="cen") $parametres3="centre.idCentre";
+			elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+			elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+			elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 			else $parametres3="null";
 
 			$colonnesBDD=array();
@@ -246,19 +243,22 @@ public function __construct(){
 
 			foreach ($listeCandidats as $leCandidat){
 				$v=0;
-				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, CONCAT(prenom, ' ', nom) as nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
+				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
+				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
+				else $requete.="nomListe";
+				$requete.=" as nomCandidat, rp.idCentre,".substr($nomLieu,0,-1)." as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$this->typeElection]} rp
-				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+				LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 				LEFT JOIN source ON rp.idSource = source.idSource
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 
-				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 					$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 					LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-				if ($niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="reg" OR $this->niveau=="pays")
 					$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-				if ($niveau=="pays")
+				if ($this->niveau=="pays")
 					$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
 				for($i=0;$i<sizeof($params);$i++) {
@@ -335,14 +335,14 @@ public function __construct(){
 		elseif ($this->typeElection=="regionale") $titreElection="régionale";
 		else $titreElection=$this->typeElection;
 	
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
+		if(!empty($_GET["niveau"]))	$this->niveau=$_GET["niveau"];
+		else $this->niveau=null;
 	
 	
-		if ($niveau=="cen") $nomLieu="nomCentre,";
-		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-		elseif ($niveau=="reg") $nomLieu="nomRegion,";
-		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		if ($this->niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 		else $nomLieu="";
 	
 		if(!empty($_GET['param']) AND !empty($_GET['listeAnnees']) AND !empty($_GET['listeCandidats'])){
@@ -351,10 +351,10 @@ public function __construct(){
 			$listeAnnees=explode(",",$_GET['listeAnnees']);
 			$listeCandidats=explode(",",$_GET['listeCandidats']);
 	
-			if ($niveau=="cen") $parametres3="centre.idCentre";
-			elseif ($niveau=="dep") $parametres3="departement.idDepartement";
-			elseif ($niveau=="reg") $parametres3="region.idRegion";
-			elseif ($niveau=="pays") $parametres3="pays.idPays";
+			if ($this->niveau=="cen") $parametres3="centre.idCentre";
+			elseif ($this->niveau=="dep") $parametres3="departement.idDepartement";
+			elseif ($this->niveau=="reg") $parametres3="region.idRegion";
+			elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 			else $parametres3="null";
 	
 			$colonnesBDD=array("rp.idSource","election.tour",$parametres3);
@@ -368,12 +368,12 @@ public function __construct(){
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 	
-				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 						$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 						LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-						if ($niveau=="reg" OR $niveau=="pays")
+						if ($this->niveau=="reg" OR $this->niveau=="pays")
 						$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-						if ($niveau=="pays")
+						if ($this->niveau=="pays")
 						$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 	
 						for($i=0;$i<sizeof($params);$i++) {
@@ -435,14 +435,14 @@ public function __construct(){
 		elseif ($this->typeElection=="regionale") $titreElection="régionale";
 		else $titreElection=$this->typeElection;		
 
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
+		if(!empty($_GET["niveau"]))	$this->niveau=$_GET["niveau"];
+		else $this->niveau=null;
 		
 
-		if ($niveau=="cen") $nomLieu="nomCentre,";
-		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-		elseif ($niveau=="reg") $nomLieu="nomRegion,";
-		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		if ($this->niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 		else $nomLieu="";
 
 		if(!empty($_GET['param']) AND !empty($_GET['listeLocalites']) AND !empty($_GET['listeCandidats'])){
@@ -455,10 +455,10 @@ public function __construct(){
 			
 			$v=0;
 
-			if ($niveau=="cen") $parametres3="centre.nomCentre";
-			elseif ($niveau=="dep") $parametres3="departement.nomDepartement";
-			elseif ($niveau=="reg") $parametres3="region.nomRegion";
-			elseif ($niveau=="pays") $parametres3="pays.nomPays";
+			if ($this->niveau=="cen") $parametres3="centre.nomCentre";
+			elseif ($this->niveau=="dep") $parametres3="departement.nomDepartement";
+			elseif ($this->niveau=="reg") $parametres3="region.nomRegion";
+			elseif ($this->niveau=="pays") $parametres3="pays.nomPays";
 			else $parametres3="null";
 
 			$colonnesBDD=array();
@@ -472,7 +472,7 @@ public function __construct(){
 
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
-				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 				else $requete.="nomListe";
 				$requete.=" as nomCandidat, rp.idCentre ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$this->typeElection]} rp
@@ -481,12 +481,12 @@ public function __construct(){
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 
-				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 					$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 					LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-				if ($niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="reg" OR $this->niveau=="pays")
 					$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-				if ($niveau=="pays")
+				if ($this->niveau=="pays")
 					$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
 				for($i=0;$i<sizeof($params);$i++) {
@@ -524,19 +524,19 @@ public function __construct(){
 		// ----------------------------------------	//
 		$titre_niveau="Election $titreElection ".htmlentities($params[2]);
 		$sous_titre="Niveau d'agrégation des données: ";
-		if ($niveau=="cen")
+		if ($this->niveau=="cen")
 		{
 			$sous_titre.="par centre";
 		}
-		elseif ($niveau=="dep")
+		elseif ($this->niveau=="dep")
 		{
 			$sous_titre.="par département";
 		}
-		elseif($niveau=="reg")
+		elseif($this->niveau=="reg")
 		{
 			$sous_titre.="par région";
 		}
-		elseif($niveau=="pays")
+		elseif($this->niveau=="pays")
 		{
 			$sous_titre.="par pays";
 		}
@@ -585,24 +585,16 @@ public function __construct(){
 		$sous_titre="";
 		$unite="";
 		$abscisse="";
-
-
-		if(!empty($_GET["typeElection"])) $this->typeElection=$_GET["typeElection"];
-		else return;
 		
 		if ($this->typeElection=="presidentielle") $titreElection="présidentielle";
 		elseif ($this->typeElection=="legislative") $titreElection="législative";
 		elseif ($this->typeElection=="regionale") $titreElection="régionale";
 		else $titreElection=$this->typeElection;		
 
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
-		
-
-		if ($niveau=="cen") $nomLieu="nomCentre,";
-		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-		elseif ($niveau=="reg") $nomLieu="nomRegion,";
-		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		if ($this->niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 		else $nomLieu="";
 
 		if(!empty($_GET['param']) AND !empty($_GET['listeLocalites']) AND !empty($_GET['listeCandidats'])){
@@ -613,10 +605,10 @@ public function __construct(){
 
 			$v=0;
 
-			if ($niveau=="cen") $parametres3="centre.nomCentre";
-			elseif ($niveau=="dep") $parametres3="departement.nomDepartement";
-			elseif ($niveau=="reg") $parametres3="region.nomRegion";
-			elseif ($niveau=="pays") $parametres3="pays.nomPays";
+			if ($this->niveau=="cen") $parametres3="centre.nomCentre";
+			elseif ($this->niveau=="dep") $parametres3="departement.nomDepartement";
+			elseif ($this->niveau=="reg") $parametres3="region.nomRegion";
+			elseif ($this->niveau=="pays") $parametres3="pays.nomPays";
 			else $parametres3="null";
 
 			$colonnesBDD=array();
@@ -629,7 +621,7 @@ public function __construct(){
 
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
-				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 				else $requete.="nomListe";
 				$requete.=" as nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$this->typeElection]} rp
@@ -638,12 +630,12 @@ public function __construct(){
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 
-				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 					$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 					LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-				if ($niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="reg" OR $this->niveau=="pays")
 					$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-				if ($niveau=="pays")
+				if ($this->niveau=="pays")
 					$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
 				for($i=0;$i<sizeof($params);$i++) {
@@ -719,14 +711,14 @@ public function __construct(){
 		elseif ($this->typeElection=="regionale") $titreElection="régionale";
 		else $titreElection=$this->typeElection;
 	
-		if(!empty($_GET["niveau"]))	$niveau=$_GET["niveau"];
-		else $niveau=null;
+		if(!empty($_GET["niveau"]))	$this->niveau=$_GET["niveau"];
+		else $this->niveau=null;
 	
 	
-		if ($niveau=="cen") $nomLieu="nomCentre,";
-		elseif ($niveau=="dep") $nomLieu="nomDepartement,";
-		elseif ($niveau=="reg") $nomLieu="nomRegion,";
-		elseif ($niveau=="pays") $nomLieu="nomPays,";
+		if ($this->niveau=="cen") $nomLieu="nomCentre,";
+		elseif ($this->niveau=="dep") $nomLieu="nomDepartement,";
+		elseif ($this->niveau=="reg") $nomLieu="nomRegion,";
+		elseif ($this->niveau=="pays") $nomLieu="nomPays,";
 		else $nomLieu="";
 	
 		if(!empty($_GET['param']) AND !empty($_GET['listeLocalites']) AND !empty($_GET['listeCandidats'])){
@@ -737,10 +729,10 @@ public function __construct(){
 	
 			$v=0;
 	
-			if ($niveau=="cen") $parametres3="centre.nomCentre";
-			elseif ($niveau=="dep") $parametres3="departement.nomDepartement";
-			elseif ($niveau=="reg") $parametres3="region.nomRegion";
-			elseif ($niveau=="pays") $parametres3="pays.nomPays";
+			if ($this->niveau=="cen") $parametres3="centre.nomCentre";
+			elseif ($this->niveau=="dep") $parametres3="departement.nomDepartement";
+			elseif ($this->niveau=="reg") $parametres3="region.nomRegion";
+			elseif ($this->niveau=="pays") $parametres3="pays.nomPays";
 			else $parametres3="null";
 	
 			$colonnesBDD=array();
@@ -753,7 +745,7 @@ public function __construct(){
 	
 				$v=0;
 				$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
-				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+				if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 				else $requete.="nomListe";
 				$requete.=" as nomCandidat, rp.idCentre,$parametres3 as lieuDeVote ,$nomLieu nomSource,  SUM(nbVoix) as nbVoix
 				FROM {$this->tables[$this->typeElection]} rp
@@ -762,12 +754,12 @@ public function __construct(){
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 	
-				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+				if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 						$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 						LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-						if ($niveau=="reg" OR $niveau=="pays")
+						if ($this->niveau=="reg" OR $this->niveau=="pays")
 						$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-						if ($niveau=="pays")
+						if ($this->niveau=="pays")
 						$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 	
 						for($i=0;$i<sizeof($params);$i++) {

@@ -1,5 +1,4 @@
-<?php
-if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * 
  * @author Amadou SOW && Abdou Khadre GUEYE DESS | 2ITIC 2011-2012
@@ -7,11 +6,11 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  *
  */
 class Main_model extends CI_Model{
-private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
+private $tables=array("presidentielle"=>"resultatspresidentielles2","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
 private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
 private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
-private $typeElection=null;
-private $niveau=null;
+private $typeElection;
+private $niveau;
 private $titreElection="";
 private $candidatOrListe=array("candidature"=>"idCandidature","listescoalitionspartis"=>"idListe");
 private $tableCandidat;
@@ -24,9 +23,8 @@ public function __construct(){
 		elseif ($this->typeElection=="legislative") $this->titreElection="législative";
 		elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
 		else $this->titreElection=$this->typeElection;
-	}
-	if(!empty($_GET["niveau"]))	$this->niveau=$_GET["niveau"];
-	else $this->niveau=null;	
+	} else $this->typeElection=null;
+	if(!empty($_GET["niveau"]))	$this->niveau=$_GET["niveau"];	else $this->niveau=null;	
 }
 	/**
 	 * Cette fonction retourne les données pour l'histogramme
@@ -49,7 +47,7 @@ public function __construct(){
 		$v=0;
 		
 		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
-		if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+		if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 		else $requete.="nomListe";
 		$requete.=" as nomCandidat, $nomLieu nomSource,partis, SUM( nbVoix ) as nbVoix
 		FROM {$this->tables[$this->typeElection]} rp
@@ -86,7 +84,7 @@ public function __construct(){
 			else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
 		}
 		
-		$requete.=" GROUP BY idCandidature";
+		$requete.=" GROUP BY rp.idCandidature";
 		
 		$resultats=$this->db->query($requete)->result();
 		
@@ -127,8 +125,12 @@ public function __construct(){
 		$abscisse=array();$ordonnee=array();
 
 		foreach ($resultats as $resultat){//ici
-			$abscisse[]=$resultat->nomCandidat."<br />".preg_replace("`$params[1]:([a-zA-Z0-9\/\\ ]*);`isU", "$1", $resultat->partis);
-			$ordonnee[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}");			
+			$candidat=$resultat->nomCandidat;
+			$a=preg_replace("#(.*)$params[1]:([a-zA-Z0-9 ]*)(.*)#", "$2", $resultat->partis);
+			if ($this->typeElection=="presidentielle") $candidat.="<br /><b>$a</b>";		
+			$abscisse[]=$candidat;
+			$ordonnee[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}",
+			"url"=>"http://www.sigegis.ugb-edu.com/main_controller/getCandidat?id={$resultat->idCandidature}&typeElection={$this->typeElection}");			
 		}
 		
 		if(!empty($_GET['unite'])){
@@ -169,7 +171,7 @@ public function __construct(){
 		$v=0;
 
 		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
-		if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, '', nom)";
+		if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 		else $requete.="nomListe";
 		$requete.="  as nomCandidat, $nomLieu nomSource, SUM( nbVoix ) as nbVoix
 		FROM {$this->tables[$this->typeElection]} rp
@@ -230,8 +232,6 @@ public function __construct(){
 		}
 		else  $titre_niveau.="globaux ";				
 		
-
-
 		if ($this->niveau=="cen") $sous_titre.=  $resultats[0]->nomCentre;
 		elseif ($this->niveau=="dep") $sous_titre.=  $resultats[0]->nomDepartement;
 		elseif ($this->niveau=="reg") $sous_titre.=  $resultats[0]->nomRegion;
@@ -247,7 +247,7 @@ public function __construct(){
 		$i=0;
 		
 		foreach ($resultats as $resultat){
-			$pieData[]=array("name"=>$resultat->nomCandidat,"y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}");
+			$pieData[]=array("name"=>$resultat->nomCandidat,"y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}","url"=>"http://www.mytest.com");
 		}
 						
 		$rendu=array();
@@ -318,7 +318,7 @@ public function __construct(){
 			$requeteTOTAL.=$wherePART;
 			
 			$requete="SELECT rp.idCandidature, ";
-			if ($this->typeElection=="presidentielle") $requete.=" CONCAT(prenom, '', nom)";
+			if ($this->typeElection=="presidentielle") $requete.=" CONCAT(prenom, ' ', nom)";
 			else $requete.=" nomListe";
 			$requete.=" as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
 			$requete.=$joinPART.$wherePART;
@@ -328,7 +328,7 @@ public function __construct(){
 					
 	
 			$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, ";
-			if ($this->typeElection=="presidentielle") $requeteCount.=" CONCAT(prenom, '', nom)";
+			if ($this->typeElection=="presidentielle") $requeteCount.=" CONCAT(prenom, ' ', nom)";
 			else $requeteCount.=" nomListe"; $requeteCount.=" as nomCandidat,nomSource
 			FROM {$this->tables[$this->typeElection]} rp
 			LEFT JOIN $this->tableCandidat ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
@@ -429,18 +429,21 @@ public function __construct(){
 			}
 			$requeteTOTAL.=$wherePART;
 			
-			$requete="SELECT rp.idCandidature, CONCAT(prenom, '', nom) as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
+			$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
+			if ($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
+			else $requete.="nomListe";
+			$requete.=" as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
 			$requete.=$joinPART.$wherePART;
 			
 		$requeteCount="SELECT COUNT(DISTINCT S.idCandidature) as total FROM (SELECT rp.idCandidature, ";
-		$requeteCount.="CONCAT(prenom, '', nom)";
-		$requeteCount.="nomListe";
+		if ($this->typeElection=="presidentielle") $requeteCount.="CONCAT(prenom, ' ', nom)";
+		else $requeteCount.="nomListe";
 		$requeteCount.=" as nomCandidat,nomSource
 		FROM {$this->tables[$this->typeElection]} rp
 		LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$typeElection'";
+		LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$this->typeElection'";
 
 		$requete.=" GROUP BY idCandidature ORDER BY nbVoix $sord";
 
@@ -449,11 +452,12 @@ public function __construct(){
 	
 	header("Content-type: text/csv;charset=utf-8");
 	header('Content-disposition: attachment;filename=SIGeGIS - Export.csv');
-	$s="Nom du candidat;Voix;% exprimes\r\n";
+	$s="Nom du candidat;Voix;% exprimes;Source\r\n";
 	foreach ($resultats as $row) {
 	$s .= $row->nomCandidat .";";
 	$s .= $row->nbVoix .";";
-	$s .= $row->pourcentage;
+	$s .= $row->pourcentage.";";
+	$s .= $row->nomSource;
 	$s .= "\r\n";
 	}
 	
@@ -717,8 +721,6 @@ public function __construct(){
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 		
-		
-		
 			if ($this->niveau=="dep" OR $this->niveau=="reg" OR $this->niveau=="pays")
 				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
@@ -734,7 +736,11 @@ public function __construct(){
 				elseif ($this->niveau=="pays") $parametres3="pays.idPays";
 				else $parametres3="null";
 		
-				$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
+				$colonnesBDD=array();
+				$colonnesBDD[]="rp.idSource";
+				$colonnesBDD[]="YEAR(election.dateElection)";
+				if ($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+				$colonnesBDD[]=$parametres3;
 		
 				for($i=0;$i<sizeof($params);$i++) {
 				if($v++){
@@ -907,7 +913,11 @@ public function __construct(){
 									else $parametres3="null";
 		
 		
-									$colonnesBDD=array("rp.idSource","YEAR(election.dateElection)","election.tour",$parametres3);
+									$colonnesBDD=array();
+									$colonnesBDD[]="rp.idSource";
+									$colonnesBDD[]="YEAR(election.dateElection)";
+									if ($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+									$colonnesBDD[]=$parametres3;
 		
 									for($i=0;$i<sizeof($params);$i++) {
 									if($v++){
@@ -936,4 +946,21 @@ public function __construct(){
 		
 		echo $s;
 		} // ...............  Fin de getGrid() ...............
+		
+		public function getCandidat(){
+			$id=$_GET['id'];
+			if (empty($id)) return ;
+			$requete="SELECT * from $this->tableCandidat WHERE {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}=$id";
+			$resultats=$this->db->query($requete)->result();
+			$s=array();
+			foreach ($resultats as $row) {
+				$s["idPhoto"]=$row->idCandidature;
+				$s["prenom"]=$row->prenom;
+				$s["nom"]=$row->nom;
+				$s["dateNaissance"]=$row->dateNaissance;
+				$s["lieuNaissance"]=$row->lieuNaissance;
+				$s["contenu"]=$row->commentaires;
+			}
+			echo json_encode($s);
+		}
 }

@@ -8,7 +8,7 @@ $(document).ready(function() {
 	    colModel :[
 		{name:'idListe', index:'idListe', editable:true},
 		{name:'nomListe', index:'nomListe', editable:true, editrules:{required:true}},
-		{name:'typeListe', index:'typeListe', editable:true, editrules:{required:true}},
+		{name:'typeListe', index:'typeListe', editable:true, edittype:'select', editrules:{required:true}, editoptions:{value:"parti:Parti;coalitition:Coalition"}},
 		{name:'partis', index:'partis', edittype:'textarea', editoptions:{rows:"4",cols:"60"}, editable:true},
 		{name:'infosComplementaires', index:'infosComplementaires', editable:true, edittype:'textarea', editoptions:{rows:"10",cols:"90"}},
 		{name:'logo', index:'logo', edittype:'image', editable:true, hidden:true, editrules:{edithidden:true}, editoptions: {src: '', width:150}}

@@ -54,9 +54,9 @@
 				        <label for="button_erurale">Rurales</label>
 				    </div></td><td>
 				    <div id="radio2">
-				    	<input type="radio" id="button_centre" name="radio" />
+				    	<input type="radio" id="button_centre" name="radio2"/>
 				        <label for="button_centre">Niveau centre</label>
-				        <input type="radio" id="button_departement" name="radio" />
+				        <input type="radio" id="button_departement" name="radio2" />
 				        <label for="button_departement">Niveau département</label>
 				    </div></td></tr></table>
 				</form><br /><br />

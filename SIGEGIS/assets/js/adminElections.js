@@ -1,4 +1,5 @@
-$(document).ready(function() {		
+$(document).ready(function() {
+	$("#left-sidebar button").attr("disabled","disabled");
 	$("#menu ul li:not(':first,:gt(7)')").hide();
 	$("#list").jqGrid({
 		autowidth:true,			
@@ -6,11 +7,11 @@ $(document).ready(function() {
 	    mtype: 'POST',
 	    colNames:['ID Election','Date','Type','Tour','Découpage administratif'],
 	    colModel :[
-		{name:'idElection', index:'idResultat', editable:true},
-		{name:'dateElection', index:'dateElection', sorttype:'date', formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, editable:true, editrules:{required:true}},
-		{name:'typeElection', index:'typeElection', editable:true, editrules:{required:true}},
-		{name:'tour', index:'tour', editable:true, editrules:{required:true}},
-		{name:'anneeDecoupage', index:'anneeDecoupage', editable:true, editrules:{required:true}}
+		{name:'idElection',index:'idResultat',editable:true},
+		{name:'dateElection',index:'dateElection',sorttype:'date',formatoptions:{srcformat:"Y-m-d",newformat:"d/m/Y"},editable:true,editrules:{required:true}},
+		{name:'typeElection',index:'typeElection',edittype:'select',editable:true,editoptions:{value:"presidentielle:Présidentielle;legislative:Législative;regionale:Régionale;municipale:Municipale;rurale:Rurale"},editrules:{required:true}},
+		{name:'tour',index:'tour',editable:true,edittype:'select',editoptions:{value:"premier_tour:Premier tour;second_tour:Second tour; :Unique"}},
+		{name:'anneeDecoupage',index:'anneeDecoupage',editable:true,editrules:{required:true}}
 	    ],
 	    pager: '#pager',
 	    rowNum:20,
@@ -25,10 +26,10 @@ $(document).ready(function() {
 	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true},{closeAfterAdd:true});
 
 	$elections.on("change",function(){		
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD", page:1}).trigger("reloadGrid");		
+		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"),editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD",page:1}).trigger("reloadGrid");		
 	});
 	$tours.on("change",function(){		
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD", page:1}).trigger("reloadGrid");
+		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"),editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD",page:1}).trigger("reloadGrid");
 	});
 	
 	
@@ -48,16 +49,21 @@ $(document).ready(function() {
 		
 		//------------------ RELOAD ALL --------------------//
 		
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD", page:1}).trigger("reloadGrid");
+		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"),editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD",page:1}).trigger("reloadGrid");
 
 		//------------------ 	END   	--------------------//
 		$("#ss_locales :input").on("click",function(){
-			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$(this).attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD", page:1}).trigger("reloadGrid");
+			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$(this).attr("id"),editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD",page:1}).trigger("reloadGrid");
 		});
 	});
 		
+	$("#allListes").on("click",function(){
+		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection=all",page:1}).trigger("reloadGrid");
+	});
 	
-	//if (!$("#locale")[0].checked) $("#elections_locales").hide("animated");
+	$("#notAllListes").on("click",function(){
+		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"),editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD",page:1}).trigger("reloadGrid");
+	});
 	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 });

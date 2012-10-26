@@ -70,6 +70,12 @@
 					<div id="chartdiv2" class="diagrammes"></div>
 					<br />
 
+
+<div id="fenetre" style="display:none; font-size:0.7em;">
+<div id="contenu_modale"></div>
+
+</div>					
+
 					<div style='clear: both;'></div>
 				</div>
 			</td>

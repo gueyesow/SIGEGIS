@@ -191,34 +191,45 @@ $("#types_affichage input").on( "change",function() {
 });
 
 
+
 $.each(types_election,function(){  
-	if ($.getUrlVar("type")===""+this){
+	if ($.getUrlVar("type")==""+this){
 		$("#"+this).attr("checked","checked");
-		if(""+this==="locale"||""+this==="municipale"||""+this==="regionale"||""+this==="rurale") {
+		if(""+this=="locale"||""+this=="municipale"||""+this=="regionale"||""+this=="rurale") {
 			$("#types_elections").append(
-				"<fieldset><legend>Elections locales</legend>"+
+				"<fieldset id='ss_locales'><legend>Elections locales</legend>"+
 				"<input id='municipale' type='radio' name='radio3' /><label for='municipale'>Municipales</label><br />"+
 				"<input id='regionale' type='radio' name='radio3' /><label for='regionale'>Régionales</label><br />"+
 				"<input id='rurale' type='radio' name='radio3' /><label for='rurale'>Rurales</label></fieldset>");
-			$("#locale").attr("checked","checked");
+			$("#locale").attr("checked","checked");$("#"+this).attr("checked","checked");
 		}
 	}
 });
 
 $("#types_elections input").on( "change",function() {
-	 var idelection=""+$(this).attr("id");
+	var idelection=""+$(this).attr("id");
+	
 	$.each(types_election,function(){		
-		if (idelection===""+this ){
+		if (idelection==""+this )
+		{
+			
 			$("#types_affichage input").each(function(){
 				idmode=""+$(this).attr("id");
-				valeur=($(this).attr("checked")==="checked")?"yes":"no";		
+				valeur=($(this).attr("checked")=="checked")?"yes":"no";		
 				mode+="&"+idmode+"="+valeur;	
 			});
+			
 			if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
+			
 			if(  this !="regionale" && this!="municipale" && this!="rurale" ) {
 				if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/participation?type="+this+mode;
 				else window.location="http://www.sigegis.ugb-edu.com/main_controller/participation?type="+this;				
 			}
+			
+			$("#ss_locales :input").on("click",function(){
+				if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/participation?type="+$(this).attr("id")+mode;
+				else window.location="http://www.sigegis.ugb-edu.com/main_controller/participation?type="+$(this).attr("id");
+			});
 		}
 	});
 });
@@ -366,7 +377,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		});
 
 		$('#csv').on("click",function(){
-			window.location="http://www.sigegis.ugb-edu.com/main_controller/exportStatisticsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord="+$("#list").jqGrid('getGridParam','sortorder');
+			window.location="http://www.sigegis.ugb-edu.com/main_controller/exportStatisticsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&niveau="+$.getUrlVar("niveau")+"&sord="+$("#list").jqGrid('getGridParam','sortorder');
 		});
 		
 		/**
