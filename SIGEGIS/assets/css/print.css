@@ -6,7 +6,7 @@ body{
 	line-height:18px;
 	}
 	
-#left-sidebar,#menu-css,#zone_des_filtres,#pager,#exportButton,#printButton,#alerthd,#alertcnt{
+#left-sidebar,#menu,#footer,#zone_des_filtres,#pager,#exportButton,#printButton,#alerthd,#alertcnt{
 	display: none;
 	}
 

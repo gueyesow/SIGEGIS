@@ -552,9 +552,9 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		    bgiframe: true,
 		    resizable: true,
 		    modal: true,
-		    width: 650,
-		    minHeight: 400,
+		    width: 700,
+		    height: 500,
 		    show: 'fade',
-		    title: 'Présentation du candidat'
+		    title: 'Présentation du candidat', buttons: { Fermer: function() { $( this ).dialog( "close" ); } }
 		  });		  
 });

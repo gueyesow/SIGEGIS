@@ -110,7 +110,7 @@ class Admin_controller extends CI_Controller {
  
  public function editCandidats()
  {
- 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminCandidats","ckeditor/ckeditor","tooltips","style");
+ 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminCandidats","ckeditor/ckeditor","ckeditor/adapters/jquery","tooltips","style");
  	$top['title'] = 'SIGeGIS&gt;Candidats';
  	$top['styles'][] = 'theme';
  	$data['head'] = $this->load->view('top',$top,true);

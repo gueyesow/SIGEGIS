@@ -15,7 +15,11 @@ $(document).ready(function() {
 		{name:'dateNaissance', index:'dateNaissance', editable:true},
 		{name:'lieuNaissance', index:'lieuNaissance', editable:true},
 		{name:'partis', index:'partis', editable:true, editrules:{required:true}, edittype:'textarea', editoptions:{rows:"5",cols:"40"}},
-		{name:'commentaires', index:'commentaires', width:150, editable:true, edittype:'textarea', editoptions:{rows:"10",cols:"90",class:'ckeditor'}}		
+		{name:'commentaires', index:'commentaires', width:150, hidden:true, editable:true, edittype:'textarea', editoptions:{rows:"10",cols:"90"}, 
+		editrules:{
+            required:true, 
+            edithidden:true
+         }} 		
 	    ],
 	    pager: '#pager',
 	    rowNum:20,
@@ -26,23 +30,46 @@ $(document).ready(function() {
 	    viewrecords: true,
 	    gridview: true, 	    
 	    ondblClickRow: function(id) 	{
-	    	grid.editGridRow(id,{closeAfterEdit:true,width:700,closeAfterEdit:true,
-				recreateForm: true,top:"5",left:"200",
-				beforeInitData: function () {
-			        var cm = grid.jqGrid('getColProp', 'photo');
-			        selRowId = grid.jqGrid('getGridParam', 'selrow');
-			        cm.editoptions.src = 'http://www.sigegis.ugb-edu.com/assets/images/candidats/c_' + selRowId + '.jpg';	      			        
-				}});
+	    	grid.editGridRow(id,
+	    		{
+		    		width:700,closeAfterEdit:true,
+					recreateForm: true,closeOnEscape:true,
+					afterShowForm:function(){
+						$("#commentaires").ckeditor();
+					},
+					onClose: function() {
+						$('#commentaires').ckeditorGet().destroy();					  
+					},
+					beforeShowForm: function(form) {
+		                  var dlgDiv = $("#editmod" + grid[0].id);
+		                  var dlgWidth = dlgDiv.width();
+		                  dlgDiv[0].style.top =  "10px";
+		                  dlgDiv[0].style.left = Math.round(($(window).width()-dlgWidth)/2) + "px";
+		            },
+					beforeInitData: function () {
+				        var cm = grid.jqGrid('getColProp', 'photo');
+				        selRowId = grid.jqGrid('getGridParam', 'selrow');
+				        cm.editoptions.src = 'http://www.sigegis.ugb-edu.com/assets/images/candidats/c_' + selRowId + '.jpg';
+					}
+		        });
 		}
 	}).navGrid("#pager",
 			{edit:true,add:true,del:true,search:true},
 			{
-				closeAfterEdit:true,width:700,recreateForm: true,
-				beforeInitData: function () {
-			        var cm = grid.jqGrid('getColProp', 'photo');
-			        selRowId = grid.jqGrid('getGridParam', 'selrow');
-			        cm.editoptions.src = 'http://www.sigegis.ugb-edu.com/assets/images/candidats/c_' + selRowId + '.jpg';
-				}
+				closeAfterEdit:true,width:700,closeAfterEdit:true,
+				recreateForm: true,closeOnEscape:true,
+				afterShowForm:function(){
+					$("#commentaires").ckeditor();
+				},
+				onClose: function() {
+					$('#commentaires').ckeditorGet().destroy();					  
+				},
+				beforeShowForm: function(form) {
+	                  var dlgDiv = $("#editmod" + grid[0].id);
+	                  var dlgWidth = dlgDiv.width();
+	                  dlgDiv[0].style.top =  "10px";
+	                  dlgDiv[0].style.left = Math.round(($(window).width()-dlgWidth)/2) + "px";
+	            },
 			},{closeAfterAdd:true, width:700});
 
 	$centres.on("change",function(){
@@ -59,5 +86,6 @@ $(document).ready(function() {
 	
 
 	$(".ui-jqgrid-bdiv").removeAttr("style");
-	$("#types_affichage input").attr("disabled","disabled");
+	$("#types_affichage input").attr("disabled","disabled");$("#commentaires,.ckeditor").ckeditor();
+	$("#commentaires").on("click",function(){/*$("#commentaires,.ckeditor").ckeditor();*/alert();});
 });

@@ -393,7 +393,7 @@ public function __construct(){
 			$s .= "<cell>". $row->dateNaissance ."</cell>";
 			$s .= "<cell>". $row->lieuNaissance ."</cell>";
 			$s .= "<cell>". $row->partis."</cell>";
-			$s .= "<cell>". $row->commentaires ."</cell>";
+			$s .= "<cell>". htmlspecialchars($row->commentaires) ."</cell>";
 			$s .= "<cell></cell>";
 			$s .= "</row>";
 		}
