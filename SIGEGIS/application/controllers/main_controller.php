@@ -1,7 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Main_controller extends CI_Controller {
-
+class Main_controller extends CI_Controller {		
+	private $typeElection;
+	private $niveau;	
+	private $params;
+	
+	private $tableCandidat;
+	
 	public function __construct(){
 		// database et assets_helper sont chargés automatiquement
 		parent::__construct();
@@ -9,6 +14,14 @@ class Main_controller extends CI_Controller {
 		$this->load->model("analysis_model","analysisModel");
 		$this->load->model("filtering_model","filteringModel");
 		$this->load->helper('form');
+		
+		if(!empty($_GET["typeElection"]))	$this->typeElection=$_GET["typeElection"];	else $this->typeElection=null;
+		
+		if(!empty($_GET["niveau"]))	$this->niveau=$_GET["niveau"];	else $this->niveau=null;
+					
+		if(!empty($_GET['param'])) {$parametres=$_GET['param'];}	else $parametres="1,2012,premier_tour,globaux";
+
+		$this->params=explode(",",$parametres);
 	}
 
 	public function index()
@@ -62,20 +75,20 @@ class Main_controller extends CI_Controller {
 		$this->load->view('participation',$data);
 	}
 
-	public function getBarVisualiser(){
-		echo $this->basicModel->getBarVisualiser();
+	public function getBarVisualiser(){	
+		echo $this->basicModel->getBarVisualiser($this->typeElection,$this->niveau,$this->params);
 	}
 	
-	public function getPieVisualiser(){
-		echo $this->basicModel->getPieVisualiser();
+	public function getPieVisualiser(){				
+		echo $this->basicModel->getPieVisualiser($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function getComboParticipation(){
-		echo $this->basicModel->getComboParticipation();
+		echo $this->basicModel->getComboParticipation($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function getGridVisualiser(){
-		$this->basicModel->getGridVisualiser();
+		$this->basicModel->getGridVisualiser($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function getBarAnalyserAnnee(){
@@ -92,24 +105,16 @@ class Main_controller extends CI_Controller {
 	public function getPieAnalyserLocalite(){
 		echo $this->analysisModel->getPieAnalyserLocalite();
 	}
-
-	public function getBarParticipation(){
-		echo $this->basicModel->getBarParticipation("chartdiv1");
-	}
-	
-	public function getPieParticipation(){
-		echo $this->basicModel->getPieParticipation("chartdiv2");
-	}
-	public function getPieParticipation2(){
-		echo $this->basicModel->getPieParticipation2("chartdiv3");
-	}
 	
 	public function getPoidsElectoralRegions(){
-		echo $this->basicModel->getPoidsElectoralRegions();
+		if (!empty($_GET['annee']) AND !empty($_GET['tour'])) {
+			$annee=$_GET['annee'];$tour=$_GET['tour'];
+		} else return;
+		echo $this->basicModel->getPoidsElectoralRegions($this->typeElection,$this->niveau,$annee,$tour);
 	}
 	
 	public function getGridParticipation(){
-		$this->basicModel->getGridParticipation();
+		$this->basicModel->getGridParticipation($this->typeElection,$this->niveau,$this->params);
 	}
 
 	public function getGridAnalyserAnnee(){
@@ -173,14 +178,14 @@ class Main_controller extends CI_Controller {
 	}
 	
 	public function exportResultatsToCSV(){
-		$this->basicModel->exportResultatsToCSV();
+		$this->basicModel->exportResultatsToCSV($this->typeElection,$this->niveau,$this->params);
 	}
 	public function exportStatisticsToCSV(){
-		$this->basicModel->exportStatisticsToCSV();
+		$this->basicModel->exportStatisticsToCSV($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function exportToCSVAnalyse(){
-		$this->filteringModel->exportResultatsToCSV();
+		$this->filteringModel->exportResultatsToCSV($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function exportToCSVAnalyseLocalite(){

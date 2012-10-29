@@ -7,7 +7,46 @@ $(document).ready(function() {
 	
 	$("#line").attr("disabled","disabled");
 
-	// Charge les données dans le bar chart 
+	// Charge les données dans le bar chart
+	
+	function refreshAll(){
+		niveau=$.getUrlVar("niveau");
+		type=$.getUrlVar("type");
+		
+		param=$sources.val()+","+$elections.val();
+		if(type=="presidentielle") param+=","+$tours.val();
+		
+		switch (niveau) {
+		 case "cen":param+=","+$centres.val();break;
+		 case "dep":param+=","+$departements.val();break;
+		 case "reg":param+=","+$regions.val();break;
+		 case "pays":param+=","+$pays.val();break;
+		 default:break;
+		}
+		
+		$urlGrid="http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?niveau="+niveau+"&param="+param+"&typeElection="+type;
+		
+		$paramCharts='param='+param+'&typeElection='+type;
+		if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
+		
+		$("#list").setGridParam({url:$urlGrid,page:1}).trigger("reloadGrid");
+		
+		$.ajax({        							
+			url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
+			data:$paramCharts,        					     
+			success: function(json) {		
+				refreshBarChart(json);																						
+			}    
+		});
+		
+		$.ajax({        							
+			url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
+			data:$paramCharts,    					     
+			success: function(json) {
+				refreshPieChart(json);
+			}    
+		});
+	}
 	 
 	function refreshBarChart(json){
 		var series = {            
@@ -342,115 +381,19 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 	
 		if ($.getUrlVar("niveau")=="cen") // NIVEAU CENTRE 
 		{		
-			$centres.on("change",function()
-			{				
-				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-				param+=","+$centres.val();				
-				
-				$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?niveau=cen&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
-				
-				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
-					data:'niveau=cen&param='+param+'&typeElection='+$.getUrlVar("type"),        					     
-					success: function(json) {		
-						refreshBarChart(json);																						
-					}    
-				});
-				
-				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
-					data:'niveau=cen&param='+param+'&typeElection='+$.getUrlVar("type"),    					     
-					success: function(json) {
-						refreshPieChart(json);
-					}    
-				});							
-			});			
+			$centres.on("change",function(){refreshAll();});				
 		}
 		else if ($.getUrlVar("niveau")=="dep")	// NIVEAU DEPARTEMENT 
 		{		
-			$departements.on("change",function()
-			{
-						
-						param=$sources.val()+","+$elections.val();
-						if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-						param+=","+$departements.val();
-						
-						$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?niveau=dep&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
-						
-						$.ajax({        							
-							url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
-							data:'niveau=dep&param='+param+'&typeElection='+$.getUrlVar("type"),        					     
-							success: function(json) {
-								refreshBarChart(json);								
-							}    
-						});
-						
-						$.ajax({        							
-							url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
-							data:'niveau=dep&param='+param+'&typeElection='+$.getUrlVar("type"),      					     
-							success: function(json) {
-								refreshPieChart(json);									
-							}    
-						});									
-			});			
-			
+			$departements.on("change",function(){refreshAll();});			
 		}
 		else if ($.getUrlVar("niveau")=="reg")		// NIVEAU REGION 		
 		{
-			$regions.on("change",function()
-			{
-				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-				param+=","+$regions.val();
-				
-				$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?niveau=reg&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
-				
-				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
-					data:'niveau=reg&param='+param+'&typeElection='+$.getUrlVar("type"),     					     
-					success: function(json) {
-						refreshBarChart(json);					
-					}    
-				});
-				
-				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
-					data:'niveau=reg&param='+param+'&typeElection='+$.getUrlVar("type"),   					     
-					success: function(json) {
-						refreshPieChart(json);
-					}    
-				});
-			});			
+			$regions.on("change",function(){refreshAll();});
 		}
 		else if($.getUrlVar("niveau")=="globaux")  
 		{
-			$pays.on("change",function(){
-				
-				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-				param+=",null";
-	
-				$url='http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?param='+param+'&typeElection='+$.getUrlVar("type");
-				
-				$("#list").setGridParam({url:$url,page:1}).trigger("reloadGrid");
-								
-				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
-					data:'&param='+param+'&typeElection='+$.getUrlVar("type"),     					     
-					success: function(json) {
-						refreshBarChart(json);					
-					}    
-				});
-				
-				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
-					data:'&param='+param+'&typeElection='+$.getUrlVar("type"),   					     
-					success: function(json) {
-						refreshPieChart(json);									
-					}    
-				});
-			});
+			$pays.on("change",function(){refreshAll();});
 		}
 		
 		$('#imprimer').on("click",function(){

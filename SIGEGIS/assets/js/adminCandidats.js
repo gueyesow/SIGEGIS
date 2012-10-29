@@ -17,7 +17,7 @@ $(document).ready(function() {
 		{name:'partis', index:'partis', editable:true, editrules:{required:true}, edittype:'textarea', editoptions:{rows:"5",cols:"40"}},
 		{name:'commentaires', index:'commentaires', width:150, hidden:true, editable:true, edittype:'textarea', editoptions:{rows:"10",cols:"90"}, 
 		editrules:{
-            required:true, 
+            required:false, 
             edithidden:true
          }} 		
 	    ],

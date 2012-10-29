@@ -159,10 +159,10 @@ function refreshComboChart(json){
 	}
 	
 
-if($.getUrlVar("map")==="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
-if($.getUrlVar("bar")==="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")==="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
-if($.getUrlVar("pie")==="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")==="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");}
-if($.getUrlVar("grid")==="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")==="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
+if($.getUrlVar("map")=="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
+if($.getUrlVar("bar")=="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")=="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
+if($.getUrlVar("pie")=="no") {$("#chartdiv2").hide();$("#pie").removeAttr("checked");} else  if($.getUrlVar("pie")=="yes"){$("#chartdiv2").show();$("#pie").attr("checked","checked");}
+if($.getUrlVar("grid")=="no") {$("#theGrid").hide();$("#grid").removeAttr("checked");} else  if($.getUrlVar("grid")=="yes") {$("#theGrid").show();$("#grid").attr("checked","checked");}
 
 $("#chartdiv2").hide();
 
@@ -173,7 +173,7 @@ $("#types_affichage input").on( "change",function() {
 
 	$("#types_affichage input").each(function(){
 		idmode=""+$(this).attr("id");
-		valeur=($(this).attr("checked")==="checked")?"yes":"no";		
+		valeur=($(this).attr("checked")=="checked")?"yes":"no";		
 		mode+="&"+idmode+"="+valeur;			
 	});
 	
@@ -181,7 +181,7 @@ $("#types_affichage input").on( "change",function() {
 	if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
 	
 	if( $.getUrlVar("year") ) {		
-		if( $.getUrlVar("year")===$elections.val() )
+		if( $.getUrlVar("year")==$elections.val() )
 			mode+="&year="+$.getUrlVar("year");
 		else 
 			mode+="&year="+$elections.val();
@@ -236,23 +236,23 @@ $("#types_elections input").on( "change",function() {
 		
 if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 
-	if ($.getUrlVar("niveau")==="cen")
+	if ($.getUrlVar("niveau")=="cen")
 	{
 
 	}
 	else
-	if ($.getUrlVar("niveau")==="col")
+	if ($.getUrlVar("niveau")=="col")
 	{
 		$("#filtrecentres").remove();
 	}
 	else
-	if ($.getUrlVar("niveau")==="dep")
+	if ($.getUrlVar("niveau")=="dep")
 	{
 		$("#filtrecollectivites").remove();
 		$("#filtrecentres").remove();
 	}
 	else
-	if ($.getUrlVar("niveau")==="reg")
+	if ($.getUrlVar("niveau")=="reg")
 	{
 		$("#filtredepartements").remove();
 		$("#filtrecollectivites").remove();
@@ -265,7 +265,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 	
 
 	param=$sources.val()+","+$elections.val();
-	if($.getUrlVar("type")==="presidentielle") param+=","+$tours.val();
+	if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
 	
 	$url='http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau='+$.getUrlVar("niveau")+'&param='+param+'&typeElection='+$.getUrlVar("type");
 	
@@ -293,13 +293,14 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 	
-		if ($.getUrlVar("niveau")==="cen") // NIVEAU CENTRE 
+		if ($.getUrlVar("niveau")=="cen") // NIVEAU CENTRE 
 		{		
 			$centres.on("change",function()
 			{				
 				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")==="presidentielle") param+=","+$tours.val();
-				param+=","+$centres.val();				
+				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
+				param+=","+$centres.val();
+				param+=","+$.getUrlVar("type");
 				
 				$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau=cen&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
 				
@@ -312,14 +313,15 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 				});
 			});			
 		}
-		else if ($.getUrlVar("niveau")==="dep")	// NIVEAU DEPARTEMENT 
+		else if ($.getUrlVar("niveau")=="dep")	// NIVEAU DEPARTEMENT 
 		{		
 			$departements.on("change",function()
 			{
 						
 						param=$sources.val()+","+$elections.val();
-						if($.getUrlVar("type")==="presidentielle") param+=","+$tours.val();
+						if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
 						param+=","+$departements.val();
+						param+=","+$.getUrlVar("type");
 						
 						$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau=dep&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
 						
@@ -333,13 +335,14 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 			});			
 			
 		}
-		else if ($.getUrlVar("niveau")==="reg")		// NIVEAU REGION 		
+		else if ($.getUrlVar("niveau")=="reg")		// NIVEAU REGION 		
 		{
 			$regions.on("change",function()
 			{
 				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")==="presidentielle") param+=","+$tours.val();
-				param+=","+$regions.val();			
+				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
+				param+=","+$regions.val();
+				param+=","+$.getUrlVar("type");
 				$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau=reg&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
 				$.ajax({        							
 					url: 'http://www.sigegis.ugb-edu.com/main_controller/getComboParticipation',    
@@ -350,14 +353,14 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 				});
 			});			
 		}
-		else if($.getUrlVar("niveau")==="globaux")  
+		else if($.getUrlVar("niveau")=="globaux")  
 		{
 			$pays.on("change",function(){
 				
 				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")==="presidentielle") param+=","+$tours.val();
-				param+=",null";
-	
+				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
+				param+=","+$.getUrlVar("type");
+				
 				$url='http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?param='+param+'&typeElection='+$.getUrlVar("type");
 				
 				$("#list").setGridParam({url:$url,page:1}).trigger("reloadGrid");
