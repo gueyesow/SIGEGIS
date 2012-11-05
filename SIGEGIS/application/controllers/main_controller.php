@@ -37,6 +37,19 @@ class Main_controller extends CI_Controller {
 		$this->load->view('front_page',$data);		
 	}
 	
+	public function map()
+	{
+		$js_scripts["scripts_array"]=array("base","init_filtres","maps","jqsvg/jquery.svg.min","tooltips","style");
+		$top['title'] = 'SIGeGIS>Map';
+		$top['styles'][] = 'theme';
+		$data['head'] = $this->load->view('top',$top,true);
+		$data['menu'] = $this->load->view('menu',$top,true);
+		$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
+		$data['footer'] = $this->load->view('footer',null,true);
+		$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+		$this->load->view('maps',$data);
+	}
+	
 	public function apropos()
 	{		
 		$this->load->view('a_propos');
@@ -44,7 +57,15 @@ class Main_controller extends CI_Controller {
 	
 	public function exemples()
 	{
-		$this->load->view('exemples');
+		$js_scripts["scripts_array"]=array("base","init_filtres","exemples","tooltips","style");
+		$top['title'] = 'SIGeGIS&gt;Exemples';
+		$top['styles'][] = 'theme';
+		$data['head'] = $this->load->view('top',$top,true);
+		$data['menu'] = $this->load->view('menu',$top,true);
+		$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
+		$data['footer'] = $this->load->view('footer',null,true);
+		$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+		$this->load->view('exemples',$data);
 	}
 	
 	public function visualiser(){
@@ -74,7 +95,15 @@ class Main_controller extends CI_Controller {
 		$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
 		$this->load->view('participation',$data);
 	}
+	
+	public function getNomLocalite($idRegion="",$niveau=""){
+		$this->filteringModel->getNomLocalite($idRegion,$niveau);
+	}
 
+	public function getWinnersLocalites(){
+		$this->basicModel->getWinnersLocalites($this->typeElection,$this->niveau,$this->params);
+	}
+	
 	public function getBarVisualiser(){	
 		echo $this->basicModel->getBarVisualiser($this->typeElection,$this->niveau,$this->params);
 	}
@@ -92,18 +121,15 @@ class Main_controller extends CI_Controller {
 	}
 	
 	public function getBarAnalyserAnnee(){
-		echo $this->analysisModel->getBarAnalyserAnnee();
-	}
-	public function getPieAnalyserAnnee(){
-		echo $this->analysisModel->getPieAnalyserAnnee("chartdiv2");
+		echo $this->analysisModel->getBarAnalyserAnnee($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function getBarAnalyserLocalite(){
-		echo $this->analysisModel->getBarAnalyserLocalite();
-	}
-	
-	public function getPieAnalyserLocalite(){
-		echo $this->analysisModel->getPieAnalyserLocalite();
+		if(!empty($_GET['listeLocalites']) AND !empty($_GET['listeCandidats'])){		
+			$listeLocalites=explode(",",$_GET['listeLocalites']);
+			$listeCandidats=explode(",",$_GET['listeCandidats']);
+			echo $this->analysisModel->getBarAnalyserLocalite($this->typeElection,$this->niveau,$this->params,$listeLocalites,$listeCandidats);
+		} else return false;
 	}
 	
 	public function getPoidsElectoralRegions(){
@@ -116,13 +142,17 @@ class Main_controller extends CI_Controller {
 	public function getGridParticipation(){
 		$this->basicModel->getGridParticipation($this->typeElection,$this->niveau,$this->params);
 	}
-
+	
 	public function getGridAnalyserAnnee(){
-		$this->analysisModel->getGridAnalyserAnnee();
+		$this->analysisModel->getGridAnalyserAnnee($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function getGridAnalyserLocalite(){
-		$this->analysisModel->getGridAnalyserLocalite();
+		if(!empty($_GET['listeLocalites']) AND !empty($_GET['listeCandidats'])){		
+			$listeLocalites=explode(",",$_GET['listeLocalites']);
+			$listeCandidats=explode(",",$_GET['listeCandidats']);
+			$this->analysisModel->getGridAnalyserLocalite($this->typeElection,$this->niveau,$this->params,$listeLocalites,$listeCandidats);
+		} else return false;	
 	}
 	
 	public function getCandidats(){
@@ -175,6 +205,10 @@ class Main_controller extends CI_Controller {
 	
 	public function getDecoupages(){
 		$this->filteringModel->getDecoupages();
+	}
+	
+	public function getDecoupagePays(){
+		$this->filteringModel->getDecoupagePays();
 	}
 	
 	public function exportResultatsToCSV(){

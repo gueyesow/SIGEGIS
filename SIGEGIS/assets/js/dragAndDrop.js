@@ -2,18 +2,13 @@
  * Auteurs: Amadou SOW & Abdou Khadre GUEYE | DESS 2ITIC
  * Description: Gestion des filtres de la partie analyse 
  */
-	
 
- 
-	/**
-	 * Ajouter en paramètre la source,le tour à représenter
-	 */
+// Rappel: chart1 <=> Bar et chart2 <=> Line save à true indique que l'on compare deux élections
 
-// chart1 => Bar // chart2 => Line 
-	function putGrid(url){	
+function putGrid(url){	
 		
-		if(save) {balise="#list2";pager="#pager2";}
-		else {balise="#list";pager="#pager";}
+	if(save) {balise="#list2";pager="#pager2";}
+	else {balise="#list";pager="#pager";}
 		
 	if ($(balise).text()!="") $(balise).setGridParam({url: url,page:1}).trigger("reloadGrid");
 	else{
@@ -39,7 +34,7 @@
 		$(".ui-jqgrid-bdiv").removeAttr("style");
 		$("*[id*=theGrid]").hide();
 	}	
-	}
+}
 
 function refreshChart(theChart,json){
 	
@@ -127,7 +122,7 @@ $("#valider").on("click",function(event) {
 	listeCandidats="";
 	paramBis=$sources.val();
 
-	if(typeElection==="presidentielle") paramBis+=","+$("#ana_tour").val();
+	if(typeElection=="presidentielle") paramBis+=","+$("#ana_tour").val();
 	paramBis+=","+$("#localite").val();
 	
 	if ($("#bar")[0].checked) $("#chartdiv1").show();
@@ -145,10 +140,10 @@ $("#valider").on("click",function(event) {
 	
 	paramBis+="&listeAnnees="+listeAnnees+"&listeCandidats="+listeCandidats;
 	
-	if ($("select[name*=ana_localite]").val()==="pays") { paramBis+="&niveau=pays"; }
-	if ($("select[name*=ana_localite]").val()==="region") { paramBis+="&niveau=reg";}
-	if ($("select[name*=ana_localite]").val()==="departement") {paramBis+="&niveau=dep";}
-	if ($("select[name*=ana_localite]").val()==="centre") { paramBis+="&niveau=cen";}
+	if ($("select[name*=ana_localite]").val()=="pays") { paramBis+="&niveau=pays"; }
+	if ($("select[name*=ana_localite]").val()=="region") { paramBis+="&niveau=reg";}
+	if ($("select[name*=ana_localite]").val()=="departement") {paramBis+="&niveau=dep";}
+	if ($("select[name*=ana_localite]").val()=="centre") { paramBis+="&niveau=cen";}
 	
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserAnnee',    
@@ -196,10 +191,10 @@ $("#validerLocalite").on("click",function(event) {
 	
 	paramBis+="&listeLocalites="+listeLocalites+"&listeCandidats="+listeCandidats;
 	
-	if ($("select[name*=ana_localite2]").val()==="pays") { paramBis+="&niveau=pays"; }
-	if ($("select[name*=ana_localite2]").val()==="region") { paramBis+="&niveau=reg";}
-	if ($("select[name*=ana_localite2]").val()==="departement") {paramBis+="&niveau=dep";}
-	if ($("select[name*=ana_localite2]").val()==="centre") { paramBis+="&niveau=cen";}
+	if ($("select[name*=ana_localite2]").val()=="pays") { paramBis+="&niveau=pays"; }
+	if ($("select[name*=ana_localite2]").val()=="region") { paramBis+="&niveau=reg";}
+	if ($("select[name*=ana_localite2]").val()=="departement") {paramBis+="&niveau=dep";}
+	if ($("select[name*=ana_localite2]").val()=="centre") { paramBis+="&niveau=cen";}
 		
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserLocalite',    
@@ -210,7 +205,7 @@ $("#validerLocalite").on("click",function(event) {
 		}    
 	});
 	
-	putGrid("http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserLocalite?niveau=dep&param="+paramBis+"&typeElection="+typeElection);	
+	putGrid("http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserLocalite?param="+paramBis+"&typeElection="+typeElection);	
 });
 
 

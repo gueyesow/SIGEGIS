@@ -6,13 +6,47 @@
 $(document).ready(function() {
 
 $("#grid").attr("checked","checked");
-$("#menu ul li:gt(4)").remove();
-$("#menu ul li:nth-child(2) a").text("Niveau national");
-$("#menu ul li:nth-child(3) a").text("Par région");
-$("#menu ul li:nth-child(4) a").text("Par département");
-$("#menu ul li:nth-child(5) a").text("Par centre");
+$("#menu ul li:gt(5)").remove();
+$("#menu ul li:nth-child(2) a").text("Niveau global");
+$("#menu ul li:nth-child(3) a").text("Par pays");
+$("#menu ul li:nth-child(4) a").text("Par région");
+$("#menu ul li:nth-child(5) a").text("Par département");
+$("#menu ul li:nth-child(6) a").text("Par centre");
 
+function refreshAll(){
+	niveau=niveau;
+	type=type;
+	
+	param=$sources.val()+","+$elections.val();
+	if(type=="presidentielle") param+=","+$tours.val();
+	
+	switch (niveau) {
+	 case "cen":param+=","+$centres.val();break;
+	 case "dep":param+=","+$departements.val();break;
+	 case "reg":param+=","+$regions.val();break;
+	 case "pays":param+=","+$pays.val();break;
+	 default:break;
+	}
+	
+	$urlGrid='http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau='+niveau+'&param='+param+'&typeElection='+type;
+	
+	$paramCharts='param='+param+'&typeElection='+type;
+	if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
+	
+	$("#list").setGridParam({url:$urlGrid,page:1}).trigger("reloadGrid");
+					
+	$.ajax({        							
+		url: 'http://www.sigegis.ugb-edu.com/main_controller/getComboParticipation',    
+		data:$paramCharts,     					     
+		success: function(json) {
+			refreshComboChart(json);						
+		}    
+	});	
+}
 
+/**
+ * Le diagramme représentant les taux de participation
+ */
 chart1 = new Highcharts.Chart({
     chart: {
         renderTo: 'chartdiv1',
@@ -85,6 +119,9 @@ chart1 = new Highcharts.Chart({
     series: []
 });
 
+/**
+ * Le diagramme représentant le poids électoral des régions
+ */
 chart2 = new Highcharts.Chart({
 	chart: {
 		renderTo: 'chartdiv2',
@@ -125,23 +162,9 @@ chart2 = new Highcharts.Chart({
 	series: []
 });
 
-
-function refreshPiePoidsElectoralRegions(json){
-	var i=0;
-	
-	var series=JSON.parse(json);			
-	chart2.setTitle({text: series[0].titre},{text: series[0].sous_titre});		
-	if ( chart2.series.length > 0 ) {			
-		for(i=0;i<chart2.series.length;i++) {chart2.series[i].setData(series[i+1].data,false);}			
-	}		
-	else	
-	{
-		for(i=0;i<series.length;i++)
-			chart2.addSeries(series[i+1],false);
-	}	
-	chart2.redraw();
-}
-	
+/**
+ * Charge les données dans l'objet chart1 (Taux de participation)
+ */
 function refreshComboChart(json){
 		var i=0;
 		
@@ -156,8 +179,27 @@ function refreshComboChart(json){
 				chart1.addSeries(series[i+1],false);
 		}	
 		chart1.redraw();
-	}
+}
+
+
+/**
+ * Charge les données dans l'objet chart2 (Répartition géographique des électeurs)
+ */
+function refreshPiePoidsElectoralRegions(json){
+	var i=0;
 	
+	var series=JSON.parse(json);			
+	chart2.setTitle({text: series[0].titre},{text: series[0].sous_titre});		
+	if ( chart2.series.length > 0 ) {			
+		for(i=0;i<chart2.series.length;i++) {chart2.series[i].setData(series[i+1].data,false);}			
+	}		
+	else	
+	{
+		for(i=0;i<series.length;i++)
+			chart2.addSeries(series[i+1],false);
+	}	
+	chart2.redraw();
+}	
 
 if($.getUrlVar("map")=="no") {$("#gbox_list").hide("animated");} else {$("#gbox_list").show("animated");}
 if($.getUrlVar("bar")=="no") {$("#chartdiv1").hide("animated");$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")=="yes") {$("#chartdiv1").show("animated");$("#bar").attr("checked","checked");}
@@ -168,7 +210,9 @@ $("#chartdiv2").hide();
 
 $("#bar, #pie, #line").attr("disabled","disabled");
 
-$("#types_affichage input").on( "change",function() {
+$("#types_affichage input").on("change",function() 
+{
+
 	var idmode;
 
 	$("#types_affichage input").each(function(){
@@ -178,7 +222,7 @@ $("#types_affichage input").on( "change",function() {
 	});
 	
 	
-	if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
+	if(niveau) mode+="&niveau="+niveau;
 	
 	if( $.getUrlVar("year") ) {		
 		if( $.getUrlVar("year")==$elections.val() )
@@ -187,13 +231,13 @@ $("#types_affichage input").on( "change",function() {
 			mode+="&year="+$elections.val();
 	}					
 
-	window.location="http://www.sigegis.ugb-edu.com/main_controller/participation?type="+$.getUrlVar("type")+mode;
+	window.location="http://www.sigegis.ugb-edu.com/main_controller/participation?type="+type+mode;
 });
 
 
 
 $.each(types_election,function(){  
-	if ($.getUrlVar("type")==""+this){
+	if (type==""+this){
 		$("#"+this).attr("checked","checked");
 		if(""+this=="locale"||""+this=="municipale"||""+this=="regionale"||""+this=="rurale") {
 			$("#types_elections").append(
@@ -219,7 +263,7 @@ $("#types_elections input").on( "change",function() {
 				mode+="&"+idmode+"="+valeur;	
 			});
 			
-			if($.getUrlVar("niveau")) mode+="&niveau="+$.getUrlVar("niveau");
+			if(niveau) mode+="&niveau="+niveau;
 			
 			if(  this !="regionale" && this!="municipale" && this!="rurale" ) {
 				if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/participation?type="+this+mode;
@@ -234,26 +278,29 @@ $("#types_elections input").on( "change",function() {
 	});
 });
 		
-if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
+if (type != "presidentielle") $("#filtretours").remove();
 
-	if ($.getUrlVar("niveau")=="cen")
+	if (niveau=="cen")
 	{
 
-	}
+	}	
 	else
-	if ($.getUrlVar("niveau")=="col")
-	{
-		$("#filtrecentres").remove();
-	}
-	else
-	if ($.getUrlVar("niveau")=="dep")
+	if (niveau=="dep")
 	{
 		$("#filtrecollectivites").remove();
 		$("#filtrecentres").remove();
 	}
 	else
-	if ($.getUrlVar("niveau")=="reg")
+	if (niveau=="reg")
 	{
+		$("#filtredepartements").remove();
+		$("#filtrecollectivites").remove();
+		$("#filtrecentres").remove();
+	}
+	else
+	if (niveau=="pays")
+	{
+		$("#filtreregions").remove();
 		$("#filtredepartements").remove();
 		$("#filtrecollectivites").remove();
 		$("#filtrecentres").remove();
@@ -263,11 +310,11 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		$("#filtrepays").remove();$("#filtreregions").remove();	$("#filtredepartements").remove();	$("#filtrecollectivites").remove();	$("#filtrecentres").remove();
 	}
 	
-
+/*
 	param=$sources.val()+","+$elections.val();
-	if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
+	if(type=="presidentielle") param+=","+$tours.val();
 	
-	$url='http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau='+$.getUrlVar("niveau")+'&param='+param+'&typeElection='+$.getUrlVar("type");
+	$url='http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau='+niveau+'&param='+param+'&typeElection='+type;*/
 	
 	$("#list").jqGrid({		
 		autowidth:true,
@@ -293,86 +340,26 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 	
-		if ($.getUrlVar("niveau")=="cen") // NIVEAU CENTRE 
+		if (niveau=="cen") // NIVEAU CENTRE 
 		{		
-			$centres.on("change",function()
-			{				
-				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-				param+=","+$centres.val();
-				param+=","+$.getUrlVar("type");
-				
-				$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau=cen&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
-				
-				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getComboParticipation',    
-					data:'niveau=cen&param='+param+'&typeElection='+$.getUrlVar("type"),        					     
-					success: function(json) {
-						refreshComboChart(json);									
-					}    
-				});
-			});			
+			$centres.on("change",function(){refreshAll();});			
 		}
-		else if ($.getUrlVar("niveau")=="dep")	// NIVEAU DEPARTEMENT 
+		else if (niveau=="dep")	// NIVEAU DEPARTEMENT 
 		{		
-			$departements.on("change",function()
-			{
-						
-						param=$sources.val()+","+$elections.val();
-						if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-						param+=","+$departements.val();
-						param+=","+$.getUrlVar("type");
-						
-						$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau=dep&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
-						
-						$.ajax({        							
-							url: 'http://www.sigegis.ugb-edu.com/main_controller/getComboParticipation',    
-							data:'niveau=dep&param='+param+'&typeElection='+$.getUrlVar("type"),        					     
-							success: function(json) {
-								refreshComboChart(json);								
-							}    
-						});								
-			});			
-			
+			$departements.on("change",function(){refreshAll();});						
 		}
-		else if ($.getUrlVar("niveau")=="reg")		// NIVEAU REGION 		
+		else if (niveau=="reg")		// NIVEAU REGION 		
 		{
-			$regions.on("change",function()
-			{
-				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-				param+=","+$regions.val();
-				param+=","+$.getUrlVar("type");
-				$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?niveau=reg&param="+param+"&typeElection="+$.getUrlVar("type"),page:1}).trigger("reloadGrid");
-				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getComboParticipation',    
-					data:'niveau=reg&param='+param+'&typeElection='+$.getUrlVar("type"),     					     
-					success: function(json) {
-						refreshComboChart(json);					
-					}    
-				});
-			});			
+			$regions.on("change",function(){refreshAll();});			
 		}
-		else if($.getUrlVar("niveau")=="globaux")  
+		else if (niveau=="pays")		// NIVEAU REGION 		
 		{
-			$pays.on("change",function(){
-				
-				param=$sources.val()+","+$elections.val();
-				if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-				param+=","+$.getUrlVar("type");
-				
-				$url='http://www.sigegis.ugb-edu.com/main_controller/getGridParticipation?param='+param+'&typeElection='+$.getUrlVar("type");
-				
-				$("#list").setGridParam({url:$url,page:1}).trigger("reloadGrid");
-								
-				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getComboParticipation',    
-					data:'param='+param+'&typeElection='+$.getUrlVar("type"),     					     
-					success: function(json) {
-						refreshComboChart(json);						
-					}    
-				});
-			});
+			$pays.on("change",function(){refreshAll();});			
+		}
+		else if(niveau=="globaux")  
+		{
+			if (type=="presidentielle") $tours.on("change",function(){refreshAll();});
+			else $elections.on("change",function(){refreshAll();});
 		}
 		
 		$('#imprimer').on("click",function(){
@@ -380,7 +367,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		});
 
 		$('#csv').on("click",function(){
-			window.location="http://www.sigegis.ugb-edu.com/main_controller/exportStatisticsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&niveau="+$.getUrlVar("niveau")+"&sord="+$("#list").jqGrid('getGridParam','sortorder');
+			window.location="http://www.sigegis.ugb-edu.com/main_controller/exportStatisticsToCSV?param="+param+"&typeElection="+type+"&niveau="+niveau+"&sord="+$("#list").jqGrid('getGridParam','sortorder');
 		});
 		
 		/**
@@ -455,7 +442,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		$('#poidsElectoralRegions').click(function() {
 			$.ajax({        							
 				url: 'http://www.sigegis.ugb-edu.com/main_controller/getPoidsElectoralRegions',    
-				data:'annee='+$elections.val()+'&tour='+$tours.val()+'&typeElection='+$.getUrlVar("type"),   					     
+				data:'annee='+$elections.val()+'&tour='+$tours.val()+'&typeElection='+type,   					     
 				success: function(json) {
 					 $("#chartdiv2").show();
 					refreshPiePoidsElectoralRegions(json);

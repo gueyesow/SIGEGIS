@@ -123,7 +123,7 @@ class Admin_controller extends CI_Controller {
  
  public function editListes()
  {
- 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminListes","tooltips","style");
+ 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminListes","ckeditor/ckeditor","ckeditor/adapters/jquery","tooltips","style");
  	$top['title'] = 'SIGeGIS&gt;Listes de partis et de coalitions';
  	$top['styles'][] = 'theme';
  	$data['head'] = $this->load->view('top',$top,true);

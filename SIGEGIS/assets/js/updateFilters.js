@@ -66,7 +66,7 @@ $("select[name*=ana_localite]").on("change",function()
 
 $("select[name*=ana_localite2]").on("change",function()
 {			
-	if ($(this).val()=="pays") { showLocality(); /*$("#swapListLocality").hide();*/$("#filtrepays").hide();$("#filtreregions").hide();	$("#filtredepartements").hide();	$("#filtrecollectivites").hide();	$("#filtrecentres").hide();$pays.change();}
+	if ($(this).val()=="pays") { showLocality(); $("#filtrepays").hide();$("#filtreregions").hide();	$("#filtredepartements").hide();	$("#filtrecollectivites").hide();	$("#filtrecentres").hide();$pays.change();}
 	else if ($(this).val()=="region") { showLocality();$("#filtreregions").hide();$("#filtredepartements").hide();	$("#filtrecollectivites").hide();	$("#filtrecentres").hide();$pays.change();}
 	else if ($(this).val()=="departement") { showLocality();$("#filtredepartements").hide();$("#filtrecollectivites").hide(); $("#filtrecentres").hide();$pays.change();}
 	else if ($(this).val()=="centre") { showLocality(); $("#filtrecentres").hide();$pays.change();}
@@ -115,7 +115,7 @@ $("#choixmultipleB").on("change",function()
 				data:parametres_analyse,
 				dataType:'json',        					     
 				success: function(json) {
-					annees="";				
+					annees="";		
 					$.each(json, function(index, value) {						
 						$("#choixCandidatA").append('<option value="'+ index +'">'+ value +'</option>');						     
 					});																				         

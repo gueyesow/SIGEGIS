@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$("#left-sidebar button").attr("disabled","disabled");
-	$("#menu ul li:not(':first,:gt(7)')").hide();
+	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
 	$("#list").jqGrid({
 		autowidth:true,			
 	    datatype: 'xml',
@@ -8,7 +8,7 @@ $(document).ready(function() {
 	    colNames:['ID Election','Date','Type','Tour','Découpage administratif'],
 	    colModel :[
 		{name:'idElection',index:'idResultat',editable:true},
-		{name:'dateElection',index:'dateElection',sorttype:'date',formatoptions:{srcformat:"Y-m-d",newformat:"d/m/Y"},editable:true,editrules:{required:true}},
+		{name:'dateElection',index:'dateElection', formatter:'date', formatoptions: {srcformat:'ISO8601Short', newformat:'d/m/Y'},editable:true,editrules:{required:true}},
 		{name:'typeElection',index:'typeElection',edittype:'select',editable:true,editoptions:{value:"presidentielle:Présidentielle;legislative:Législative;regionale:Régionale;municipale:Municipale;rurale:Rurale"},editrules:{required:true}},
 		{name:'tour',index:'tour',editable:true,edittype:'select',editoptions:{value:"premier_tour:Premier tour;second_tour:Second tour; :Unique"}},
 		{name:'anneeDecoupage',index:'anneeDecoupage',editable:true,editrules:{required:true}}
@@ -19,11 +19,11 @@ $(document).ready(function() {
 	    sortname: 'idElection',
 	    sortorder: 'asc',	    
 	    ondblClickRow: function(id) 	{
-	    	$("#list").editGridRow(id,{closeAfterEdit:true});
+	    	$("#list").editGridRow(id,{closeAfterEdit:true,closeOnEscape:true,afterShowForm:function(){$("#dateElection").datepicker();}},{closeAfterAdd:true});
 		},
 	    viewrecords: true,
 	    gridview: true
-	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true},{closeAfterAdd:true});
+	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true,closeOnEscape:true,afterShowForm:function(){$("#dateElection").datepicker();}},{closeAfterAdd:true});
 
 	$elections.on("change",function(){		
 		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"),editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD",page:1}).trigger("reloadGrid");		
@@ -31,8 +31,7 @@ $(document).ready(function() {
 	$tours.on("change",function(){		
 		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"),editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD",page:1}).trigger("reloadGrid");
 	});
-	
-	
+		
 	$("#types_elections input").on("click",function(){
 		
 		if ($(this).attr("id")=="locale" && !$("#ss_locales").length)

@@ -1,6 +1,7 @@
 $(document).ready(function() {
-	$("#menu ul li:not(':first,:gt(7)')").hide();
-	$("#list").jqGrid({
+	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
+	grid=$("#list");
+	grid.jqGrid({
 		autowidth:true,			
 	    datatype: 'xml',
 	    mtype: 'POST',
@@ -10,7 +11,10 @@ $(document).ready(function() {
 		{name:'nomListe', index:'nomListe', editable:true, editrules:{required:true}},
 		{name:'typeListe', index:'typeListe', editable:true, edittype:'select', editrules:{required:true}, editoptions:{value:"parti:Parti;coalitition:Coalition"}},
 		{name:'partis', index:'partis', edittype:'textarea', editoptions:{rows:"4",cols:"60"}, editable:true},
-		{name:'infosComplementaires', index:'infosComplementaires', editable:true, edittype:'textarea', editoptions:{rows:"10",cols:"90"}},
+		{name:'commentaires', index:'commentaires', editable:true, hidden:true, edittype:'textarea', editoptions:{rows:"10",cols:"90"},editrules:{
+            required:false, 
+            edithidden:true
+         }},
 		{name:'logo', index:'logo', edittype:'image', editable:true, hidden:true, editrules:{edithidden:true}, editoptions: {src: '', width:150}}
 	    ],
 	    pager: '#pager',
@@ -20,29 +24,56 @@ $(document).ready(function() {
 	    editurl:"http://www.sigegis.ugb-edu.com/admin_controller/listeCRUD",
 	    sortorder: 'asc',	    
 	    ondblClickRow: function(id) 	{
-	    	$("#list").editGridRow(id,{closeAfterEdit:true,width:700,closeAfterEdit:true,
-				recreateForm: true,top:"5",left:"200",
+	    	grid.editGridRow(id,{closeAfterEdit:true,width:700,closeAfterEdit:true,
+	    		recreateForm: true,closeOnEscape:true,
+				beforeShowForm: function(form) {
+	                  var dlgDiv = $("#editmod" + grid[0].id);
+	                  var dlgWidth = dlgDiv.width();
+	                  dlgDiv[0].style.top =  "10px";
+	                  dlgDiv[0].style.left = Math.round(($(window).width()-dlgWidth)/2) + "px";
+	            },
+	    		afterShowForm:function(){
+	    			$("#commentaires").ckeditor();
+	    		},
+	    		onClose: function() {
+	    			$('#commentaires').ckeditorGet().destroy();					  
+	    		},
 				beforeInitData: function () {
-			        var cm = $("#list").jqGrid('getColProp', 'logo');
-			        selRowId = $("#list").jqGrid('getGridParam', 'selrow');
+			        var cm = grid.jqGrid('getColProp', 'logo');
+			        selRowId = grid.jqGrid('getGridParam', 'selrow');
 			        cm.editoptions.src = 'http://www.sigegis.ugb-edu.com/assets/images/partis/pc_' + selRowId + '.jpg';	      			        
 				}});
 		},
 	    viewrecords: true,
 	    gridview: true
-	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true},{closeAfterAdd:true});
+	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true,width:700,closeAfterEdit:true,
+		recreateForm: true,closeOnEscape:true,
+		afterShowForm:function(){
+			$("#commentaires").ckeditor();
+		},
+		onClose: function() {
+			$('#commentaires').ckeditorGet().destroy();					  
+		}},
+		{closeAfterAdd:true,width:700,beforeShowForm: function(form) {
+            var dlgDiv = $("#editmod" + grid[0].id);
+            var dlgWidth = dlgDiv.width();
+            dlgDiv[0].style.top =  "10px";
+            dlgDiv[0].style.left = Math.round(($(window).width()-dlgWidth)/2) + "px";
+      },afterShowForm:function(){
+			$("#commentaires").ckeditor();
+		},onClose: function() {$('#commentaires').ckeditorGet().destroy();}});
 
 	$centres.on("change",function(){
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 	});
 	$elections.on("change",function(){$("#ss_locales :checked").removeAttr("checked");});
 	
 	$("#allListes").on("click",function(){
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?annee=all",page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?annee=all",page:1}).trigger("reloadGrid");
 	});
 	
 	$("#notAllListes").on("click",function(){
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 	});
 	
 
@@ -64,11 +95,11 @@ $(document).ready(function() {
 		
 		//------------------ RELOAD ALL --------------------//
 		
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 
 		//------------------ 	END   	--------------------//
 		$("#ss_locales :input").on("click",function(){
-			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#ss_locales input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+			grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#ss_locales input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 		});
 	});
 	$("#presidentielle").attr("disabled","disabled");

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$("#menu ul li:not(':first,:gt(7)')").hide();
+	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
 	$("#left-sidebar input, #left-sidebar button, #zone_des_filtres select").attr("disabled","disabled");
 	$("#list").jqGrid({
 		autowidth:true,

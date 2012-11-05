@@ -15,13 +15,13 @@ private $titreElection="";
 private $typeLocalite="";
 private $la_session;
 private $niveau=null;
-private $candidatOrListe=array("candidature"=>"idCandidature","listescoalitionspartis"=>"idListe");
+private $candidatOrListe=array("candidat"=>"idCandidature","listescoalitionspartis"=>"idListe");
 private $tableCandidat;
 
 public function __construct(){
 	if(!empty($_GET["typeElection"])) {
 		$this->typeElection=$_GET["typeElection"];	
-		if ($this->typeElection=="presidentielle") $this->tableCandidat="candidature";else $this->tableCandidat="listescoalitionspartis";
+		if ($this->typeElection=="presidentielle") $this->tableCandidat="candidat";else $this->tableCandidat="listescoalitionspartis";
 		if ($this->typeElection=="presidentielle") $this->titreElection="présidentielle";
 		elseif ($this->typeElection=="legislative") $this->titreElection="législative";
 		elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
@@ -351,10 +351,10 @@ public function __construct(){
 	
 		if (!empty($annee)){
 			if($annee=="all")
-				$requete="SELECT * FROM candidature";
+				$requete="SELECT * FROM candidat";
 			else
-				$requete="SELECT DISTINCT candidature.* FROM {$this->tables[$this->typeElection]} rp 
-				LEFT JOIN candidature ON rp.idCandidature = candidature.idCandidature
+				$requete="SELECT DISTINCT candidat.* FROM {$this->tables[$this->typeElection]} rp 
+				LEFT JOIN candidat ON rp.idCandidature = candidat.idCandidature
 				LEFT JOIN election ON rp.idElection = election.idElection 
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre 
 				WHERE YEAR(election.dateElection)=$annee";
@@ -450,7 +450,7 @@ public function __construct(){
 			$s .= "<cell>". $row->nomListe ."</cell>";
 			$s .= "<cell>". $row->typeListe ."</cell>";
 			$s .= "<cell>". $row->partis ."</cell>";
-			$s .= "<cell>". $row->infosComplementaires ."</cell>";
+			$s .= "<cell>". $row->commentaires ."</cell>";
 			$s .= "<cell></cell>";
 			$s .= "</row>";
 		}
@@ -627,6 +627,8 @@ public function __construct(){
 	
 		$idElection = $this->input->post('idElection');
 		$dateElection = $this->input->post('dateElection');
+		$date = explode("/", $dateElection);
+		$dateElection=date("Y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2]));		
 		$typeElection = $this->input->post('typeElection');
 		$tour = $this->input->post('tour');
 		$anneeDecoupage = $this->input->post('anneeDecoupage');
@@ -743,10 +745,12 @@ public function __construct(){
 		$prenom = $this->input->post('prenom');
 		$nom = $this->input->post('nom');
 		$dateNaissance = $this->input->post('dateNaissance');
+		$date = explode("/", $dateNaissance);
+		$dateNaissance=date("Y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2]));
 		$lieuNaissance = $this->input->post('lieuNaissance');
 		$partis = $this->input->post('partis');
 		$commentaires = $this->input->post('commentaires');
-		
+
 		$data = array(
 				'prenom' => $prenom,
 				'nom' => $nom,
@@ -759,15 +763,15 @@ public function __construct(){
 		
 		if($_POST['oper']=='add')
 		{
-			$this->db->insert("candidature", $data);
+			$this->db->insert("candidat", $data);
 		}
 		if($_POST['oper']=='edit')
 		{			
-			$this->db->update("candidature", $data, array('idCandidature' => $idCandidature));
+			$this->db->update("candidat", $data, array('idCandidature' => $idCandidature));
 		}
 		if($_POST['oper']=='del' AND $this->la_session['level']==1)
 		{
-			$this->db->delete("candidature", array('idCandidature' => $_POST['id']));
+			$this->db->delete("candidat", array('idCandidature' => $_POST['id']));
 		}
 	}
 	
@@ -776,13 +780,13 @@ public function __construct(){
 		$nomListe = $this->input->post('nomListe');
 		$typeListe = $this->input->post('typeListe');
 		$partis = $this->input->post('partis');
-		$infosComplementaires = $this->input->post('infosComplementaires');		
+		$commentaires = $this->input->post('commentaires');		
 		
 		$data = array(
 				'nomListe' => $nomListe,
 				'typeListe' => $typeListe,
 				'partis' => $partis,
-				'infosComplementaires' => $infosComplementaires
+				'commentaires' => $commentaires
 		);
 		
 		if($_POST['oper']=='add')

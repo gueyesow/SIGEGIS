@@ -1,9 +1,9 @@
 <?php
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Filtering_model extends CI_Model{
-	private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
+	private $tables=array("presidentielle"=>"resultatspresidentielles2","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
 	private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
-	private $candidatOrListe=array("candidature"=>"idCandidature","listescoalitionspartis"=>"idListe");
+	private $candidatOrListe=array("candidat"=>"idCandidature","listescoalitionspartis"=>"idListe");
 	private $tableCandidat;
 	private $typeElection;
 	private $niveau;
@@ -11,7 +11,7 @@ class Filtering_model extends CI_Model{
 	public function __construct(){
 		if(!empty($_GET["typeElection"])) {
 			$this->typeElection=$_GET["typeElection"];
-			if ($this->typeElection=="presidentielle") $this->tableCandidat="candidature";else $this->tableCandidat="listescoalitionspartis";
+			if ($this->typeElection=="presidentielle") $this->tableCandidat="candidat";else $this->tableCandidat="listescoalitionspartis";
 			if ($this->typeElection=="presidentielle") $this->titreElection="présidentielle";
 			elseif ($this->typeElection=="legislative") $this->titreElection="législative";
 			elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
@@ -35,8 +35,10 @@ class Filtering_model extends CI_Model{
 		if ( !empty($_GET['param']) AND !empty($_GET["annees"]) AND !empty($_GET["niveau"])) {
 			
 			$requete="SELECT rp.idCandidature, ";
+			
 			if($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 			else $requete.="nomListe";
+			
 			$requete.=" as nomCandidat
 			FROM {$this->tables[$typeElection]} rp
 			LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
@@ -60,15 +62,15 @@ class Filtering_model extends CI_Model{
 			elseif ($_GET["niveau"]=="dep") $parametres3="departement.idDepartement";
 			elseif ($_GET["niveau"]=="reg") $parametres3="region.idRegion";
 			elseif ($_GET["niveau"]=="pays") $parametres3="pays.idPays";
+			else $parametres3=null;
 				
-			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
 			if ($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
-			$colonnesBDD[]=$parametres3;
+			if ($parametres3) $colonnesBDD[]=$parametres3;
 
 			for($i=0;$i<sizeof($params);$i++) {
-				if($v++)$requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
-				else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
+				if ($v)$requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+				else {$requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'"; $v++;}
 			}
 				
 			for($i=0;$i<sizeof($arrayAnnees);$i++) {
@@ -83,14 +85,14 @@ class Filtering_model extends CI_Model{
 			$candidatures = array();
 
 			if($query->result()){
-				foreach ($query->result() as $candidature) {
-					$candidatures[$candidature->idCandidature] = $candidature->nomCandidat;
+				foreach ($query->result() as $candidat) {
+					$candidatures[$candidat->idCandidature] = $candidat->nomCandidat;
 				}
 				echo json_encode($candidatures);
 			}
 			else // AUCUN RESULTAT (CANDIDAT)
 			{
-				$candidatures[''] = "Aucun";
+				$candidatures[''] = "Aucun candidat";
 				echo json_encode($candidatures);
 			}
 		} return FALSE;
@@ -156,14 +158,14 @@ class Filtering_model extends CI_Model{
 			$candidatures = array();
 
 			if($query->result()){
-				foreach ($query->result() as $candidature) {
-					$candidatures[$candidature->idCandidature] = $candidature->nomCandidat;
+				foreach ($query->result() as $candidat) {
+					$candidatures[$candidat->idCandidature] = $candidat->nomCandidat;
 				}
 				echo json_encode($candidatures);
 			}
 			else // AUCUN RESULTAT (CANDIDAT)
 			{
-				$candidatures[''] = "Aucun";
+				$candidatures[''] = "Aucun candidat";
 				echo json_encode($candidatures);
 			}
 		} return FALSE;
@@ -183,14 +185,14 @@ class Filtering_model extends CI_Model{
 		}
 
 
-		$query = $this->db->order_by('nomCandidat')->get('candidature');
+		$query = $this->db->order_by('nomCandidat')->get('candidat');
 
 		$candidatures = array();
 
 		if($query->result()){
 			$chaine = array();
-			foreach ($query->result() as $candidature)
-				$chaine [$candidature->idCandidature]= $candidature->nomCandidat;
+			foreach ($query->result() as $candidat)
+				$chaine [$candidat->idCandidature]= $candidat->nomCandidat;
 			echo '[{ "id": "8", "label": "laby", "value": "labx" },{ "id": "2", "label": "lab2y", "value": "lab2x" }]';
 		}
 		else{
@@ -342,6 +344,18 @@ class Filtering_model extends CI_Model{
 		}
 	}
 
+	
+	function getNomLocalite($id,$niveau){	
+		if ($id=="") echo  "Inconnue";
+		if ($niveau=="dep") {$nomLieu="nomDepartement AS nomLieu";$idLieu="idDepartement";$table="departement";}
+		elseif ($niveau=="reg") {$nomLieu="nomRegion AS nomLieu";$idLieu="idRegion";$table="region";}
+		$this->db->select($nomLieu);		
+		if($id)
+			 $this->db->where($idLieu,$id);	
+		$resultat = $this->db->get($table);
+		foreach ($resultat->result() as $r) echo $r->nomLieu;
+	}
+	
 	function getRegions(){
 		$pays = NULL;
 		$anneeDecoupage=NULL;
@@ -467,6 +481,19 @@ class Filtering_model extends CI_Model{
 		}else{
 			return FALSE;
 		}
+	}
+	
+	function getDecoupagePays(){ // idElection => Tour
+		$id=$_GET["idPays"];
+		$requete="SELECT anneeDecoupage FROM pays WHERE idPays=$id";
+		$query=$this->db->query($requete);
+		
+		if($query->num_rows()){
+			foreach ($query->result() as $decoupage) {
+				echo  $decoupage->anneeDecoupage;
+			}
+		}
+		else return FALSE;
 	}
 
 }

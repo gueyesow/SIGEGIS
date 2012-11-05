@@ -1,4 +1,3 @@
-<?php if(!$this->session->userdata('logged_in')) show_error("ACCES NON AUTORISE");?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -25,31 +24,17 @@
 	</div>
 	<br />
 	<br />
-	
+
 	<table id="wrapper-table">
 		<tr>
 			<td id="left-sidebar">
+	
+				<?php echo $options_menu;?>
 			
-			<?php echo $options_menu;?>
-				
-				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
-				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
-				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
+				<div id="winners"></div>				
 			</td>
-			<td id="content">
-			<form>
-				    <div id="radio">
-				        <input type="radio" id="allListes" name="radio" />
-				        <label for="allListes">Toutes les élections</label>
-				        <input type="radio" id="notAllListes" name="radio" checked="checked" />
-				        <label for="notAllListes">Filtrer les élections</label>
-				    </div>
-				</form>					
-				<br /><br />
-				<div id="theGrid">
-					<table id="list"></table>
-					<div id="pager"></div>
-				</div>
+			<td id="content">			
+				<div  id="senmaps" style="margin:auto;height: 650px; width: 760px;;"></div>
 			</td>
 		</tr>
 	</table>

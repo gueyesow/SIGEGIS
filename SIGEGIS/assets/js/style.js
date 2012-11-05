@@ -4,20 +4,15 @@ $("input[id*='valider'],input[id*='validerLocalite'], #connection_form :submit, 
 $("#radio,#radio2").buttonset();
 
 $("#ouvrir, #comparer, .boutonAdmin").css("width","200px");
+$(".boutonAdmin").css("width","80%");
 
 $('#menu li a').hover(   
 		  
 function() {     
-	$(this).css('padding', '5px 15px')   
-         .stop()
-         .animate({'backgroundColor':'rgba(0,0,0,0.5)'},'fast');               
+	$(this).animate({'backgroundColor':'rgba(0,0,0,0.5)'},'fast');               
     },   
     function() {   
-    	$(this).css('padding', '5px 15px')   
-         .stop()   
-         .animate({'paddingLeft'    : '15px',   
-                    'paddingRight'      : '15px',   
-                    'backgroundColor' :'rgba(0,0,0,0.2)'},   
+    	$(this).animate({'backgroundColor' :'rgba(0,0,0,0.2)'},   
                     'fast');   
   
     }).mousedown(function() {   
@@ -95,7 +90,7 @@ function() {
 			yAxis: {
 			min: 0,
 			title: {
-			text: 'NbVoix'
+			text: 'Voix'
 			}
 			},
 			exporting: {
@@ -157,7 +152,7 @@ function() {
 			yAxis: {
 			min: 0,
 			title: {
-			text: 'NbVoix'
+			text: 'Voix'
 			}
 			},
 			exporting: {

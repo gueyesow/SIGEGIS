@@ -21,7 +21,7 @@
 			
 				<?php echo $options_menu;?>
 				
-				<button id="ouvrir" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Ouvrir l'utilitaire d'analyse</button>
+				<button id="ouvrir" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Faire une nouvelle requête</button>
 				<button id="comparer" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Comparer ces résultats à ...</button>
 				
 				<div id="dialog_zone_des_options"  title="Utilitaire SIGEGIS">
@@ -168,9 +168,9 @@
 						<p>
 						Vous êtes dans l'utilitaire SIGEGIS<br />
 						Deux options vous sont offertes:<br /><br />
-						<b>1) Analyser suivant une localité précise</b><br />
+						<b>1) Comparer suivant une localité précise</b><br />
 						Avec cette option, vous pouvez sélectionner le lieu de vote qui vous intéresse puis les candidats ciblés<br /><br />
-						<b>2) Analyser suivant une élection précise</b><br />
+						<b>2) Comparer suivant une élection précise</b><br />
 						Les options sont quasi identiques aux précédentes. Il suffit juste de déplacer les éléments qui vous intéressent de la zone à gauche à celle de droite.<br />
 						<br /><br />
 						Les modes de représentation disponibles se trouvent dans le menu de gauche.
@@ -185,7 +185,7 @@
 						</ol> 
 						
 						<p> 
-						Cliquez sur <b style="font-size:14px;">Ouvrir l'utilitaire d'analyse</b> pour débuter. 
+						Cliquez sur <b style="font-size:14px;">Faire une nouvelle requête</b> pour débuter. 
 						</p>
 					</div>
 					

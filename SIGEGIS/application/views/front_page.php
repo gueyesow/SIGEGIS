@@ -31,9 +31,9 @@
 			
 			<?php echo $options_menu;?>
 				
-				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img height="58px" src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
-				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
-				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
+				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
+				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
+				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
 			<td id="content">
 				<div>
@@ -44,7 +44,7 @@
 						<p>
 						Cette plateforme est simple d'utilisation et vous permet de visualiser les résultats des élections passées ainsi que d'effectuer des analyses sur les données électorales.<br />												
 					
-						La navigation entre les différentes élections se fait grâce au menu de gauche et la liste <b>Année</b> en haut <img height="50px" alt="screenshot" src="../../assets/images/capture.jpg">.
+						La navigation entre les différentes élections se fait grâce au menu de gauche et la liste <b>Année</b> en haut <img height="50px" alt="screenshot" src="../../assets/images/capture.jpg">.<br />
 						De même, les changements de mode de représentation des données se feront à partir de ce menu:
 						</p>
 						<ol type="a">
@@ -57,7 +57,7 @@
 						<p> 
 						Chosissez l'opération que vous souhaitez effectuer:
 						<button id="visualiser" class="boutons" title="Visualiser les résultats des élections passées">Visualiser des résultats</button>
-						<button id="analyser" class="boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Analyser des résultats</button> 
+						<button id="analyser" class="boutons" title="Ensemble d'outils permettant d'effectuer des comparaisons">Comparer des résultats</button> 
 						</p>
 					</div>
 

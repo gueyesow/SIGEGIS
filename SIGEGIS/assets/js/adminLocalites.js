@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$("#menu ul li:not(':first,:gt(7)')").hide();
+	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
 	var $anneeDecoupage=$("#anneeDecoupage");
 	 
 	label={

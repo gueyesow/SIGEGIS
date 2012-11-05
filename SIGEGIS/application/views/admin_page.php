@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <?php echo $head;?>
-<style type="text/css">#content table {width:100%;text-align:left;} #content table td {vertical-align:top;}</style>
+<style type="text/css">#wrapper #wrapper-table #content table {width:100%;text-align:left;} #content table td {vertical-align:top;}</style>
 </head>
 
 <body>
@@ -33,9 +33,9 @@
 			
 			<?php echo $options_menu;?>
 				
-				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img height="58px" src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
-				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
-				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button><br />
+				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
+				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
+				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button><br />
 			</td>
 			<td id="content">
 			<h2>Modifications des données</h2>

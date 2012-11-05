@@ -32,9 +32,9 @@
 			
 			<?php echo $options_menu;?>
 				
-				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img height="58px" src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
-				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img height="58px" src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
-				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img height="58px" src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
+				<button id="imprimer" class="theToolTip" title="Imprimer toute la page"><img src="../../assets/images/print.png" alt="Imprimer toute la page"/></button>
+				<button id="pdf" class="theToolTip" title="Exporter les graphiques au format PDF"><img src="../../assets/images/pdf.png" alt="Exporter au format PDF"/></button>
+				<button id="csv" class="theToolTip" title="Exporter les données au format CSV"><img src="../../assets/images/csv.png" alt="Exporter au format CSV"/></button>
 			</td>
 			<td id="content">			
 			<form>
@@ -65,10 +65,7 @@
 				<div id="theGrid">
 					<table id="list"></table>
 					<div id="pager"></div>
-				</div>
-				<table id="listeCandidats">
-				<tr><th>Prénom</th><th>Nom</th></tr>
-				</table>
+				</div>				
 			</td>
 		</tr>
 	</table>

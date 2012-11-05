@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$("#menu ul li:not(':first,:gt(7)')").hide();
+	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
 	var grid=$("#list");
 	
 	grid.jqGrid({
@@ -12,7 +12,7 @@ $(document).ready(function() {
 		{name:'photo', index:'photo', edittype: 'image', hidden:true, width:150, editable:true, editrules:{edithidden:true}, editoptions: {src: ''}},
 		{name:'prenom', index:'prenom', editable:true, editrules:{required:true}},
 		{name:'nom', index:'nom', editable:true, editrules:{required:true}},
-		{name:'dateNaissance', index:'dateNaissance', editable:true},
+		{name:'dateNaissance', index:'dateNaissance', formatter:'date', formatoptions: {srcformat:'ISO8601Short', newformat:'d/m/Y'}, editable:true},
 		{name:'lieuNaissance', index:'lieuNaissance', editable:true},
 		{name:'partis', index:'partis', editable:true, editrules:{required:true}, edittype:'textarea', editoptions:{rows:"5",cols:"40"}},
 		{name:'commentaires', index:'commentaires', width:150, hidden:true, editable:true, edittype:'textarea', editoptions:{rows:"10",cols:"90"}, 
@@ -35,6 +35,7 @@ $(document).ready(function() {
 		    		width:700,closeAfterEdit:true,
 					recreateForm: true,closeOnEscape:true,
 					afterShowForm:function(){
+						$("#dateNaissance").datepicker();
 						$("#commentaires").ckeditor();
 					},
 					onClose: function() {
@@ -59,6 +60,7 @@ $(document).ready(function() {
 				closeAfterEdit:true,width:700,closeAfterEdit:true,
 				recreateForm: true,closeOnEscape:true,
 				afterShowForm:function(){
+					$("#dateNaissance").datepicker();
 					$("#commentaires").ckeditor();
 				},
 				onClose: function() {
@@ -70,7 +72,7 @@ $(document).ready(function() {
 	                  dlgDiv[0].style.top =  "10px";
 	                  dlgDiv[0].style.left = Math.round(($(window).width()-dlgWidth)/2) + "px";
 	            },
-			},{closeAfterAdd:true, width:700});
+			},{closeAfterAdd:true, width:700,onClose: function() {$('#commentaires').ckeditorGet().destroy();}});
 
 	$centres.on("change",function(){
 		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCandidats?typeElection=presidentielle&annee="+$elections.val(),page:1}).trigger("reloadGrid");
@@ -87,5 +89,4 @@ $(document).ready(function() {
 
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 	$("#types_affichage input").attr("disabled","disabled");$("#commentaires,.ckeditor").ckeditor();
-	$("#commentaires").on("click",function(){/*$("#commentaires,.ckeditor").ckeditor();*/alert();});
 });

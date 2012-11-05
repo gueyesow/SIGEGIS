@@ -9,7 +9,9 @@ class Main_model extends CI_Model{
 	private $titre;
 	private $sous_titre;
 	private $titreElection;
-	private $candidatOrListe=array("candidature"=>"idCandidature","listescoalitionspartis"=>"idListe");
+	private $tableCandidat;
+	private $ypeElection;
+	private $candidatOrListe=array("candidat"=>"idCandidature","listescoalitionspartis"=>"idListe");
 	private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
 	private $tables=array("presidentielle"=>"resultatspresidentielles2","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
 	private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
@@ -18,9 +20,9 @@ class Main_model extends CI_Model{
 		$this->titre=""; $this->sous_titre=""; $this->titreElection="";
 		if(!empty($_GET["typeElection"])) {
 			$this->typeElection=$_GET["typeElection"];
-			if ($this->typeElection=="presidentielle") $this->tableCandidat="candidature";else $this->tableCandidat="listescoalitionspartis";
+			if ($this->typeElection=="presidentielle") $this->tableCandidat="candidat";else $this->tableCandidat="listescoalitionspartis";
 			if ($this->typeElection=="presidentielle") {
-				$this->titreElection="présidentielle";$this->tableCandidat="candidature";
+				$this->titreElection="présidentielle";$this->tableCandidat="candidat";
 			}
 			elseif ($this->typeElection=="legislative") $this->titreElection="législative";
 			elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
@@ -30,6 +32,8 @@ class Main_model extends CI_Model{
 	
 	public static function titre($resultats,$titreElection,$niveau,$defaultTitle="",$defaultSubTitle=""){
 		
+		if (!$resultats) return array("Données indisponibles","Réessayez plus tard | ");
+			
 		$titre_niveau="Election "; $sous_titre="";
 		
 		$titre_niveau.=" $titreElection ".$resultats[0]->annee.": résultats ";
@@ -69,7 +73,6 @@ class Main_model extends CI_Model{
 		else $nomLieu=$default ;
 		return $nomLieu;
 	}
-	
 	public static function attributLocalite($niveau,$default=""){
 		$attributLocalite=null;
 		if ($niveau=="cen") $attributLocalite="centre.idCentre";
@@ -80,89 +83,169 @@ class Main_model extends CI_Model{
 		return $attributLocalite;
 	}
 	
+	public static function attributLocalite2($niveau,$default=""){
+		$attributLocalite=null;
+		if ($niveau=="cen") $attributLocalite="idCentre";
+		elseif ($niveau=="dep") $attributLocalite="idDepartement";
+		elseif ($niveau=="reg") $attributLocalite="idRegion";
+		elseif ($niveau=="pays") $attributLocalite="idPays";
+		else $attributLocalite=$default;
+		return $attributLocalite;
+	}
 	
-	/**
-	 * Cette fonction retourne les données pour l'histogramme
-	 * @return JSON object
-	 */	
 	public function getBarVisualiser($typeElection,$niveau,$params){
-		$v=0;									
-		
+		$v=0;
+		$default="'Résultats globaux' as nomLieu, ";
 		$requete="SELECT rp.idCandidature, YEAR(dateElection) as annee, ";
-		
+	
 		if ($this->isPresidentielle()) $requete.="CONCAT(prenom, ' ', nom)";	else $requete.="nomListe";
-
-		$requete.=" as nomCandidat, ".self::nomLieu($niveau)." nomSource,partis, SUM( nbVoix ) as nbVoix
+	
+		$requete.=" as nomCandidat, ".self::nomLieu($niveau,$default)." nomSource,partis, SUM( nbVoix ) as nbVoix
 		FROM {$this->tables[$typeElection]} rp
 		LEFT JOIN $this->tableCandidat ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN election ON rp.idElection = election.idElection
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-						
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+	
+		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays")
+			if ($niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays")
+			if ($niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
-		
+	
+			$colonnesBDD[]="rp.idSource";
+			$colonnesBDD[]="YEAR(election.dateElection)";
+			if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";
+			if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);
+	
+			for($i=0;$i<sizeof($params);$i++) {
+			if($v++){
+			if ($colonnesBDD[$i]) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+			}
+			else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
+	}
+	
+	$requete.=" GROUP BY rp.idCandidature";
+	
+	$resultats=$this->db->query($requete)->result();
+	
+			/* ----------------------------------------	*/
+			/*			  TITRE DU DIAGRAMME			*/
+			/* ----------------------------------------	*/
+	
+			list($this->titre,$this->sous_titre)=self::titre($resultats, $this->titreElection, $niveau);
+	
+			/* ----------------------------------------	*/
+			/*			COLLECTE DES DONNEES			*/
+			/* ----------------------------------------	*/
+	
+			$i=0;$j=0;
+			$abscisse=array();$ordonnee=array();
+	
+			foreach ($resultats as $resultat){//ici
+			$candidat=$resultat->nomCandidat;
+			$a=preg_replace("#(.*)$params[1]:([a-zA-Z0-9 ]*)(.*)#", "$2", $resultat->partis);
+			if ($this->isPresidentielle()) $candidat.="<br /><b>$a</b>";
+			$abscisse[]=$candidat;
+			$ordonnee[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}",
+					"url"=>"http://www.sigegis.ugb-edu.com/main_controller/getCandidat?id={$resultat->idCandidature}&typeElection={$typeElection}");
+			}
+	
+			if(!empty($_GET['unite'])){
+			if ($_GET['unite']=="va") $unite="En valeurs absolues"; else $unite="En valeurs relatives";
+			} else  $unite="En valeurs absolues";
+	
+			/* ----------------------------------------	*/
+			//					RENDU					//
+			/* ----------------------------------------	*/
+	
+			$rendu=array();
+			$rendu["titre"]=$this->titre;
+			$rendu["sous_titre"]=$this->sous_titre;
+			$rendu["abscisse"]=$abscisse;
+			$rendu["ordonnee"]=$ordonnee;
+			$rendu["unite"]=$unite;
+	
+			echo json_encode($rendu);
+	
+	} // ...............  Fin de getBarVisualiser() ...............
+	
+	
+	/**
+	 * Cette fonction retourne les données pour l'histogramme
+	 * @return JSON object
+	 */	
+	public function getWinnersLocalites($typeElection,$niveau,$params,$tour=''){
+		$v=0;
+		if ($niveau!="reg" && $niveau!="dep") return false;
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
 		if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";
 		if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);
+
+		//--------------------------
+		$requeteTOTAL="SELECT ".self::attributLocalite($niveau).", SUM( nbVoix ) as nbVoix
+		FROM {$this->tables[$typeElection]} rp
+		LEFT JOIN $this->tableCandidat ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
+		LEFT JOIN source ON rp.idSource = source.idSource
+		LEFT JOIN election ON rp.idElection = election.idElection
+		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+		
+		if ($niveau=="dep" OR $niveau=="reg")
+			$requeteTOTAL.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
+			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
+		if ($niveau=="reg")
+			$requeteTOTAL.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
 		
 		for($i=0;$i<sizeof($params);$i++) {
-			if($v++){
-				if ($colonnesBDD[$i]!=null) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+			if( $colonnesBDD[$i] ){
+				if ($v) $requeteTOTAL.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+				else {$requeteTOTAL.=" WHERE $colonnesBDD[$i]='".$params[$i]."'"; $v++;}
 			}
-			else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
 		}
-		
-		$requete.=" GROUP BY rp.idCandidature";
-		
-		$resultats=$this->db->query($requete)->result();
-		
-		// ----------------------------------------	//
-		//			TITRES DES DIAGRAMMES			//
-		// ----------------------------------------	//
-		
-		list($this->titre,$this->sous_titre)=self::titre($resultats, $this->titreElection, $niveau);
-				
-		// ----------------------------------------	//
-		//			COLLECTE DES DONNEES			//
-		// ----------------------------------------	//
-		
-		$i=0;$j=0;
-		$abscisse=array();$ordonnee=array();
+		$requeteTOTAL.=" GROUP BY ".self::attributLocalite2($niveau)." ORDER BY ".self::attributLocalite2($niveau).",  nbVoix DESC";
+		$resultatsTOTAL = $this->db->query($requeteTOTAL)->result();
 
-		foreach ($resultats as $resultat){//ici
-			$candidat=$resultat->nomCandidat;
-			$a=preg_replace("#(.*)$params[1]:([a-zA-Z0-9 ]*)(.*)#", "$2", $resultat->partis);
-			if ($this->isPresidentielle()) $candidat.="<br /><b>$a</b>";		
-			$abscisse[]=$candidat;
-			$ordonnee[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}",
-			"url"=>"http://www.sigegis.ugb-edu.com/main_controller/getCandidat?id={$resultat->idCandidature}&typeElection={$typeElection}");			
+		//--------------------------
+		$v=0;
+		$requete="SELECT rp.idCandidature, ".self::attributLocalite($niveau).", YEAR(dateElection) as annee, ";
+		if ($this->isPresidentielle()) $requete.=" CONCAT(prenom, ' ', nom)";	else $requete.=" nomListe";
+		$requete.="  as nomCandidat, ".self::nomLieu($niveau)." nomSource, SUM( nbVoix ) as nbVoix
+		FROM {$this->tables[$typeElection]} rp
+		LEFT JOIN $this->tableCandidat ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
+		LEFT JOIN source ON rp.idSource = source.idSource
+		LEFT JOIN election ON rp.idElection = election.idElection
+		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+		
+		if ($niveau=="dep" OR $niveau=="reg")
+			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
+			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
+		if ($niveau=="reg")
+			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+				
+		for($i=0;$i<sizeof($params);$i++) {
+			if( $colonnesBDD[$i] ){
+				if ($v) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+				else {$requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'"; $v++;}
+			}
 		}
+		$requete.=" GROUP BY ".self::attributLocalite2($niveau).", `idCandidature` ORDER BY ".self::attributLocalite2($niveau).",  nbVoix DESC";
+		$requete="SELECT idCandidature, nomCandidat, ".self::attributLocalite2($niveau)." as idLieu, nomLieu, nbVoix FROM ($requete) as TAB GROUP BY ".self::attributLocalite2($niveau)." HAVING  MAX(nbVoix)=nbVoix";
 		
-		if(!empty($_GET['unite'])){
-			if ($_GET['unite']=="va") $unite="En valeurs absolues"; else $unite="En valeurs relatives";
-		} else  $unite="En valeurs absolues";
+		$resultats = $this->db->query($requete)->result();
 		
-		// ----------------------------------------	//
-		//					RENDU					//
-		// ----------------------------------------	//
+		$i=0;$data=array();
 		
-		$rendu=array();
-		$rendu["titre"]=$this->titre;
-		$rendu["sous_titre"]=$this->sous_titre;
-		$rendu["abscisse"]=$abscisse;
-		$rendu["ordonnee"]=$ordonnee;
-		$rendu["unite"]=$unite;	
-		
-		echo json_encode($rendu);	
-		
-	} // ...............  Fin de getBarVisualiser() ...............
+		foreach ($resultats as $resultat){
+			if ($resultat->nomLieu!="ETRANGER")
+				$data[]=array("name"=>$resultat->nomCandidat,"id"=>$resultat->idCandidature,"percent"=>(100*($resultat->nbVoix/$resultatsTOTAL[$i++]->nbVoix)), "voix"=>$resultat->nbVoix,"idLieu"=>$resultat->idLieu);
+			else $i++;
+		}
+		echo json_encode($data);
+						
+	} // ............... getWinnerByRegion() ...............
 	
 	public function getPieVisualiser($typeElection,$niveau,$params){			
 		$v=0;
@@ -179,12 +262,12 @@ class Main_model extends CI_Model{
 		LEFT JOIN election ON rp.idElection = election.idElection
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays")
+		if ($niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";		
 		
 		$colonnesBDD[]="rp.idSource";
@@ -202,21 +285,22 @@ class Main_model extends CI_Model{
 
 		$resultats=$this->db->query($requete)->result();
 		
-		// ----------------------------------------	//
-		//			TITRES DES DIAGRAMMES			//
-		// ----------------------------------------	//
+		/* ----------------------------------------	*/
+		/*			  TITRE DU DIAGRAMME			*/
+		/* ----------------------------------------	*/
 
 		list($this->titre,$this->sous_titre)=self::titre($resultats, $this->titreElection, $niveau);
 
-		// ----------------------------------------	//
-		//			COLLECTE DES DONNEES			//
-		// ----------------------------------------	//
+		/* ----------------------------------------	*/
+		/*			COLLECTE DES DONNEES			*/
+		/* ----------------------------------------	*/
 
 		$pieData=array();
 		$i=0;
 		
 		foreach ($resultats as $resultat){
-			$pieData[]=array("name"=>$resultat->nomCandidat,"y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}","url"=>"http://www.mytest.com");
+			$pieData[]=array("name"=>$resultat->nomCandidat,"y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}",
+			"url"=>"http://www.sigegis.ugb-edu.com/main_controller/getCandidat?id={$resultat->idCandidature}&typeElection={$typeElection}");
 		}
 						
 		$rendu=array();
@@ -253,12 +337,12 @@ class Main_model extends CI_Model{
 		LEFT JOIN election ON rp.idElection = election.idElection
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 		
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$joinPART.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$joinPART.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays")
+		if ($niveau=="pays" OR $niveau=="globaux")
 			$joinPART.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
 		$requeteTOTAL.=$joinPART;
@@ -344,12 +428,12 @@ class Main_model extends CI_Model{
 		LEFT JOIN election ON rp.idElection = election.idElection
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 		
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$joinPART.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$joinPART.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays")
+		if ($niveau=="pays" OR $niveau=="globaux")
 			$joinPART.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
 		$requeteTOTAL.=$joinPART;
@@ -423,12 +507,12 @@ class Main_model extends CI_Model{
 		LEFT JOIN source ON rp.idSource = source.idSource	
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 		
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays")
+		if ($niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 		
 		$colonnesBDD[]="rp.idSource";
@@ -491,12 +575,12 @@ class Main_model extends CI_Model{
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 	
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays")
+		if ($niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 	
 		$colonnesBDD[]="rp.idSource";
@@ -514,9 +598,9 @@ class Main_model extends CI_Model{
 		
 		$resultats=$this->db->query($requete)->result();
 		
-		// ----------------------------------------	//
-		//			TITRES DES DIAGRAMMES			//
-		// ----------------------------------------	//
+		/* ----------------------------------------	*/
+		/*			  TITRE DU DIAGRAMME			*/
+		/* ----------------------------------------	*/
 
 		$this->titre="Election $this->titreElection ".$resultats[0]->annee;
 		$this->titre.=": Taux de participation ";
@@ -539,13 +623,13 @@ class Main_model extends CI_Model{
 			if ($_GET['unite']=="va") $unite="En valeurs absolues"; else $unite="En valeurs relatives";
 		} else  $unite="En valeurs absolues";
 		
-		// ----------------------------------------	//
-		//			COLLECTE DES DONNEES			//
-		// ----------------------------------------	//
+		/* ----------------------------------------	*/
+		/*			COLLECTE DES DONNEES			*/
+		/* ----------------------------------------	*/
 
 		foreach ($resultats as $resultat){
 			$source=$resultat->nomSource;
-			$this->sous_titre.=" | Source:".$source;
+			$this->sous_titre.=$resultat->nomLieu." | Source:".$source;
 	
 			$barData[]=array("y"=>(int)$resultat->inscrits,"color"=>"{$this->colors[0]}");
 			$barData[]=array("y"=>(int)$resultat->votants,"color"=>"{$this->colors[1]}");
@@ -560,8 +644,8 @@ class Main_model extends CI_Model{
 		
 		$rendu[]=array("titre"=>$this->titre,"sous_titre"=>$this->sous_titre);
 		$rendu[]=array("type"=>"column","name"=>"Informations sur la participation","data"=>$barData);
-		$rendu[]=array("type"=>"pie","name"=>"Abstention - Votants","data"=>$pieData,"size"=>100,"center"=>array(610,90));
-		$rendu[]=array("type"=>"pie","name"=>"Nuls - Exprimés","data"=>$pieData2,"size"=>100,"center"=>array(340,90));
+		$rendu[]=array("type"=>"pie","name"=>"Abstention - Votants","data"=>$pieData,"size"=>100,"center"=>array(510,90));
+		$rendu[]=array("type"=>"pie","name"=>"Nuls - Exprimés","data"=>$pieData2,"size"=>100,"center"=>array(240,90));
 		
 		echo json_encode($rendu);
 		
@@ -582,16 +666,16 @@ class Main_model extends CI_Model{
 	
 		$resultats=$this->db->query($requete)->result();
 	
-		// ----------------------------------------	//
-		//			TITRES DES DIAGRAMMES			//
-		// ----------------------------------------	//
+		/* ----------------------------------------	*/
+		/*			  TITRE DU DIAGRAMME			*/
+		/* ----------------------------------------	*/
 		
 		$defaultTitle="Poids électoral des régions";
 		list($this->titre,$this->sous_titre)=self::titre($resultats, $this->titreElection, $niveau, $defaultTitle);
 
-		// ----------------------------------------	//
-		//			COLLECTE DES DONNEES			//
-		// ----------------------------------------	//
+		/* ----------------------------------------	*/
+		/*			COLLECTE DES DONNEES			*/
+		/* ----------------------------------------	*/
 	
 		$i=0; $pieData=array();
 		
@@ -620,12 +704,12 @@ class Main_model extends CI_Model{
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays")
+		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays")
+		if ($niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 
 		$colonnesBDD[]="rp.idSource";
@@ -669,7 +753,8 @@ class Main_model extends CI_Model{
 				$s["idPhoto"]=$row->idCandidature;
 				$s["prenom"]=$row->prenom;
 				$s["nom"]=$row->nom;
-				$s["dateNaissance"]=$row->dateNaissance;
+				$date=explode("-", $row->dateNaissance);
+				$s["dateNaissance"]=date("d/m/Y", mktime(0, 0, 0, $date[1], $date[2], $date[0]));
 				$s["lieuNaissance"]=$row->lieuNaissance;
 				$s["contenu"]=$row->commentaires;
 			}

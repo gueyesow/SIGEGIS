@@ -5,10 +5,19 @@
 
 $(document).ready(function() {		
 	
+	// Mise en forme - Activation des Options
+	
 	$("#menu ul li:gt(0)").remove();
 	
 	$(".zone_des_options *, #comparer").attr("disabled","disabled");
 	
+	if(!$("#bar")[0].checked || $("#bar")[0].disabled) {$("*[id*='chartdiv1'],*[id*='chartdiv2']").hide("animated");}
+	
+	if(!$("#line")[0].checked || $("#line")[0].disabled) {$("*[id*='chartdiv3'],*[id*='chartdiv4']").hide("animated");}
+	
+	/**
+	 * Diagramme N°1: diagramme par défaut (colonnes)
+	 */
 	chart1 = new Highcharts.Chart({
 	chart: {
 	renderTo: 'chartdiv1',
@@ -27,7 +36,6 @@ $(document).ready(function() {
 	rotation: -40,
 	align: 'right',
 	style: {
-	width:20,
 	fontSize: '12px',
 	fontFamily: 'Verdana, sans-serif'
 	}
@@ -36,7 +44,7 @@ $(document).ready(function() {
 	yAxis: {
 	min: 0,
 	title: {
-	text: 'NbVoix'
+	text: 'Voix'
 	}
 	},
 	exporting: {
@@ -71,6 +79,9 @@ $(document).ready(function() {
 	series:[]
 	});		
 	
+	/**
+	 * Diagramme N°2: courbes
+	 */
 	chart2 = new Highcharts.Chart({
 		chart: {
 		renderTo: 'chartdiv3',
@@ -98,7 +109,7 @@ $(document).ready(function() {
 		yAxis: {
 		min: 0,
 		title: {
-		text: 'NbVoix'
+		text: 'Voix'
 		}
 		},
 		exporting: {
@@ -176,13 +187,15 @@ $(document).ready(function() {
 	
 	if (!$("#locale")[0].checked) $("#elections_locales").hide("animated");
 	
-	$('#imprimer').on("click",function(){
+	/*
+ 	$('#imprimer').on("click",function(){
 		window.print();
 	});
 
 	$('#csv').on("click",function(){
 		window.location="http://www.sigegis.ugb-edu.com/main_controller/exportToCSVAnalyse?param="+param+"&typeElection="+typeElection+"&sord="+$("#list").jqGrid('getGridParam','sortorder');
 	});
+	*/
 	
 	/**
 	 * Create a global getSVG method that takes an array of charts as an argument
@@ -246,9 +259,5 @@ $(document).ready(function() {
 
 	$('#pdf').click(function() {
 		Highcharts.exportCharts([chart1],{type: 'application/pdf'});
-	});
-	
-	if(!$("#bar")[0].checked || $("#bar")[0].disabled) {$("*[id*='chartdiv1'],*[id*='chartdiv2']").hide("animated");}
-	if(!$("#line")[0].checked || $("#line")[0].disabled) {$("*[id*='chartdiv3'],*[id*='chartdiv4']").hide("animated");}
-
+	});	
 });

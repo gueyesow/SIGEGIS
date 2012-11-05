@@ -1,9 +1,9 @@
 $(document).ready(function() {
-	$("#menu ul li:not(':first,:gt(7)')").hide();
+	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
 	$("#types_affichage input").attr("disabled","disabled");
-	if(!$.getUrlVar("type")) $("#zone_des_filtres select").attr("disabled","disabled");
+	if(!type) $("#zone_des_filtres select").attr("disabled","disabled");
 	
-	$("#"+$.getUrlVar("type")).attr("checked","checked");
+	$("#"+type).attr("checked","checked");
 	
 	$("#list").jqGrid({
 		autowidth:true,			
@@ -35,10 +35,10 @@ $(document).ready(function() {
 	
 	$("#types_elections input").on("click",function(){
 		param=$sources.val()+","+$elections.val();
-		if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-		if($.getUrlVar("niveau")=="cen") param+=','+$centres.val();
+		if(type=="presidentielle") param+=","+$tours.val();
+		if(niveau=="cen") param+=','+$centres.val();
 		else param+=','+$departements.val();
-		param+="&niveau="+$.getUrlVar("niveau");
+		param+="&niveau="+niveau;
 		
 			if ($(this).attr("id")=="locale" && !$("#ss_locales").length)
 				$("#types_elections").append(
@@ -52,7 +52,7 @@ $(document).ready(function() {
 				$("#ss_locales :checked").removeAttr("checked");
 			} 
 						
-			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridVisualiser?param="+param+"&typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/resultatCRUD?typeElection="+$.getUrlVar("type"), page:1}).trigger("reloadGrid");
+			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridVisualiser?param="+param+"&typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/resultatCRUD?typeElection="+type, page:1}).trigger("reloadGrid");
 
 		});
 	
@@ -63,20 +63,20 @@ $(document).ready(function() {
 	$centres.on("change",function(){
 		
 		param=$sources.val()+","+$elections.val();
-		if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
-		if($.getUrlVar("niveau")=="cen") param+=','+$centres.val();
+		if(type=="presidentielle") param+=","+$tours.val();
+		if(niveau=="cen") param+=','+$centres.val();
 		else param+=','+$departements.val();
-		param+='&typeElection='+$.getUrlVar("type");
-		param+="&niveau="+$.getUrlVar("niveau");
+		param+='&typeElection='+type;
+		param+="&niveau="+niveau;
 
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridVisualiser?param="+param, editurl:"http://www.sigegis.ugb-edu.com/admin_controller/resultatCRUD?typeElection="+$.getUrlVar("type"), page:1}).trigger("reloadGrid");
+		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridVisualiser?param="+param, editurl:"http://www.sigegis.ugb-edu.com/admin_controller/resultatCRUD?typeElection="+type, page:1}).trigger("reloadGrid");
 		
-		if ($.getUrlVar("type")!="presidentielle" && $.getUrlVar("type")!="legislative") {
+		if (type!="presidentielle" && type!="legislative") {
 			$("#locale").click();
-			$("#"+$.getUrlVar("type")).attr("checked","checked");						
+			$("#"+type).attr("checked","checked");						
 		}
-		if($.getUrlVar("type")!="presidentielle") $("#filtretours").remove();
-		$("#types_elections input:not('#"+$.getUrlVar("type")+"')").attr("disabled","disabled");
+		if(type!="presidentielle") $("#filtretours").remove();
+		$("#types_elections input:not('#"+type+"')").attr("disabled","disabled");
 	});
 	
 	$elections.on("change",function(){
@@ -84,13 +84,13 @@ $(document).ready(function() {
 	});
 
 	$("*[id*='button_e']").on("click",function(){
-		window.location="http://www.sigegis.ugb-edu.com/admin_controller/editResultats?type="+$(this).attr("id").substring(8)+"&niveau="+$.getUrlVar("niveau");
+		window.location="http://www.sigegis.ugb-edu.com/admin_controller/editResultats?type="+$(this).attr("id").substring(8)+"&niveau="+niveau;
 	});
 	$("*[id*='button_centre']").on("click",function(){
-		window.location="http://www.sigegis.ugb-edu.com/admin_controller/editResultats?type="+$.getUrlVar("type")+"&niveau=cen";
+		window.location="http://www.sigegis.ugb-edu.com/admin_controller/editResultats?type="+type+"&niveau=cen";
 	});
 	$("*[id*='button_departement']").on("click",function(){
-		window.location="http://www.sigegis.ugb-edu.com/admin_controller/editResultats?type="+$.getUrlVar("type")+"&niveau=dep";
+		window.location="http://www.sigegis.ugb-edu.com/admin_controller/editResultats?type="+type+"&niveau=dep";
 	});
 	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
