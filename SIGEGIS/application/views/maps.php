@@ -34,7 +34,7 @@
 				<div id="winners"></div>				
 			</td>
 			<td id="content">			
-				<div  id="senmaps" style="margin:auto;height: 650px; width: 760px;;"></div>
+				<div id="senmaps"></div>
 			</td>
 		</tr>
 	</table>

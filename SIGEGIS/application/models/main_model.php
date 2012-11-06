@@ -1,9 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * 
- * @author Amadou SOW && Abdou Khadre GUEYE DESS | 2ITIC 2011-2012
- * Description: Ce modèle gère l'exportation des données ainsi que leur affichage pour la partie dédié à la visualisation des données 
- *
+ * Description:  Fournit les données sur les élections
+ * @author Amadou SOW && Abdou Khadre GUEYE DESS | 2ITIC 2011-2012 
  */
 class Main_model extends CI_Model{
 	private $titre;
@@ -29,7 +27,14 @@ class Main_model extends CI_Model{
 			else $this->titreElection=$this->typeElection;
 		} else $this->typeElection=null;
 	}
-	
+	/**
+	 * @return array Tableau contenant le titre et le sous-titre du diagramme
+	 * @param array $resultats
+	 * @param string $titreElection
+	 * @param string $niveau
+	 * @param string $defaultTitle Le titre par défaut du diagramme
+	 * @param string $defaultSubTitle Le sous-titre par défaut du diagramme
+	 */
 	public static function titre($resultats,$titreElection,$niveau,$defaultTitle="",$defaultSubTitle=""){
 		
 		if (!$resultats) return array("Données indisponibles","Réessayez plus tard | ");
@@ -65,6 +70,12 @@ class Main_model extends CI_Model{
 		return ($this->typeElection=="presidentielle")?true:false;
 	} 
 	
+	/**
+	 * Fournit l'attibut de la BDD correspondant au nom de la localité
+	 * @return string
+	 * @param string $niveau
+	 * @param string $default L'attribut par défaut (chaine vide)
+	 */
 	public static function nomLieu($niveau,$default=""){
 		if ($niveau=="cen") $nomLieu="nomCentre as nomLieu,";
 		elseif ($niveau=="dep") $nomLieu="nomDepartement as nomLieu,";
@@ -73,6 +84,12 @@ class Main_model extends CI_Model{
 		else $nomLieu=$default ;
 		return $nomLieu;
 	}
+	
+	/**
+	 * @param string $niveau
+	 * @param string $default
+	 * @return string L'attribut de la BDD correspondant a un type de localité
+	 */
 	public static function attributLocalite($niveau,$default=""){
 		$attributLocalite=null;
 		if ($niveau=="cen") $attributLocalite="centre.idCentre";
@@ -83,6 +100,12 @@ class Main_model extends CI_Model{
 		return $attributLocalite;
 	}
 	
+	/**
+	 * 
+	 * @param string $niveau
+	 * @param string $default L'attribut par défaut
+	 * @return string L'attribut de la BDD correspondant a un type de localité sans le prefixe de la table
+	 */
 	public static function attributLocalite2($niveau,$default=""){
 		$attributLocalite=null;
 		if ($niveau=="cen") $attributLocalite="idCentre";
@@ -93,6 +116,13 @@ class Main_model extends CI_Model{
 		return $attributLocalite;
 	}
 	
+	/**
+	 * Diagramme en bâtons
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param array $params
+	 * @return string Objet JSON
+	 */
 	public function getBarVisualiser($typeElection,$niveau,$params){
 		$v=0;
 		$default="'Résultats globaux' as nomLieu, ";
@@ -171,12 +201,15 @@ class Main_model extends CI_Model{
 			echo json_encode($rendu);
 	
 	} // ...............  Fin de getBarVisualiser() ...............
-	
-	
+		
 	/**
-	 * Cette fonction retourne les données pour l'histogramme
-	 * @return JSON object
-	 */	
+	 * Liste les différents vainqueurs dans chaque localité
+	 * @return string Objet JSON
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param array $params
+	 * @param string $tour
+	 */
 	public function getWinnersLocalites($typeElection,$niveau,$params,$tour=''){
 		$v=0;
 		if ($niveau!="reg" && $niveau!="dep") return false;
@@ -247,6 +280,15 @@ class Main_model extends CI_Model{
 						
 	} // ............... getWinnerByRegion() ...............
 	
+	
+	
+	/**
+	 * Diagramme circulaire des résultats
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param array $params
+	 * @return string Objet JSON
+	 */
 	public function getPieVisualiser($typeElection,$niveau,$params){			
 		$v=0;
 
@@ -317,7 +359,13 @@ class Main_model extends CI_Model{
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getGridVisualiser($typeElection, $niveau, $params){		
+	/**
+	 * 
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param array $params
+	 */
+	 public function getGridVisualiser($typeElection, $niveau, $params){		
 		
 		$page = $_GET['page']; $limit = $_GET['rows']; $sidx = $_GET['sidx']; $sord = $_GET['sord'];
 	
@@ -411,6 +459,12 @@ class Main_model extends CI_Model{
 		echo $s;
 	} // ...............  Fin de getGrid() ...............
 	
+	/**
+	 * Exportation des résultats
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param array $params
+	 */
 	public function exportResultatsToCSV($typeElection,$niveau,$params){
 	
 		$sord = $_GET['sord']; $v=0;
@@ -490,6 +544,9 @@ class Main_model extends CI_Model{
 	/**
 	* Cette fonction affiche le code xml du Grid
 	* @return string
+	* @param string $typeElection
+	* @param string $niveau
+	* @param array $params
 	* @param string $balise Le nom du conteneur Html
 	*/
 	public function getGridParticipation($typeElection,$niveau,$params){	
@@ -565,6 +622,13 @@ class Main_model extends CI_Model{
 		echo $s;
 	} // ............... getGridParticipation() ...............
 		
+	/**
+	 * Composition de diagrammes fournissant de infos sur la participation
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param array $params
+	 * @return string Objet JSON
+	 */
 	public function getComboParticipation($typeElection,$niveau,$params){
 	
 		$default="'Participation au niveau  national' as nomLieu,";	$v=0;
@@ -651,7 +715,15 @@ class Main_model extends CI_Model{
 		
 	} // ...............  Fin de getComboParticipation() ...............
 		
-
+	/**
+	 * Répartion géographique des électeurs (diagramme circulaire)
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param string $annee
+	 * @param string $tour
+	 * @param array $params
+	 * @return string Objet JSON
+	 */
 	public function getPoidsElectoralRegions($typeElection,$niveau,$annee,$tour){
 					
 		$requete="SELECT nomRegion, YEAR(dateElection) as annee, SUM( nbInscrits ) as inscrits
@@ -694,6 +766,12 @@ class Main_model extends CI_Model{
 		
 	} // ............... getPoidsElectoralRegions() ...............
 		
+	/**
+	 * 
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param array $params
+	 */
 	public function exportStatisticsToCSV($typeElection,$niveau,$params){
 
 		$default="'Participation au niveau  national' as nomLieu,";	$v=0;
@@ -742,7 +820,11 @@ class Main_model extends CI_Model{
 		
 		echo $s;
 	} // ............... exportStatisticsToCSV() ...............
-		
+
+	/**
+	 * Partie présentation du candidat
+	 * @return string Objet JSON
+	 */
 	public function getCandidat(){
 			$id=$_GET['id'];
 			if (empty($id)) return ;

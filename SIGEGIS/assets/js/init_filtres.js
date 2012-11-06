@@ -68,7 +68,7 @@
 					
 					if ($("#poidsElectoralRegions").length>0) $("#titre").text("Election "+titres[type]+" "+$elections.val()+": taux de participation");
 					
-					$('#menu li a:not(#menu_front a,#menu_exemples a,#menu_apropos a)').each(function(){								
+					$('#menu li a:not(#menu_front a,#menu_exemples a,#menu_apropos a,#menu_admin a,#menu_decon a)').each(function(){								
 							
 						if( $(this).attr("href").indexOf("year")==-1 )	
 							$(this).attr("href",$(this).attr("href")+"&year="+$elections.val());
@@ -78,21 +78,20 @@
 						url=$(this).attr("href");
 						year="";chaine="";
 														
-						//alert();
-							if( $.getUrlVar("map") && $.getUrlVar("grid") && $.getUrlVar("pie") && $.getUrlVar("bar") ) 
-								{url+="&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid");}
+						if( $.getUrlVar("map") && $.getUrlVar("grid") && $.getUrlVar("pie") && $.getUrlVar("bar") ) 
+							{url+="&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid");}
 
-							if( $.getUrlVar("year") ) {
-								if( $.getUrlVar("year")==$elections.val() )
-									chaine="&year="+$.getUrlVar("year");
-								else   
-									chaine="&year="+$elections.val();
+						if( $.getUrlVar("year") ) {
+							if( $.getUrlVar("year")==$elections.val() )
+								chaine="&year="+$.getUrlVar("year");
+							else   
+								chaine="&year="+$elections.val();
 
-								if(url.indexOf("year")==-1) 
-									$(this).attr("href",url+chaine);
-								else
-									$(this).attr("href",url.substr(0,url.indexOf("&year"))+chaine);
-							}
+							if(url.indexOf("year")==-1) 
+								$(this).attr("href",url+chaine);
+							else
+								$(this).attr("href",url.substr(0,url.indexOf("&year"))+chaine);
+						}
 						
 					});
 				}           

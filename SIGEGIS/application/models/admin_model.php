@@ -1,9 +1,8 @@
 <?php if ( ! defined('BASEPATH') ) exit('No direct script access allowed');
+
 /**
- * 
- * @author Amadou SOW && Abdou Khadre GUEYE DESS | 2ITIC 2011-2012
- * Description: Administration de la plateforme 
- *
+ * Description: Administration de la plateforme
+ * @author Amadou SOW && Abdou Khadre GUEYE DESS | 2ITIC 2011-2012 
  */
 
 class Admin_model extends CI_Model{
@@ -402,6 +401,9 @@ public function __construct(){
 		echo $s;
 	}
 	
+	/**
+	 * Fournit toutes les listes de partis et de coalitions 
+	 */
 	public function getGridCoalitionsPartis(){
 	
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
