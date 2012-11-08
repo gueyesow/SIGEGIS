@@ -148,6 +148,18 @@ fieldset {
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	}
+	
+.tooltip2 {
+	display: none;
+	font-size:12px;
+	font-weight:bold;
+	position: absolute;
+	border: 1px solid #d3c4b2;
+	background-color: #f0f0ff;
+	padding: 6px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	}
 
 #help p, #help ol li {
 	font-size: 1.3em;	

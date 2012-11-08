@@ -152,13 +152,13 @@
 				dataType: 'json',      
 				success: function(json) {
 					$regions.empty();
-					if ($("select[name*=ana_localite2]").length>0) $("#choixMultipleLocalitesA").empty();
+					if ($("select[name=niveauAgregation2]").length>0) $("#choixMultipleLocalitesA").empty();
 					$.each(json, function(index, value) {         
 						$regions.append('<option value="'+ index +'">'+ value +'</option>');
-						if ($("select[name*=ana_localite2]").val() == "region") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');								
+						if ($("select[name=niveauAgregation2]").val() == "region") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');								
 					});
 					$regions.change();         
-					if ($("select[name*=ana_localite2]").val() == "pays") {
+					if ($("select[name=niveauAgregation2]").val() == "pays") {
 						$pays.children().each(function() {         
 							$("#choixMultipleLocalitesA").append('<option value="'+ $(this).val() +'">'+ $(this).text() +'</option>');								
 						});
@@ -180,10 +180,10 @@
 				success: function(json) 
 				{
 					$departements.empty();
-					if ($("select[name*=ana_localite2]").val() == "departement") $("#choixMultipleLocalitesA").empty();
+					if ($("select[name=niveauAgregation2]").val() == "departement") $("#choixMultipleLocalitesA").empty();
 					$.each(json, function(index, value) {         
 					$departements.append('<option value="'+ index +'">'+ value +'</option>');
-					if ($("select[name*=ana_localite2]").val() == "departement") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
+					if ($("select[name=niveauAgregation2]").val() == "departement") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
 					});
 					$departements.change();         
 				}           
@@ -222,10 +222,10 @@
 				dataType: 'json',      
 				success: function(json) {      
 					$centres.empty();
-					if ($("select[name*=ana_localite2]").val() == "centre") $("#choixMultipleLocalitesA").empty();
+					if ($("select[name=niveauAgregation2]").val() == "centre") $("#choixMultipleLocalitesA").empty();
 					$.each(json, function(index, value) {         
 						$centres.append('<option value="'+ index +'">'+ value +'</option>');
-						if ($("select[name*=ana_localite2]").val() == "centre") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
+						if ($("select[name=niveauAgregation2]").val() == "centre") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
 					});
 					$centres.change(); // // Permet de specifier un changement (:selected)         
 				}           

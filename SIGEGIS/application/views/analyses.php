@@ -49,7 +49,7 @@
 											'centre' => 'Centre',
 									);
 									
-									echo form_dropdown2("ana_localite","ana_localite",null,$options,"Agréger par");
+									echo form_dropdown2("niveauAgregation1","niveauAgregation1",null,$options,"Agréger par");
 
 									$options=array("premier_tour"=>"Premier tour","second_tour"=>"Second tour");
 									echo form_dropdown2("ana_tour","ana_tour",null,$options,"Tour");
@@ -105,7 +105,7 @@
 											'departement'   => 'Département',
 											'centre' => 'Centre',
 									);
-									echo form_dropdown2("ana_localite2","ana_localite2",null,$options,"Type de localité");
+									echo form_dropdown2("niveauAgregation2","niveauAgregation2",null,$options,"Type de localité");
 									?>
 									
 									<?php

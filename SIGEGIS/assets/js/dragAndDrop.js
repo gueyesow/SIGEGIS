@@ -3,8 +3,11 @@
  * Description: Gestion des filtres de la partie analyse 
  */
 
-// Rappel: chart1 <=> Bar et chart2 <=> Line save à true indique que l'on compare deux élections
+// Rappel: chart1 <=> Bar et chart2 <=> Line | "save" à true indique que l'on compare deux élections
 
+/*
+ * Crée le grid si ce n'est pas déjà fait et y charge des données qui sont reçues à partir du lien "url"
+ */
 function putGrid(url){	
 		
 	if(save) {balise="#list2";pager="#pager2";}
@@ -30,12 +33,18 @@ function putGrid(url){
 		    viewrecords: true,
 		    gridview: true,
 		}).navGrid(pager,{edit:false,add:false,del:false,search:false});
+				
+		if(!$("#grid")[0].checked || $("#grid")[0].disabled) {$("#theGrid").hide("animated");if(save) $("#theGrid2").hide("animated");}
 		
-		$(".ui-jqgrid-bdiv").removeAttr("style");
-		$("*[id*=theGrid]").hide();
+		$(".ui-jqgrid-bdiv").removeAttr("style"); // Width: 100%
 	}	
 }
 
+/*
+ * Recharge le graphique représenté par l'objet theChart avec les données reçues via l'objet JSON "json"
+ * theChart Object Objet représentant le graphique
+ * json JSON Object Objet JSON
+ */
 function refreshChart(theChart,json){
 	
 	var i=0;
@@ -115,7 +124,6 @@ $("#valider").on("click",function(event) {
 	lastPressedButton="valider";
 	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
-	$("#grid,#bar,#map").removeAttr("disabled");
 	$("#dialog_zone_des_options").dialog('close');
 	
 	listeAnnees="";
@@ -140,10 +148,10 @@ $("#valider").on("click",function(event) {
 	
 	paramBis+="&listeAnnees="+listeAnnees+"&listeCandidats="+listeCandidats;
 	
-	if ($("select[name*=ana_localite]").val()=="pays") { paramBis+="&niveau=pays"; }
-	if ($("select[name*=ana_localite]").val()=="region") { paramBis+="&niveau=reg";}
-	if ($("select[name*=ana_localite]").val()=="departement") {paramBis+="&niveau=dep";}
-	if ($("select[name*=ana_localite]").val()=="centre") { paramBis+="&niveau=cen";}
+	if ($("select[name=niveauAgregation1]").val()=="pays") { paramBis+="&niveau=pays"; }
+	if ($("select[name=niveauAgregation1]").val()=="region") { paramBis+="&niveau=reg";}
+	if ($("select[name=niveauAgregation1]").val()=="departement") {paramBis+="&niveau=dep";}
+	if ($("select[name=niveauAgregation1]").val()=="centre") { paramBis+="&niveau=cen";}
 	
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserAnnee',    
@@ -164,7 +172,6 @@ $("#valider").on("click",function(event) {
 $("#validerLocalite").on("click",function(event) {
 	lastPressedButton="validerLocalite";
 	$(".ui-jqgrid-bdiv").removeAttr("style");
-	$("#grid,#bar,#map").removeAttr("disabled");
 	$("#dialog_zone_des_options").dialog('close');
 	
 	listeLocalites="";
@@ -172,9 +179,9 @@ $("#validerLocalite").on("click",function(event) {
 	
 	paramBis=$sources.val();	
 	
-	if(typeElection=="presidentielle") paramBis+=","+$tours.val();
+	paramBis+=","+$elections.val();
 	
-	paramBis+=","+$elections.val()+","+typeElection;
+	if(typeElection=="presidentielle") paramBis+=","+$tours.val();	
 		
 	if ($("#bar")[0].checked) $("#chartdiv1").show();
 	$("#help").hide();
@@ -191,10 +198,10 @@ $("#validerLocalite").on("click",function(event) {
 	
 	paramBis+="&listeLocalites="+listeLocalites+"&listeCandidats="+listeCandidats;
 	
-	if ($("select[name*=ana_localite2]").val()=="pays") { paramBis+="&niveau=pays"; }
-	if ($("select[name*=ana_localite2]").val()=="region") { paramBis+="&niveau=reg";}
-	if ($("select[name*=ana_localite2]").val()=="departement") {paramBis+="&niveau=dep";}
-	if ($("select[name*=ana_localite2]").val()=="centre") { paramBis+="&niveau=cen";}
+	if ($("select[name=niveauAgregation2]").val()=="pays") { paramBis+="&niveau=pays"; }
+	if ($("select[name=niveauAgregation2]").val()=="region") { paramBis+="&niveau=reg";}
+	if ($("select[name=niveauAgregation2]").val()=="departement") {paramBis+="&niveau=dep";}
+	if ($("select[name=niveauAgregation2]").val()=="centre") { paramBis+="&niveau=cen";}
 		
 	$.ajax({        							
 		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserLocalite',    
@@ -216,3 +223,41 @@ $("#accordion_item2 select[id*='ana']").on("change",function(){
 	$("#choixMultipleLocalitesB,#choixCandidatLocaliteA,#choixCandidatLocaliteB").empty();
 	$pays.change();
 });
+
+$("#dialog_zone_des_options").dialog({
+	autoOpen: false,
+	width: 800,
+	buttons: {
+		"Fermer": function() {
+			$(this).dialog("close");
+			$("#ouvrir").show();
+		}
+	},
+	closeOnEscape: true ,
+	resizable: false,
+	beforeClose: function(event, ui) { $("#ouvrir").show(); }
+});
+
+
+$("#ouvrir").on("click",function(){
+	$("#dialog_zone_des_options").dialog('open');
+	$("#ouvrir").hide();
+	$(".zone_des_options *:not([#bar,#pie,#map)").removeAttr("disabled");
+	$("#comparer").removeAttr("disabled");
+	typeElection=$(".zone_des_options input:checked:not(#locale)").attr("id");
+});
+
+$("#comparer").on("click",function(){
+	save=true;
+	if(save) {balise="chartdiv2";if($("#line")[0].checked) baliseLine="chartdiv4";}
+	else {balise="chartdiv1";if($("#line")[0].checked) baliseLine="chartdiv3";}
+	
+	$("#chartdiv2").show();
+	if ($("#line")[0].checked) $("#chartdiv4").show();
+	
+	$("#dialog_zone_des_options").dialog('open');
+	
+	putBar(balise);
+	putLine(baliseLine);
+});
+

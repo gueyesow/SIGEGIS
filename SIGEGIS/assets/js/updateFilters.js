@@ -1,7 +1,8 @@
 
+// Sélectionne par défaut le niveau d'agrégation "région" 
+$("#niveauAgregation1,#niveauAgregation2").val("region");
 
-$("#ana_localite,#ana_localite2").val("region");
-
+// Récupère toutes les années où ont eu lieu un découpage administratif 
 $.ajax({            
 	url: 'http://www.sigegis.ugb-edu.com/main_controller/getDecoupages',            			         			   
 	dataType: 'json',      
@@ -11,7 +12,7 @@ $.ajax({
 			$("#ana_decoupage,#ana_decoupage_localite").append('<option value="'+ index +'">'+ value +'</option>');							
 		});
 		$("#ana_decoupage option:last,#ana_decoupage_localite option:last").attr("selected","selected");
-		$("select[name*=ana_localite]").change();		
+		$("select[name*=niveauAgregation]").change();		
 		$("select[name*=ana_decoupage_localite]").change();
 		Annees();	      					
 	}           
@@ -19,9 +20,9 @@ $.ajax({
 
 $("select[name=ana_decoupage]").on("change",function()
 {		
-	$("#choixmultipleA,#choixmultipleB,#choixCandidatA,#choixCandidatB").empty();
+	$("#choixmultipleA,#choixmultipleB,#choixCandidatA,#choixCandidatB").empty();	
+	$("select[name=niveauAgregation1]").change();
 	Annees();
-	$("select[name=ana_localite]").change();		
 });
 
 $("select[name*=ana_decoupage_localite]").on("change",function()
@@ -38,12 +39,13 @@ $("select[name*=ana_decoupage_localite]").on("change",function()
 			});			
 					
 			$("#choixMultipleLocalitesA,#choixMultipleLocalitesB,#choixCandidatLocaliteA,#choixCandidatLocaliteB").empty();
-			$("select[name*=ana_localite2]").change();
+			$("select[name=niveauAgregation2]").change();
 		}       
 	});			
 });
 
-$("select[name*=ana_localite]").on("change",function()
+//  si le changement de niveau d'agrégation change avec le 1er mode d'analyse
+$("select[name=niveauAgregation1]").on("change",function()
 {		
 	if ($(this).val()=="pays") { methode="getPays";parametres_analyse+="&niveau=pays&paramAnnee="+$("#ana_decoupage").val();}
 	else if ($(this).val()=="region") { methode="getRegions";parametres_analyse+="&niveau=reg";}
@@ -56,15 +58,18 @@ $("select[name*=ana_localite]").on("change",function()
 		url: $url,    
 		dataType: 'json', 
 		success: function(json) {			
-			$("#localite").empty();
+			$("#localite").empty();			
 			$.each(json, function(index, value) {         
 				$("#localite").append('<option value="'+ index +'">'+ value +'</option>');     
-			});										
+			});		
+			$("#choixmultipleA,#choixmultipleB,#choixCandidatA,#choixCandidatB").empty();
+			Annees();
 		}    
 	});			
 });
 
-$("select[name*=ana_localite2]").on("change",function()
+//si le changement de niveau d'agrégation change avec le 2nd mode d'analyse
+$("select[name=niveauAgregation2]").on("change",function()
 {			
 	if ($(this).val()=="pays") { showLocality(); $("#filtrepays").hide();$("#filtreregions").hide();	$("#filtredepartements").hide();	$("#filtrecollectivites").hide();	$("#filtrecentres").hide();$pays.change();}
 	else if ($(this).val()=="region") { showLocality();$("#filtreregions").hide();$("#filtredepartements").hide();	$("#filtrecollectivites").hide();	$("#filtrecentres").hide();$pays.change();}
@@ -72,11 +77,13 @@ $("select[name*=ana_localite2]").on("change",function()
 	else if ($(this).val()=="centre") { showLocality(); $("#filtrecentres").hide();$pays.change();}
 });
 
+// Afficher les options nécessaires pour le choix de la localité
 function showLocality(){
 	$("#swapListLocality").show();
 	$("*[id*=filtre]").show();	
 }
 
+// Fournit les différentes années des élections passées
 function Annees()
 {
 	$.ajax({            // DATES 
@@ -105,10 +112,10 @@ $("#choixmultipleB").on("change",function()
 			
 			parametres_analyse="param="+param+"&annees="+annees+"&typeElection="+typeElection;
 
-			if ($("select[name*=ana_localite]").val()=="pays") { parametres_analyse+="&niveau=pays"; }
-			if ($("select[name*=ana_localite]").val()=="region") { parametres_analyse+="&niveau=reg";}
-			if ($("select[name*=ana_localite]").val()=="departement") {parametres_analyse+="&niveau=dep";}
-			if ($("select[name*=ana_localite]").val()=="centre") { parametres_analyse+="&niveau=cen";}		
+			if ($("select[name*=niveauAgregation]").val()=="pays") { parametres_analyse+="&niveau=pays"; }
+			if ($("select[name*=niveauAgregation]").val()=="region") { parametres_analyse+="&niveau=reg";}
+			if ($("select[name*=niveauAgregation]").val()=="departement") {parametres_analyse+="&niveau=dep";}
+			if ($("select[name*=niveauAgregation]").val()=="centre") { parametres_analyse+="&niveau=cen";}		
 			
 			$.ajax({        							    
 				url: "http://www.sigegis.ugb-edu.com/main_controller/getCandidatsAnnee",
@@ -140,10 +147,10 @@ $("#choixMultipleLocalitesB").on("change",function()
 		
 		parametres_analyse="param="+param+"&localites="+localites;
 
-		if ($("select[name*=ana_localite2]").val()==="pays") { parametres_analyse+="&niveau=pays"; }
-		if ($("select[name*=ana_localite2]").val()==="region") { parametres_analyse+="&niveau=reg";}
-		if ($("select[name*=ana_localite2]").val()==="departement") {parametres_analyse+="&niveau=dep";}
-		if ($("select[name*=ana_localite2]").val()==="centre") { parametres_analyse+="&niveau=cen";}		
+		if ($("select[name=niveauAgregation2]").val()=="pays") { parametres_analyse+="&niveau=pays"; }
+		if ($("select[name=niveauAgregation2]").val()=="region") { parametres_analyse+="&niveau=reg";}
+		if ($("select[name=niveauAgregation2]").val()=="departement") {parametres_analyse+="&niveau=dep";}
+		if ($("select[name=niveauAgregation2]").val()=="centre") { parametres_analyse+="&niveau=cen";}		
 		
 		$.ajax({        							    
 			url: "http://www.sigegis.ugb-edu.com/main_controller/getCandidatsLocalite",

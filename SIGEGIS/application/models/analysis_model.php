@@ -8,6 +8,7 @@ class Analysis_model extends CI_Model{
 	private $titre;
 	private $sous_titre;
 	private $titreElection;
+	private $typeElection;
 	private $tableCandidat;
 	private $candidatOrListe=array("candidat"=>"idCandidature","listescoalitionspartis"=>"idListe");
 	private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
@@ -18,8 +19,8 @@ class Analysis_model extends CI_Model{
 		$this->titre=""; $this->sous_titre=""; $this->titreElection="";
 		if(!empty($_GET["typeElection"])) {
 			$this->typeElection=$_GET["typeElection"];
+			if ($this->typeElection=="presidentielle") $this->tableCandidat="candidat";else $this->tableCandidat="listescoalitionspartis";
 			if ($this->typeElection=="presidentielle") {
-				$this->tableCandidat="candidat";
 				$this->titreElection="présidentielle";
 			}
 			elseif ($this->typeElection=="legislative") $this->titreElection="législative";
@@ -31,10 +32,18 @@ class Analysis_model extends CI_Model{
 		} else $this->typeElection=null;
 	}
 	
+	/**
+	 * Teste si l'on a affaire à une élection présidentielle
+	 */
 	public function isPresidentielle(){
 		return ($this->typeElection=="presidentielle")?true:false;
 	}
-	
+		
+	/**
+	 * Fournit le nom du lieu de vote
+	 * @param string $niveau
+	 * @param string $default
+	 */
 	public static function nomLieu($niveau,$default=""){
 		if ($niveau=="cen") $nomLieu="nomCentre as nomLieu,";
 		elseif ($niveau=="dep") $nomLieu="nomDepartement as nomLieu,";
@@ -44,6 +53,12 @@ class Analysis_model extends CI_Model{
 		return $nomLieu;
 	}
 	
+	/**
+	 * Fournit l'attribut dans la BDD correspondant à l'ID de la localité
+	 * @param string $niveau
+	 * @param string $default L'attribut par défaut
+	 * @return string L'attribut de la BDD correspondant à l'ID de la localité
+	 */
 	public static function attributLocalite($niveau,$default=""){
 		$attributLocalite=null;
 		if ($niveau=="cen") $attributLocalite="centre.idCentre";
@@ -54,6 +69,12 @@ class Analysis_model extends CI_Model{
 		return $attributLocalite;
 	}
 	
+	/**
+	 * Fournit l'attribut dans la BDD correspondant au nom de la localité
+	 * @param string $niveau
+	 * @param string $default L'attribut par défaut
+	 * @return string L'attribut de la BDD correspondant au nom de la localité
+	 */
 	public static function attributNomLocalite($niveau,$default=""){
 		$attributLocalite=null;
 		if ($niveau=="cen") $attributLocalite="centre.nomCentre";
@@ -65,9 +86,11 @@ class Analysis_model extends CI_Model{
 	}
 		
 	/**
-	 * Cette fonction retourne le code JavaScript du Column chart
-	 * @return string
-	 * @param string $balise Le nom du conteneur Html
+	 * Diagramme en bâtons
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param array $params
+	 * @return string Objet JSON
 	 */
 	public function getBarAnalyserAnnee($typeElection,$niveau,$params){
 			
@@ -187,8 +210,11 @@ class Analysis_model extends CI_Model{
 	} // ............... getBarAnalyserAnnee ...............
 
 	/**
-	 * Cette fonction affiche le code xml du Grid
-	 * @return string
+	 * Retourne les données pour le grid de l'analyse suivant une année
+	 * @param $typeElection string le type de l'élection à considérer
+	 * @param $niveau string le niveau d'agrégation des données
+	 * @param $params array tableau contenant successivement l'ID de la source, l'année de l'élection et si nécessaire le tour
+	 * @return string Code XML	 
 	 */
 	public function getGridAnalyserAnnee($typeElection,$niveau,$params){
 
@@ -197,11 +223,7 @@ class Analysis_model extends CI_Model{
 		if(!$sidx) $sidx =1;
 
 		$tableauResultats=array();
-		$series="";
-		$titre="";
-		$sous_titre="";
-		$unite="";
-		$abscisse="";
+		$series="";		$titre="";		$sous_titre="";		$unite="";		$abscisse="";
 
 		if(!empty($params) AND !empty($_GET['listeAnnees']) AND !empty($_GET['listeCandidats'])){
 			
@@ -287,9 +309,11 @@ class Analysis_model extends CI_Model{
 	} // ............... getGridAnalyserAnnee() ...............
 	
 	/**
-	 * Cette fonction retourne le code JavaScript du Column chart
-	 * @return string
-	 * @param string $balise Le nom du conteneur Html
+	 * Diagramme en bâtons
+	 * @param string $typeElection
+	 * @param string $niveau
+	 * @param array $params
+	 * @return string Objet JSON
 	 */
 	public function getBarAnalyserLocalite($typeElection,$niveau,$params,$listeLocalites,$listeCandidats){
 
@@ -307,12 +331,10 @@ class Analysis_model extends CI_Model{
 		
 		$v=0;
 
-		$colonnesBDD[]="rp.idSource";
-		if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";
+		$colonnesBDD[]="rp.idSource";		
 		$colonnesBDD[]="YEAR(election.dateElection)";
-		$colonnesBDD[]="election.typeElection";
-					
-		
+		if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";					
+
 		foreach ($listeCandidats as $leCandidat){
 
 			$v=0;
@@ -350,20 +372,21 @@ class Analysis_model extends CI_Model{
 			$resultats=$this->db->query($requete)->result();
 
 			$data=array();
-			
+			if ($resultats){
 			foreach ($resultats as $resultat){
 				$data[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$couleur]}");
 			}
 
 			$barSeries[]=array("name"=>$resultat->nomCandidat, "data"=>$data);
 			$couleur++;
+			}
 		}
 	
 
 		/* ------------------------------------	*/
 		/*			TITRE DU DIAGRAMME			*/
 		/* ------------------------------------	*/
-		$titre_niveau="Election ".$this->titreElection." ".htmlentities($params[2]);
+		$titre_niveau="Election ".$this->titreElection." ".htmlentities($params[1]);
 		$sous_titre="Niveau d'agrégation des données: ";
 		if ($niveau=="cen")
 		{
@@ -401,8 +424,11 @@ class Analysis_model extends CI_Model{
 	}// ...............  Fin de getBarAnalyserLocalite() ...............
 	
 	/**
-	 * Cette fonction affiche le code xml du Grid
-	 * @return string
+	 * Retourne les données pour le grid de l'analyse suivant une localité
+	 * @param $typeElection string le type de l'élection à considérer
+	 * @param $niveau string le niveau d'agrégation des données
+	 * @param $params array tableau contenant successivement l'ID de la source, l'année de l'élection et si nécessaire le tour
+	 * @return string Code XML	 
 	 */
 	public function getGridAnalyserLocalite($typeElection,$niveau,$params,$listeLocalites,$listeCandidats){
 
@@ -420,9 +446,8 @@ class Analysis_model extends CI_Model{
 		$v=0;
 
 		$colonnesBDD[]="rp.idSource";
-		if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";
 		$colonnesBDD[]="YEAR(election.dateElection)";
-		$colonnesBDD[]="election.typeElection";
+		if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";		
 
 		foreach ($listeCandidats as $leCandidat){
 

@@ -67,5 +67,3 @@ var colors=["#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#00ccc6","#bd9695
 var annees="";
 var mode = "";
 var parametres_analyse="";	 
-
-	

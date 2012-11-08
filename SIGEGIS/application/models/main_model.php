@@ -8,7 +8,7 @@ class Main_model extends CI_Model{
 	private $sous_titre;
 	private $titreElection;
 	private $tableCandidat;
-	private $ypeElection;
+	private $typeElection;
 	private $candidatOrListe=array("candidat"=>"idCandidature","listescoalitionspartis"=>"idListe");
 	private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
 	private $tables=array("presidentielle"=>"resultatspresidentielles2","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");

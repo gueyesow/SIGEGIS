@@ -73,7 +73,7 @@ class Main_controller extends CI_Controller {
 	}
 
 	public function analyser(){
-		$js_scripts["scripts_array"]=array("base","init_filtres","updateFilters","analyses","dragAndDrop","tooltips","style");
+		$js_scripts["scripts_array"]=array("base","init_filtres","analyses","dragAndDrop","updateFilters","tooltips","style");
 		$top['title'] = 'SIGeGIS&gt;Analyses';
 		$top['styles'] = array('theme','analyses');
 		$data['head'] = $this->load->view('top',$top,true);
