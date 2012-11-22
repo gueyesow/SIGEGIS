@@ -22,7 +22,27 @@ $(document).ready(function() {
 		output+="<b>Détails: </b><br />"+objet.contenu;
 		output+="</div>";
 		$("#contenu_modale").html(output);
-		$('#fenetre').dialog('open');            					 
+		$('#fenetre').dialog('open');
+		
+		var cssObj = {
+			      'background' : 'none',
+			      'border' : 'none',
+			      'font-size' : '18px',
+			      'color' : '#384f59'
+		};
+		
+		$(".ui-widget-header").css(cssObj);
+		
+		var cssObj = {
+			      'border' : 'none',
+			      'font-style' : 'Trebuchet MS',
+			      'font-size' : '12px' //,'color' : '#384f59'
+		};
+		
+
+		$("#fenetre *").css(cssObj);
+
+		$(".ui-widget-content").css("background","#fcfcfc");
 	    return false;	
 	}
 	
@@ -39,7 +59,7 @@ $(document).ready(function() {
 		 default:break;
 		}
 		
-		$urlGrid="http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?niveau="+niveau+"&param="+param+"&typeElection="+type;
+		$urlGrid="http://www.sigegis.ugb-edu.com/visualiser/getGrid?niveau="+niveau+"&param="+param+"&typeElection="+type;
 		
 		$paramCharts='param='+param+'&typeElection='+type;
 		if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
@@ -47,7 +67,7 @@ $(document).ready(function() {
 		$("#list").setGridParam({url:$urlGrid,page:1}).trigger("reloadGrid");
 		
 		$.ajax({        							
-			url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarVisualiser',    
+			url: 'http://www.sigegis.ugb-edu.com/visualiser/getBar',    
 			data:$paramCharts,        					     
 			success: function(json) {		
 				refreshBarChart(json);																						
@@ -55,7 +75,7 @@ $(document).ready(function() {
 		});
 		
 		$.ajax({        							
-			url: 'http://www.sigegis.ugb-edu.com/main_controller/getPieVisualiser',    
+			url: 'http://www.sigegis.ugb-edu.com/visualiser/getPie',    
 			data:$paramCharts,    					     
 			success: function(json) {
 				refreshPieChart(json);
@@ -290,13 +310,13 @@ $("#types_affichage input").on("change",function()
 	}
 
 	if ($(this).attr("id")=="map")
-		window.location="http://www.sigegis.ugb-edu.com/main_controller/map?type="+$.getUrlVar("type")+mode;
+		window.location="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+$.getUrlVar("type")+mode;
 	else
-	window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+$.getUrlVar("type")+mode;
+	window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+$.getUrlVar("type")+mode;
 	
 	$("#ss_locales :input").on("click",function(){
-		if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+this+mode;
-		else window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+this;
+		if (mode) window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+this+mode;
+		else window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+this;
 	});
 });
 
@@ -334,13 +354,13 @@ $("#types_elections input").on( "change",function() {
 			if(niveau) mode+="&niveau="+niveau;
 			
 			if(  this !="regionale" && this!="municipale" && this!="rurale" ) {
-				if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+this+mode;
-				else window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+this;				
+				if (mode) window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+this+mode;
+				else window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+this;				
 			}
 			
 			$("#ss_locales :input").on("click",function(){
-				if (mode) window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+$(this).attr("id")+mode;
-				else window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+$(this).attr("id");
+				if (mode) window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+$(this).attr("id")+mode;
+				else window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+$(this).attr("id");
 			});
 		}
 	});
@@ -383,7 +403,7 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 	
 	if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
 	
-	$url='http://www.sigegis.ugb-edu.com/main_controller/getGridVisualiser?niveau='+niveau+'&param='+param+'&typeElection='+$.getUrlVar("type");
+	$url='http://www.sigegis.ugb-edu.com/visualiser/getGrid?niveau='+niveau+'&param='+param+'&typeElection='+$.getUrlVar("type");
 	
 	if ( $.getUrlVar("type") && $("#grid")[0].checked ) 
 	$("#list").jqGrid({		
@@ -437,9 +457,9 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		$('#csv').on("click",function(){
 			if (niveau) paramNiveau="&niveau="+niveau;else paramNiveau="";
 			if( $("#grid")[0].checked )
-			window.location="http://www.sigegis.ugb-edu.com/main_controller/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord="+$("#list").jqGrid('getGridParam','sortorder')+paramNiveau;
+			window.location="http://www.sigegis.ugb-edu.com/visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord="+$("#list").jqGrid('getGridParam','sortorder')+paramNiveau;
 			else
-				window.location="http://www.sigegis.ugb-edu.com/main_controller/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord=desc"+paramNiveau;
+				window.location="http://www.sigegis.ugb-edu.com/visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord=desc"+paramNiveau;
 		});
 		
 		/**
@@ -513,11 +533,11 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		});
 		
 		$('#visualiser').click(function() {
-			window.location="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type=presidentielle&niveau=globaux";
+			window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type=presidentielle&niveau=globaux";
 		});
 		
 		$('#analyser').click(function() {
-			window.location="http://www.sigegis.ugb-edu.com/main_controller/analyser";			
+			window.location="http://www.sigegis.ugb-edu.com/analyser";			
 		});
 				
 		  $('#fenetre').dialog({

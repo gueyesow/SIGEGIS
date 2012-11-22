@@ -22,7 +22,9 @@
 				<?php echo $options_menu;?>
 				
 				<button id="ouvrir" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Faire une nouvelle requête</button>
-				<button id="comparer" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Comparer ces résultats à ...</button>
+				<button id="comparer" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Comparer ces résultats à ...</button><br />
+				<button id="reset" class="theToolTip boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Réinitialiser</button><br />
+				
 				
 				<div id="dialog_zone_des_options"  title="Utilitaire SIGEGIS">
 				<div class="zone_des_options_analyse">
@@ -109,7 +111,6 @@
 									?>
 									
 									<?php
-									$styles="";
 									$filtres=array("elections","tours","pays","regions","departements","collectivites","centres");
 									$labels_filtres=array("elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");
 									foreach ($filtres as $filtre) {
@@ -189,7 +190,7 @@
 						</p>
 					</div>
 					
-					<div id="theGrid">
+					<div id="theGrid1">
 					<h1 id="titleGrid1"></h1>
 						<table id="list"></table>
 						<div id="pager"></div>

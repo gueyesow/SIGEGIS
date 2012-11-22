@@ -1,5 +1,6 @@
 $(document).ready(function() {
 	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
+	$("#left-sidebar *").attr("disabled","disabled");
 	var grid=$("#list");
 	
 	grid.jqGrid({
@@ -8,7 +9,7 @@ $(document).ready(function() {
 	    mtype: 'POST',
 	    colNames:['ID Candidat', 'Photo', 'Prénom', 'Nom', 'Date de naissance','Lieu de naissance', 'Parti', 'Commentaires'],
 	    colModel :[
-		{name:'idCandidature', index:'idCandidature', editable:true},
+		{name:'idCandidat', index:'idCandidat', editable:true},
 		{name:'photo', index:'photo', edittype: 'image', hidden:true, width:150, editable:true, editrules:{edithidden:true}, editoptions: {src: ''}},
 		{name:'prenom', index:'prenom', editable:true, editrules:{required:true}},
 		{name:'nom', index:'nom', editable:true, editrules:{required:true}},
@@ -24,8 +25,8 @@ $(document).ready(function() {
 	    pager: '#pager',
 	    rowNum:20,
 	    rowList:[20,30,50,100,1000],
-	    sortname: 'idCandidature',
-	    editurl:"http://www.sigegis.ugb-edu.com/admin_controller/candidatCRUD",
+	    sortname: 'idCandidat',
+	    editurl:"http://www.sigegis.ugb-edu.com/admin/candidatCRUD",
 	    sortorder: 'asc',	    
 	    viewrecords: true,
 	    gridview: true, 	    
@@ -75,18 +76,18 @@ $(document).ready(function() {
 			},{closeAfterAdd:true, width:700,onClose: function() {$('#commentaires').ckeditorGet().destroy();}});
 
 	$centres.on("change",function(){
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCandidats?typeElection=presidentielle&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCandidats?typeElection=presidentielle&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 	});
 	
 	$("#allCandidats").on("click",function(){
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCandidats?annee=all",page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCandidats?annee=all",page:1}).trigger("reloadGrid");
 	});
 	
 	$("#notAllCandidats").on("click",function(){
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCandidats?typeElection=presidentielle&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCandidats?typeElection=presidentielle&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 	});
 	
 
 	$(".ui-jqgrid-bdiv").removeAttr("style");
-	$("#types_affichage input").attr("disabled","disabled");$("#commentaires,.ckeditor").ckeditor();
+	
 });

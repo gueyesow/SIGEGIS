@@ -1,10 +1,10 @@
 <html>
 <head>
-<title>Upload Form</title>
+<title>Formulaire upload</title>
 </head>
 <body>
 
-<h3>Your file was successfully uploaded!</h3>
+<h3>Le fichier a &eacute;t&eacute; correctement upload&eacute; !</h3>
 
 <ul>
 <?php foreach($upload_data as $item => $value):?>
@@ -12,7 +12,7 @@
 <?php endforeach; ?>
 </ul>
 
-<p><?php echo anchor('upload', 'Upload Another File!'); ?></p>
+<p><?php echo anchor('admin/upload', 'Retour'); ?></p>
 
 </body>
 </html>

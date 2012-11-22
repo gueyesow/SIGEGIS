@@ -8,8 +8,7 @@
 <div id="wrapper">
 	<?php $styles="";?>
 	<?php $filtres=array("sources","elections","tours","pays","regions","departements","collectivites","centres");?>
-	<?php $labels_filtres=array("sources"=>"Source","elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");?>
-	<?php $typeElection=empty($_GET["type"])?"presidentielle":$_GET["type"];?>	
+	<?php $labels_filtres=array("sources"=>"Source","elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");?>	
 
 	<?php echo $menu;?>		
 
@@ -41,10 +40,10 @@
 					
 						<h1>Connexion</h1>
 					   <p id="login_errors"><?php echo validation_errors(); ?></p>
-					   <?php echo form_open('verifylogin',array("id"=>"connection_form")); ?>
+					   <?php echo form_open('admin/verifylogin',array("id"=>"connection_form")); ?>
 					   <table><tr><td>
 					     <label for="username">Identifiant:</label></td><td>
-					     <input type="text" size="20" id="username" name="username"/></td></tr><tr><td>
+					     <input type="text" size="20" id="username" name="username" value="<?php echo set_value('username'); ?>"/></td></tr><tr><td>
 					     <label for="password">Mot de passe:</label></td><td>
 					     <input type="password" size="20" id="password" name="password"/></td></tr>
 					     <tr><td colspan="2">					     

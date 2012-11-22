@@ -13,10 +13,10 @@ function putBar(elementConteneur){
 	type: 'column'
 	},
 	title: {
-	text: ''
+	text: 'Données indisponibles'
 	},
 	subtitle: {
-	text: ''
+	text: 'Réexécutez la première requête !'
 	},
 	xAxis: {
 	categories: [],
@@ -79,10 +79,10 @@ function putBar(elementConteneur){
 		type: 'line'
 		},
 		title: {
-		text: ''
+		text: 'Données indisponibles'
 		},
 		subtitle: {
-		text: ''
+		text: 'Réexécutez la seconde requête !'
 		},
 		xAxis: {
 		categories: [],
@@ -142,6 +142,8 @@ $(document).ready(function() {
 	
 	$(".zone_des_options *, #comparer").attr("disabled","disabled");
 	
+	if(!$("#grid")[0].checked || $("#grid")[0].disabled) {$("#theGrid1,#theGrid2").hide("animated");}
+	
 	if(!$("#bar")[0].checked || $("#bar")[0].disabled) {$("#chartdiv1,#chartdiv2").hide("animated");}
 	
 	if(!$("#line")[0].checked || $("#line")[0].disabled) {$("#chartdiv3,#chartdiv4").hide("animated");}
@@ -155,35 +157,29 @@ $(document).ready(function() {
 	var numberOfClickForLine=0;
 	var numberOfClickForGrid=0;	
 	
-	$("#types_affichage input").on("change",function() {									
+	$("#types_affichage input").on("change",function() {
+		
 		if(!$("#bar")[0].checked) {
 			$("#chartdiv1,#chartdiv2").hide("animated");
 		} 
-		else 
-		if($("#bar")[0].checked) {
-			$("#chartdiv1").show("animated");
-			if(save) $("#chartdiv2").show("animated");
-		}
+		else  {	$("#chartdiv1").show("animated"); if(save) $("#chartdiv2").show("animated"); }
+		
 		if(!$("#line")[0].checked) {
 			$("#chartdiv3,#chartdiv4").hide("animated");
 		} 
-		else 
-		if($("#line")[0].checked) { 
+		else {
 			$("#chartdiv3").show("animated"); 
-			if(save && $("#chartdiv4").text()!="") $("#chartdiv4").show("animated");  
-			if (numberOfClickForLine==0) {$("#"+lastPressedButton).click();numberOfClickForLine++;}
+			if(save) $("#chartdiv4").show("animated");  
+			//if (numberOfClickForLine==0) {$("#"+lastPressedButton).click();numberOfClickForLine++;}
 		}
+		
 		if(!$("#grid")[0].checked) {
-			$("#theGrid,#theGrid2").hide("animated");
+			$("#theGrid1,#theGrid2").hide("animated");
 		} 
-		else  
-		if($("#grid")[0].checked) {
-			$("#theGrid").show("animated");
+		else {
+			$("#theGrid1").show("animated");
 			if(save) $("#theGrid2").show("animated");
-			if (numberOfClickForGrid==0) {
-				$("#"+lastPressedButton).click();
-				numberOfClickForGrid++;
-			}
+			//if (numberOfClickForGrid==0) {$("#"+lastPressedButton).click();numberOfClickForGrid++;}
 		}
  	});
 		

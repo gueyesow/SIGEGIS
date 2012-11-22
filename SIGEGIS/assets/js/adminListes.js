@@ -21,7 +21,7 @@ $(document).ready(function() {
 	    rowNum:20,
 	    rowList:[20,30,50,100,1000],
 	    sortname: 'idListe',
-	    editurl:"http://www.sigegis.ugb-edu.com/admin_controller/listeCRUD",
+	    editurl:"http://www.sigegis.ugb-edu.com/admin/listeCRUD",
 	    sortorder: 'asc',	    
 	    ondblClickRow: function(id) 	{
 	    	grid.editGridRow(id,{closeAfterEdit:true,width:700,closeAfterEdit:true,
@@ -64,16 +64,16 @@ $(document).ready(function() {
 		},onClose: function() {$('#commentaires').ckeditorGet().destroy();}});
 
 	$centres.on("change",function(){
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 	});
 	$elections.on("change",function(){$("#ss_locales :checked").removeAttr("checked");});
 	
 	$("#allListes").on("click",function(){
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?annee=all",page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCoalitionsPartis?annee=all",page:1}).trigger("reloadGrid");
 	});
 	
 	$("#notAllListes").on("click",function(){
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 	});
 	
 
@@ -95,11 +95,11 @@ $(document).ready(function() {
 		
 		//------------------ RELOAD ALL --------------------//
 		
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCoalitionsPartis?typeElection="+$("#types_elections input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 
 		//------------------ 	END   	--------------------//
 		$("#ss_locales :input").on("click",function(){
-			grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridCoalitionsPartis?typeElection="+$("#ss_locales input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+			grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCoalitionsPartis?typeElection="+$("#ss_locales input:checked").attr("id")+"&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 		});
 	});
 	$("#presidentielle").attr("disabled","disabled");

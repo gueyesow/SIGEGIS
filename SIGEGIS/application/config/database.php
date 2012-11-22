@@ -50,8 +50,11 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
+//$db['default']['username'] = 'ugbeduco_siggis2';
 $db['default']['password'] = '';
-$db['default']['database'] = 'sigegis';
+//$db['default']['password'] = '[e-loAmQ]C1E';
+$db['default']['database'] = 'sigegis3';
+//$db['default']['database'] = 'ugbeduco_sigegis2';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

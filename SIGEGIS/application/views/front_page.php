@@ -8,8 +8,7 @@
 <div id="wrapper">
 	<?php $styles="";?>
 	<?php $filtres=array("sources","elections","tours","pays","regions","departements","collectivites","centres");?>
-	<?php $labels_filtres=array("sources"=>"Source","elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");?>
-	<?php $typeElection=empty($_GET["type"])?"presidentielle":$_GET["type"];?>	
+	<?php $labels_filtres=array("sources"=>"Source","elections"=>"Année","tours"=>"Tour","centres"=>"Centre","collectivites"=>"Collectivité","departements"=>"Département","regions"=>"Région","pays"=>"Pays");?>	
 
 	<?php echo $menu;?>		
 

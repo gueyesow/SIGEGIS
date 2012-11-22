@@ -4,7 +4,7 @@ $("#niveauAgregation1,#niveauAgregation2").val("region");
 
 // Récupère toutes les années où ont eu lieu un découpage administratif 
 $.ajax({            
-	url: 'http://www.sigegis.ugb-edu.com/main_controller/getDecoupages',            			         			   
+	url: 'http://www.sigegis.ugb-edu.com/filtres/getDecoupages',            			         			   
 	dataType: 'json',      
 	success: function(json) {
 		$("#ana_decoupage,#ana_decoupage_localite").empty();
@@ -29,7 +29,7 @@ $("select[name*=ana_decoupage_localite]").on("change",function()
 {
 	
 	$.ajax({            // DATES 
-		url: "http://www.sigegis.ugb-edu.com/main_controller/getDatesElections?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage_localite").val(),           			         			      
+		url: "http://www.sigegis.ugb-edu.com/filtres/getDatesElections?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage_localite").val(),           			         			      
 		dataType: 'json',      
 		success: function(json) {
 			$elections.empty();
@@ -52,7 +52,7 @@ $("select[name=niveauAgregation1]").on("change",function()
 	else if ($(this).val()=="departement") { methode="getDepartements";parametres_analyse+="&niveau=dep";}
 	else if ($(this).val()=="centre") { methode="getCentres";parametres_analyse+="&niveau=cen";}
 	
-	$url='http://www.sigegis.ugb-edu.com/main_controller/'+methode+"?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage").val();
+	$url='http://www.sigegis.ugb-edu.com/filtres/'+methode+"?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage").val();
 
 	$.ajax({        							
 		url: $url,    
@@ -87,7 +87,7 @@ function showLocality(){
 function Annees()
 {
 	$.ajax({            // DATES 
-		url: "http://www.sigegis.ugb-edu.com/main_controller/getDatesElections?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage").val(),           			         			      
+		url: "http://www.sigegis.ugb-edu.com/filtres/getDatesElections?typeElection="+typeElection+"&anneeDecoupage="+$("#ana_decoupage").val(),           			         			      
 		dataType: 'json',      
 		success: function(json) {
 			$("#choixmultipleA").empty();
@@ -118,7 +118,7 @@ $("#choixmultipleB").on("change",function()
 			if ($("select[name*=niveauAgregation]").val()=="centre") { parametres_analyse+="&niveau=cen";}		
 			
 			$.ajax({        							    
-				url: "http://www.sigegis.ugb-edu.com/main_controller/getCandidatsAnnee",
+				url: "http://www.sigegis.ugb-edu.com/filtres/getCandidatsAnnee",
 				data:parametres_analyse,
 				dataType:'json',        					     
 				success: function(json) {
@@ -153,7 +153,7 @@ $("#choixMultipleLocalitesB").on("change",function()
 		if ($("select[name=niveauAgregation2]").val()=="centre") { parametres_analyse+="&niveau=cen";}		
 		
 		$.ajax({        							    
-			url: "http://www.sigegis.ugb-edu.com/main_controller/getCandidatsLocalite",
+			url: "http://www.sigegis.ugb-edu.com/filtres/getCandidatsLocalite",
 			data:parametres_analyse,
 			dataType:'json',        					     
 			success: function(json) {
@@ -176,4 +176,9 @@ $tours.on("change",function()
 	$("#choixCandidatLocaliteA,#choixCandidatLocaliteB").empty();
 	$("#choixMultipleLocalitesB").change();
 });
+
+$("#sources").on("change",function()
+		{$("#choixCandidatA,#choixCandidatB").empty();
+		$("#choixmultipleB").change();
+		});
 

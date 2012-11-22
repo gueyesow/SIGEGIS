@@ -3,7 +3,7 @@ $(document).ready(function() {
 	$("#left-sidebar *").attr("disabled","disabled");
 	$("#list").jqGrid({
 		autowidth:true,
-		url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridUsers",
+		url:"http://www.sigegis.ugb-edu.com/admin/getGridUsers",
 	    datatype: 'xml',
 	    mtype: 'POST',
 	    colNames:['ID','Identifiant','Mot de passe','Nouveau mot de passe','Rang'],
@@ -22,7 +22,7 @@ $(document).ready(function() {
 	    ondblClickRow: function(id) 	{
 	    	$("#list").editGridRow(id,{closeAfterEdit:true});
 		},
-		editurl:"http://www.sigegis.ugb-edu.com/admin_controller/userCRUD",
+		editurl:"http://www.sigegis.ugb-edu.com/admin/userCRUD",
 	    viewrecords: true,
 	    gridview: true
 	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true, width:300},{closeAfterAdd:true});
@@ -43,11 +43,11 @@ $(document).ready(function() {
 		
 		//------------------ RELOAD ALL --------------------//
 		
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD", page:1}).trigger("reloadGrid");
+		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridElections?typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin/electionCRUD", page:1}).trigger("reloadGrid");
 
 		//------------------ 	END   	--------------------//
 		$("#ss_locales :input").on("click",function(){
-			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridElections?typeElection="+$(this).attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/electionCRUD", page:1}).trigger("reloadGrid");
+			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridElections?typeElection="+$(this).attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin/electionCRUD", page:1}).trigger("reloadGrid");
 		});
 	});
 		

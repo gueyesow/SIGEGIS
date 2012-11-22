@@ -6,15 +6,15 @@
  */
 
 class Admin_model extends CI_Model{
-private $tables=array("presidentielle"=>"resultatspresidentielles2","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
-private $tablesParticipation=array("presidentielle"=>"participationpresidentielles2","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
+private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
+private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
 private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
 private $typeElection=null;
 private $titreElection="";
 private $typeLocalite="";
 private $la_session;
 private $niveau=null;
-private $candidatOrListe=array("candidat"=>"idCandidature","listescoalitionspartis"=>"idListe");
+private $candidatOrListe=array("candidat"=>"idCandidat","listescoalitionspartis"=>"idListe");
 private $tableCandidat;
 
 public function __construct(){
@@ -39,7 +39,7 @@ public function __construct(){
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getGridVisualiser(){		
+	public function getGridResultats(){		
 		
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
 		
@@ -52,7 +52,7 @@ public function __construct(){
 			$v=0;
 		
 			$requete="SELECT * FROM {$this->tables[$this->typeElection]} rp  
-			LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
+			LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection";
 
@@ -69,7 +69,7 @@ public function __construct(){
 			}
 			
 			$requeteCount="SELECT COUNT(*) as total FROM {$this->tables[$this->typeElection]} rp  
-			LEFT JOIN {$this->tableCandidat} ON rp.idCandidature = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
+			LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection";
 			
@@ -111,10 +111,9 @@ public function __construct(){
 	$s .= "<row id='".$row->idResultat."'>";
 	$s .= "<cell>". $row->idResultat ."</cell>";
 	$s .= "<cell>". $row->nbVoix ."</cell>";
-	$s .= "<cell>". $row->valide ."</cell>";
 	$s .= "<cell>". $row->idElection ."</cell>";
 	$s .= "<cell>". $row->idSource ."</cell>";
-	$s .= "<cell>". $row->idCandidature ."</cell>";
+	$s .= "<cell>". $row->idCandidat ."</cell>";
 	$s .= "<cell>". $row->idCentre ."</cell>";
 	$s .= "<cell>". $row->idDepartement ."</cell>";
 	$s .= "</row>";
@@ -351,12 +350,14 @@ public function __construct(){
 		if (!empty($annee)){
 			if($annee=="all")
 				$requete="SELECT * FROM candidat";
-			else
-				$requete="SELECT DISTINCT candidat.* FROM {$this->tables[$this->typeElection]} rp 
-				LEFT JOIN candidat ON rp.idCandidature = candidat.idCandidature
+			else		
+				$requete="SELECT idCandidat,prenom,nom,dateNaissance,lieuNaissance,partis,commentaires 
+				FROM candidat WHERE idCandidat in (
+				SELECT DISTINCT rp.idCandidat FROM {$this->tables[$this->typeElection]} rp 
+				LEFT JOIN candidat ON rp.idCandidat = candidat.idCandidat
 				LEFT JOIN election ON rp.idElection = election.idElection 
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre 
-				WHERE YEAR(election.dateElection)=$annee";
+				WHERE YEAR(election.dateElection)=$annee)";
 		}
 		else return;
 			
@@ -384,8 +385,8 @@ public function __construct(){
 		$s .= "<records>".$totalRows."</records>";
 	
 		foreach ($resultats as $row) {
-			$s .= "<row id='".$row->idCandidature."'>";
-			$s .= "<cell>". $row->idCandidature ."</cell>";
+			$s .= "<row id='".$row->idCandidat."'>";
+			$s .= "<cell>". $row->idCandidat ."</cell>";
 			$s .= "<cell></cell>";
 			$s .= "<cell>". $row->prenom ."</cell>";
 			$s .= "<cell>". $row->nom ."</cell>";
@@ -415,11 +416,14 @@ public function __construct(){
 			if($annee=="all")
 				$requete="SELECT * FROM listesCoalitionsPartis";
 			else
-				$requete="SELECT DISTINCT listesCoalitionsPartis.* FROM {$this->tables[$this->typeElection]} rp
-				LEFT JOIN listesCoalitionsPartis ON rp.idCandidature = listesCoalitionsPartis.idListe
+				$requete="SELECT idListe,nomListe,typeListe,partis,commentaires
+				FROM listesCoalitionsPartis WHERE idListe in (
+				SELECT DISTINCT rp.idListe 
+				FROM {$this->tables[$this->typeElection]} rp
+				LEFT JOIN listesCoalitionsPartis ON rp.idCandidat = listesCoalitionsPartis.idListe
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre
-				WHERE YEAR(election.dateElection)=$annee";
+				WHERE YEAR(election.dateElection)=$annee)";
 		}
 		else return;
 	
@@ -557,19 +561,17 @@ public function __construct(){
 		
 		$idResultat = $this->input->post('idResultat');
 		$nbVoix = $this->input->post('nbVoix');
-		$valide = $this->input->post('valide');
 		$idElection = $this->input->post('idElection');
 		$idSource = $this->input->post('idSource');
-		$idCandidature = $this->input->post('idCandidature');
+		$idCandidat = $this->input->post('idCandidat');
 		$idCentre = $this->input->post('idCentre');
 		$idDepartement = $this->input->post('idDepartement');
 		
 		$data = array(
 				'nbVoix' => $nbVoix,
-				'valide' => $valide,
 				'idElection' => $idElection,
 				'idSource' => $idSource,
-				'idCandidature' => $idCandidature,
+				'idCandidat' => $idCandidat,
 				'idCentre' => $idCentre,
 				'idDepartement' => $idDepartement
 		);
@@ -743,7 +745,7 @@ public function __construct(){
 	}
 	
 	public function candidatCRUD(){
-		$idCandidature = $this->input->post('idCandidature');
+		$idCandidat = $this->input->post('idCandidat');
 		$prenom = $this->input->post('prenom');
 		$nom = $this->input->post('nom');
 		$dateNaissance = $this->input->post('dateNaissance');
@@ -769,11 +771,11 @@ public function __construct(){
 		}
 		if($_POST['oper']=='edit')
 		{			
-			$this->db->update("candidat", $data, array('idCandidature' => $idCandidature));
+			$this->db->update("candidat", $data, array('idCandidat' => $idCandidat));
 		}
 		if($_POST['oper']=='del' AND $this->la_session['level']==1)
 		{
-			$this->db->delete("candidat", array('idCandidature' => $_POST['id']));
+			$this->db->delete("candidat", array('idCandidat' => $_POST['id']));
 		}
 	}
 	

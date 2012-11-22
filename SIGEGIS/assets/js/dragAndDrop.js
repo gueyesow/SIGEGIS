@@ -5,13 +5,13 @@
 
 // Rappel: chart1 <=> Bar et chart2 <=> Line | "save" à true indique que l'on compare deux élections
 
-/*
- * Crée le grid si ce n'est pas déjà fait et y charge des données qui sont reçues à partir du lien "url"
- */
+// Crée le grid si ce n'est pas déjà fait et y charge des données qui sont reçues à partir du lien "url"
+
 function putGrid(url){	
 		
-	if(save) {balise="#list2";pager="#pager2";}
-	else {balise="#list";pager="#pager";}
+	if (request1OrRequest2=="comparer") {balise="#list2";pager="#pager2";$("#theGrid2").show();}
+	else {balise="#list";pager="#pager";$("#theGrid1").show();}
+	
 		
 	if ($(balise).text()!="") $(balise).setGridParam({url: url,page:1}).trigger("reloadGrid");
 	else{
@@ -34,10 +34,9 @@ function putGrid(url){
 		    gridview: true,
 		}).navGrid(pager,{edit:false,add:false,del:false,search:false});
 				
-		if(!$("#grid")[0].checked || $("#grid")[0].disabled) {$("#theGrid").hide("animated");if(save) $("#theGrid2").hide("animated");}
-		
-		$(".ui-jqgrid-bdiv").removeAttr("style"); // Width: 100%
+		if(!$("#grid")[0].checked || $("#grid")[0].disabled) {$("#theGrid1").hide("animated");if(save) $("#theGrid2").hide("animated");} 
 	}	
+	$(".ui-jqgrid-bdiv").removeAttr("style");
 }
 
 /*
@@ -122,8 +121,8 @@ $(".move").button();
 //-------------------------------------------------//
 $("#valider").on("click",function(event) {
 	lastPressedButton="valider";
+	//if (request1OrRequest2=="comparer") lastPressedButton2=lastPressedButton;	else lastPressedButton1=lastPressedButton;
 	
-	$(".ui-jqgrid-bdiv").removeAttr("style");
 	$("#dialog_zone_des_options").dialog('close');
 	
 	listeAnnees="";
@@ -133,7 +132,8 @@ $("#valider").on("click",function(event) {
 	if(typeElection=="presidentielle") paramBis+=","+$("#ana_tour").val();
 	paramBis+=","+$("#localite").val();
 	
-	if ($("#bar")[0].checked) $("#chartdiv1").show();
+	if ($("#bar")[0].checked) {$("#chartdiv1").show();if (save) $("#chartdiv2").show();}
+	if ($("#grid")[0].checked) {$("#theGrid1").show();if (save) $("#theGrid2").show();}
 	$("#help").hide();
 	
 	$("#choixmultipleB").children().each(function() {
@@ -153,8 +153,11 @@ $("#valider").on("click",function(event) {
 	if ($("select[name=niveauAgregation1]").val()=="departement") {paramBis+="&niveau=dep";}
 	if ($("select[name=niveauAgregation1]").val()=="centre") { paramBis+="&niveau=cen";}
 	
+	putBar(balise);
+	putLine(baliseLine);
+	
 	$.ajax({        							
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserAnnee',    
+		url: 'http://www.sigegis.ugb-edu.com/analyser/getBarAnalyserSuivantAnnee',    
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
 			refreshChart(chart1,json);
@@ -162,7 +165,7 @@ $("#valider").on("click",function(event) {
 		}    
 	});
 	
-	putGrid("http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserAnnee?niveau=dep&param="+paramBis+"&typeElection="+typeElection);
+	putGrid("http://www.sigegis.ugb-edu.com/analyser/getGridAnalyserSuivantAnnee?niveau=dep&param="+paramBis+"&typeElection="+typeElection);
 	
 });
 
@@ -171,7 +174,9 @@ $("#valider").on("click",function(event) {
 //-------------------------------------------------//
 $("#validerLocalite").on("click",function(event) {
 	lastPressedButton="validerLocalite";
-	$(".ui-jqgrid-bdiv").removeAttr("style");
+	
+	//if (request1OrRequest2=="comparer") lastPressedButton2=lastPressedButton;	else lastPressedButton1=lastPressedButton;
+	
 	$("#dialog_zone_des_options").dialog('close');
 	
 	listeLocalites="";
@@ -182,8 +187,9 @@ $("#validerLocalite").on("click",function(event) {
 	paramBis+=","+$elections.val();
 	
 	if(typeElection=="presidentielle") paramBis+=","+$tours.val();	
-		
-	if ($("#bar")[0].checked) $("#chartdiv1").show();
+
+	if ($("#bar")[0].checked) {$("#chartdiv1").show();if (save) $("#chartdiv2").show();}
+	if ($("#grid")[0].checked) {$("#theGrid1").show();if (save) $("#theGrid2").show();}
 	$("#help").hide();
 	
 	$("#choixMultipleLocalitesB").children().each(function() {
@@ -203,8 +209,11 @@ $("#validerLocalite").on("click",function(event) {
 	if ($("select[name=niveauAgregation2]").val()=="departement") {paramBis+="&niveau=dep";}
 	if ($("select[name=niveauAgregation2]").val()=="centre") { paramBis+="&niveau=cen";}
 		
+	putBar(balise);
+	putLine(baliseLine);
+	
 	$.ajax({        							
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getBarAnalyserLocalite',    
+		url: 'http://www.sigegis.ugb-edu.com/analyser/getBarAnalyserSuivantLocalite',    
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
 			refreshChart(chart1,json);	
@@ -212,7 +221,7 @@ $("#validerLocalite").on("click",function(event) {
 		}    
 	});
 	
-	putGrid("http://www.sigegis.ugb-edu.com/main_controller/getGridAnalyserLocalite?param="+paramBis+"&typeElection="+typeElection);	
+	putGrid("http://www.sigegis.ugb-edu.com/analyser/getGridAnalyserSuivantLocalite?param="+paramBis+"&typeElection="+typeElection);
 });
 
 
@@ -240,24 +249,29 @@ $("#dialog_zone_des_options").dialog({
 
 
 $("#ouvrir").on("click",function(){
+	request1OrRequest2=$(this).attr("id");
 	$("#dialog_zone_des_options").dialog('open');
 	$("#ouvrir").hide();
-	$(".zone_des_options *:not([#bar,#pie,#map)").removeAttr("disabled");
+	$(".zone_des_options *:not(#pie,#map)").removeAttr("disabled");
 	$("#comparer").removeAttr("disabled");
 	typeElection=$(".zone_des_options input:checked:not(#locale)").attr("id");
+	balise="chartdiv1";
+	baliseLine="chartdiv3";
+});
+
+$("#reset").on("click",function(){
+	window.location.reload();
 });
 
 $("#comparer").on("click",function(){
 	save=true;
-	if(save) {balise="chartdiv2";if($("#line")[0].checked) baliseLine="chartdiv4";}
-	else {balise="chartdiv1";if($("#line")[0].checked) baliseLine="chartdiv3";}
+	request1OrRequest2=$(this).attr("id");
 	
-	$("#chartdiv2").show();
-	if ($("#line")[0].checked) $("#chartdiv4").show();
+	if($("#line")[0].checked) $("#chartdiv4").show();
+	$("#chartdiv2").show(); 
 	
 	$("#dialog_zone_des_options").dialog('open');
-	
-	putBar(balise);
-	putLine(baliseLine);
+	balise="chartdiv2";
+	baliseLine="chartdiv4";
 });
 

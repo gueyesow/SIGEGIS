@@ -1,6 +1,0 @@
-15;amzo;sow;dess
-#LOAD DATA LOCAL INFILE 'C:\\\Users\\darty\\Desktop\\csv.csv'
-#into TABLE etudiant
-#FIELDS TERMINATED BY ';'
-#LINES TERMINATED BY '\n'
-

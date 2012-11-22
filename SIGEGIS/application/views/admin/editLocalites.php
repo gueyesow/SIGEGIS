@@ -9,8 +9,7 @@
 <div id="wrapper">
 	<?php $styles="";?>
 	<?php $filtres=array("anneeDecoupage");?>
-	<?php $labels_filtres=array("anneeDecoupage"=>"Année de découpage");?>
-	<?php $typeElection=empty($_GET["type"])?"presidentielle":$_GET["type"];?>	
+	<?php $labels_filtres=array("anneeDecoupage"=>"Année de découpage");?>	
 
 	<?php echo $menu;?>		
 

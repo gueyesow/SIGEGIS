@@ -37,7 +37,9 @@ var chart1;
 var chart2;
 var chart3;
 var chart4;
-var lastPressedButton=null;
+var lastPressedButton1=null;
+var lastPressedButton2=null;
+var request1OrRequest2;
 var save=false; // Sauvegarde des informations ( PARTIE ANALYSE )
 var parametres_url="";
 var param="";

@@ -1,6 +1,8 @@
+$anneeDecoupage=$("#anneeDecoupage");
+
 $(document).ready(function() {
 	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
-	var $anneeDecoupage=$("#anneeDecoupage");
+	$("#left-sidebar *").attr("disabled","disabled");
 	 
 	label={
 			"idPays":"ID pays","nomPays":"Nom du pays","anneeDecoupage":"Découpage administratif",
@@ -13,35 +15,36 @@ $(document).ready(function() {
 				"idCentre":"ID centre",
 				"nomCentre":"Nom du centre"					
 	};
-		var localite={
-				"pays":{
-					1:"idPays",
-					2:"nomPays",
-					3:"anneeDecoupage"						
-				},
-				"region":{
-					1:"idRegion",
-					2:"nomRegion",
-					3:"idPays"
-				},
-				"departement":{
-					1:"idDepartement",
-					2:"nomDepartement",
-					3:"idRegion"
-				},
-				"collectivite":{
-					1:"idCollectivite",
-					2:"nomCollectivite",
-					3:"idDepartement"
-				},
-				"centre":{
-					1:"idCentre",
-					2:"nomCentre",
-					3:"idCollectivite"
-				}
-		};
-		
-		$localite=$.getUrlVar("typeLocalite");
+	
+	localite={
+			"pays":{
+				1:"idPays",
+				2:"nomPays",
+				3:"anneeDecoupage"						
+			},
+			"region":{
+				1:"idRegion",
+				2:"nomRegion",
+				3:"idPays"
+			},
+			"departement":{
+				1:"idDepartement",
+				2:"nomDepartement",
+				3:"idRegion"
+			},
+			"collectivite":{
+				1:"idCollectivite",
+				2:"nomCollectivite",
+				3:"idDepartement"
+			},
+			"centre":{
+				1:"idCentre",
+				2:"nomCentre",
+				3:"idCollectivite"
+			}
+	};
+	
+	$localite=$.getUrlVar("typeLocalite");
 	
 	
 	$("#list").jqGrid({
@@ -70,29 +73,29 @@ $(document).ready(function() {
 	else element=$localite;
 	
 	$.ajax({            
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getDecoupages',            			         			   
+		url: 'http://www.sigegis.ugb-edu.com/filtres/getDecoupages',            			         			   
 		dataType: 'json',      
 		success: function(json) {
-			$("#anneeDecoupage").empty();
+			$anneeDecoupage.empty();
 			$.each(json, function(index, value) {         
-				$("#anneeDecoupage").append('<option value="'+ index +'">'+ value +'</option>');							
+				$anneeDecoupage.append('<option value="'+ index +'">'+ value +'</option>');							
 			});	
+			
 			if ($.getUrlVar("annee")) $anneeDecoupage.val($.getUrlVar("annee"));
 			else $("#anneeDecoupage>:last").attr("selected","selected");
 			
-			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridLocalites?typeLocalite="+$.getUrlVar("typeLocalite")+"&annee="+$anneeDecoupage.val(), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/localiteCRUD?typeLocalite="+$.getUrlVar("typeLocalite"), page:1}).trigger("reloadGrid");								
+			$anneeDecoupage.change();
 		}           
 	});
 	
-	$("#anneeDecoupage").on("change", function(){
-		if (!$.getUrlVar("annee")) $anneeDecoupage.val($.getUrlVar("annee"));
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin_controller/getGridLocalites?typeLocalite="+$.getUrlVar("typeLocalite")+"&annee="+$anneeDecoupage.val(), editurl:"http://www.sigegis.ugb-edu.com/admin_controller/localiteCRUD?typeLocalite="+$.getUrlVar("typeLocalite"), page:1}).trigger("reloadGrid");
+	$anneeDecoupage.on("change",function(){
+		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridLocalites?typeLocalite="+$.getUrlVar("typeLocalite")+"&annee="+$(this).val(), editurl:"http://www.sigegis.ugb-edu.com/admin/localiteCRUD?typeLocalite="+$.getUrlVar("typeLocalite")+"&annee="+$anneeDecoupage.val(), page:1}).trigger("reloadGrid");
 	});
 	
 	$("*[id*='button_']").on("click",function(){
-		window.location="http://www.sigegis.ugb-edu.com/admin_controller/editLocalites?typeLocalite="+$(this).attr("id").substring(7)+"&annee="+$anneeDecoupage.val();
+		window.location="http://www.sigegis.ugb-edu.com/admin/editLocalites?typeLocalite="+$(this).attr("id").substring(7)+"&annee="+$anneeDecoupage.val();
 	});
 	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
-	$("#left-sidebar input, #left-sidebar button").attr("disabled","disabled");
+	
 });

@@ -1,6 +1,6 @@
 	
 	$.ajax({  // OBTENIR LES SOURCES          
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getSources',            			         			      
+		url: 'http://www.sigegis.ugb-edu.com/filtres/getSources',            			         			      
 		dataType: 'json',      
 		success: function(json) {
 			$sources.empty();      
@@ -15,7 +15,7 @@
 	if (type) typeElection=type; else typeElection="presidentielle";
 	
 	$.ajax({            // OBTENIR LES ANNEES D'ELECTION `typeElection` 
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getDatesElections',
+		url: 'http://www.sigegis.ugb-edu.com/filtres/getDatesElections',
 		data:'typeElection='+typeElection,
 		dataType: 'json',      
 		success: function(json) {
@@ -53,7 +53,7 @@
 		var val = $(this).val();   
 		if(val != '') {            					           
 			$.ajax({            
-				url: 'http://www.sigegis.ugb-edu.com/main_controller/getTours',            			         			
+				url: 'http://www.sigegis.ugb-edu.com/filtres/getTours',            			         			
 				data: 'dateElection='+ val,   
 				dataType: 'json',      
 				success: function(json) {
@@ -103,7 +103,7 @@
 			
 			if(val1 != '') {               
 				$.ajax({            
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getPays',
+					url: 'http://www.sigegis.ugb-edu.com/filtres/getPays',
 					data: 'paramAnnee='+ val1,
 					dataType: 'json',      
 					success: function(json) {      
@@ -126,7 +126,7 @@
 
 		if(val1 != '') {               
 			$.ajax({            
-				url: 'http://www.sigegis.ugb-edu.com/main_controller/getPays',
+				url: 'http://www.sigegis.ugb-edu.com/filtres/getPays',
 				data: 'paramAnnee='+ val1,
 				dataType: 'json',      
 				success: function(json) {      
@@ -147,7 +147,7 @@
 		if(val1 != '') {           
 			           
 			$.ajax({            
-				url: 'http://www.sigegis.ugb-edu.com/main_controller/getRegions',            			         			
+				url: 'http://www.sigegis.ugb-edu.com/filtres/getRegions',            			         			
 				data: 'idPays='+ val1,   
 				dataType: 'json',      
 				success: function(json) {
@@ -174,7 +174,7 @@
 		var val1 = $(this).val();      
 		if(val1 != '') {            					           
 			$.ajax({            
-				url: 'http://www.sigegis.ugb-edu.com/main_controller/getDepartements',            			         			
+				url: 'http://www.sigegis.ugb-edu.com/filtres/getDepartements',            			         			
 				data: 'idRegion='+ val1,   
 				dataType: 'json',      
 				success: function(json) 
@@ -197,7 +197,7 @@
 		var val2 = $(this).val();    
 		if(val2 != '') {					            					           
 			$.ajax({            
-				url: 'http://www.sigegis.ugb-edu.com/main_controller/getCollectivites',            			         			
+				url: 'http://www.sigegis.ugb-edu.com/filtres/getCollectivites',            			         			
 				data: 'idDepartement='+ val2,      
 				dataType: 'json',      
 				success: function(json) {      
@@ -217,7 +217,7 @@
 		var val3 = $(this).val();   
 		if(val3 != '') {					            					           
 			$.ajax({            
-				url: 'http://www.sigegis.ugb-edu.com/main_controller/getCentres',            			         			
+				url: 'http://www.sigegis.ugb-edu.com/filtres/getCentres',            			         			
 				data: 'idCollectivite='+ val3,      
 				dataType: 'json',      
 				success: function(json) {      

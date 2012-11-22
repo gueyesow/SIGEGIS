@@ -3,7 +3,7 @@ $("input[id*='valider'],input[id*='validerLocalite'], #connection_form :submit, 
 
 $("#radio,#radio2").buttonset();
 
-$("#ouvrir, #comparer, .boutonAdmin").css("width","200px");
+$("#ouvrir, #comparer,#reset,.boutonAdmin").css("width","200px");
 $(".boutonAdmin").css("width","80%");
 
 $('#menu li a').hover(

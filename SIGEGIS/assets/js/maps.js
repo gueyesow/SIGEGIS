@@ -18,7 +18,7 @@ $(function () {
 		
 		if(!$.getUrlVar("year")) mode+="&year="+$elections.val();
 		else mode+="&year="+$.getUrlVar("year");
-		window.location.href="http://www.sigegis.ugb-edu.com/main_controller/visualiser?type="+$.getUrlVar("type")+mode;
+		window.location.href="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+$.getUrlVar("type")+mode;
 	});
 
 	
@@ -28,7 +28,7 @@ $(function () {
 		if (svg) $('#senmaps').svg('destroy');
 		$('#senmaps').svg();
 		svg = $('#senmaps').svg('get');
-		if (year_decoupage) svg.load('http://www.sigegis.ugb-edu.com/assets/snmaps/'+niveau+'_'+year_decoupage+'.svg',{onLoad: loadDone});
+		if (year_decoupage) svg.load('http://www.sigegis.ugb-edu.com/assets/images/snmaps/'+niveau+'_'+year_decoupage+'.svg',{onLoad: loadDone});
 		else return false;
 	}
 
@@ -40,7 +40,7 @@ $(function () {
 		$("[id^=D],[id^=R]").hover(function(e){			
 			a=$(this);
 			$.ajax({        							
-				url: 'http://www.sigegis.ugb-edu.com/main_controller/getNomLocalite/'+$(this).attr("id")+'/'+$.getUrlVar('niveau'),           					     
+				url: 'http://www.sigegis.ugb-edu.com/visualiser/getNomLocalite/'+$(this).attr("id")+'/'+$.getUrlVar('niveau'),           					     
 				success: function(json) {
 					$('<p class="tooltip2"></p>')
 					.html(json+"<br /><b>Voix :</b>"+$(a).attr("resultat")+"<br /><b>% :</b>"+$(a).attr("pourcentage"))
@@ -52,7 +52,6 @@ $(function () {
 			});			
 		}, function() {
 			// Hover out code
-			$(this).attr('title', $(this).data('tipText'));
 			$('.tooltip2').remove();
 		}).mousemove(function(e) {
 			// Mouse move code
@@ -71,7 +70,7 @@ $(function () {
 		if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
 
 		$.ajax({        							
-			url: 'http://www.sigegis.ugb-edu.com/main_controller/getCandidatsAnnee',    
+			url: 'http://www.sigegis.ugb-edu.com/filtres/getCandidatsAnnee',    
 			data:$paramCharts,        					     
 			success: function(json) {		
 				data=JSON.parse(json);
@@ -91,10 +90,12 @@ $(function () {
 				if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
 
 				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/main_controller/getWinnersLocalites',    
+					url: 'http://www.sigegis.ugb-edu.com/visualiser/getWinnersLocalites',    
 					data:$paramCharts,        					     
 					success: function(json) {
-						data=JSON.parse(json);				
+						
+						data=JSON.parse(json);
+						if (!data.length) $('#senmaps').svg('destroy'); //si pas de données detruire map						
 											
 						$.each(data, function(value) {									
 							$("#"+data[value].idLieu).css("fill",tab[data[value].id]);
@@ -144,13 +145,13 @@ $("#types_elections input").on("change",function() {
 			if(niveau) mode+="&niveau="+niveau;
 			
 			if(  this !="regionale" && this!="municipale" && this!="rurale" ) {
-				if (mode) window.location.href="http://www.sigegis.ugb-edu.com/main_controller/map?type="+this+mode;
-				else window.location.href="http://www.sigegis.ugb-edu.com/main_controller/map?type="+this;				
+				if (mode) window.location.href="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+this+mode;
+				else window.location.href="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+this;				
 			}
 			
 			$("#ss_locales :input").on("click",function(){
-				if (mode) window.location.href="http://www.sigegis.ugb-edu.com/main_controller/map?type="+$(this).attr("id")+mode;
-				else window.location.href="http://www.sigegis.ugb-edu.com/main_controller/map?type="+$(this).attr("id");
+				if (mode) window.location.href="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+$(this).attr("id")+mode;
+				else window.location.href="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+$(this).attr("id");
 			});
 		}
 	});
@@ -165,7 +166,7 @@ if (type != "presidentielle") $("#filtretours").remove();
 	$pays.on("change",function(){
 		$.ajax({        	
 		method:'GET',						
-		url: 'http://www.sigegis.ugb-edu.com/main_controller/getDecoupagePays',
+		url: 'http://www.sigegis.ugb-edu.com/filtres/getDecoupagePays',
 		data:'idPays='+$(this).val(),           					     
 		success: function(data) {
 			create_map(data);											
