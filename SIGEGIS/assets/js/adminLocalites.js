@@ -73,7 +73,7 @@ $(document).ready(function() {
 	else element=$localite;
 	
 	$.ajax({            
-		url: 'http://www.sigegis.ugb-edu.com/filtres/getDecoupages',            			         			   
+		url: base_url+'filtres/getDecoupages',            			         			   
 		dataType: 'json',      
 		success: function(json) {
 			$anneeDecoupage.empty();
@@ -89,11 +89,11 @@ $(document).ready(function() {
 	});
 	
 	$anneeDecoupage.on("change",function(){
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridLocalites?typeLocalite="+$.getUrlVar("typeLocalite")+"&annee="+$(this).val(), editurl:"http://www.sigegis.ugb-edu.com/admin/localiteCRUD?typeLocalite="+$.getUrlVar("typeLocalite")+"&annee="+$anneeDecoupage.val(), page:1}).trigger("reloadGrid");
+		$("#list").setGridParam({url:base_url+"admin/getGridLocalites?typeLocalite="+$.getUrlVar("typeLocalite")+"&annee="+$(this).val(), editurl:base_url+"admin/localiteCRUD?typeLocalite="+$.getUrlVar("typeLocalite")+"&annee="+$anneeDecoupage.val(), page:1}).trigger("reloadGrid");
 	});
 	
 	$("*[id*='button_']").on("click",function(){
-		window.location="http://www.sigegis.ugb-edu.com/admin/editLocalites?typeLocalite="+$(this).attr("id").substring(7)+"&annee="+$anneeDecoupage.val();
+		window.location=base_url+"admin/editLocalites?typeLocalite="+$(this).attr("id").substring(7)+"&annee="+$anneeDecoupage.val();
 	});
 	
 	$(".ui-jqgrid-bdiv").removeAttr("style");

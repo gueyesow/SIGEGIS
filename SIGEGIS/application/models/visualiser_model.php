@@ -180,7 +180,7 @@ class Visualiser_model extends CI_Model{
 			if ($this->isPresidentielle()) $candidat.="<br /><b>$a</b>";
 			$abscisse[]=$candidat;
 			$ordonnee[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}",
-					"url"=>"http://www.sigegis.ugb-edu.com/visualiser/getFichePersonnelleCandidat?id={$resultat->idCandidat}&typeElection={$typeElection}");
+					"url"=>base_url()."visualiser/getFichePersonnelleCandidat?id={$resultat->idCandidat}&typeElection={$typeElection}");
 			}
 	
 			if(!empty($_GET['unite'])){
@@ -342,7 +342,7 @@ class Visualiser_model extends CI_Model{
 		
 		foreach ($resultats as $resultat){
 			$pieData[]=array("name"=>$resultat->nomCandidat,"y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}",
-			"url"=>"http://www.sigegis.ugb-edu.com/visualiser/getFichePersonnelleCandidat?id={$resultat->idCandidat}&typeElection={$typeElection}");
+			"url"=>base_url()."visualiser/getFichePersonnelleCandidat?id={$resultat->idCandidat}&typeElection={$typeElection}");
 		}
 						
 		$rendu=array();

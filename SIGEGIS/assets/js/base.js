@@ -57,6 +57,7 @@ var types_election=["presidentielle","legislative","locale","regionale","municip
 var titres={"presidentielle":"présidentielle","legislative":"législative","municipale":"municipale","regionale":"régionale","rurale":"rurale"};
 var types_affichage=["map","bar","pie","grid"];
 var svg;
+var base_url='http://www.sigegis.ugb-edu.com/';
 var niveau=$.getUrlVar("niveau");
 var type=$.getUrlVar("type");
 var typeElection="presidentielle"; // Attention !!!

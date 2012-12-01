@@ -51,11 +51,11 @@ $("#types_elections input").on("click",function(){
 		
 		//------------------ RELOAD ALL --------------------//
 		
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridParticipation?param="+param+"&typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin/participationCRUD?typeElection="+$("#types_elections input:checked").attr("id"), page:1}).trigger("reloadGrid");
+		$("#list").setGridParam({url:base_url+"admin/getGridParticipation?param="+param+"&typeElection="+$("#types_elections input:checked").attr("id"), editurl:base_url+"admin/participationCRUD?typeElection="+$("#types_elections input:checked").attr("id"), page:1}).trigger("reloadGrid");
 
 		//------------------ 	END   	--------------------//
 		$("#ss_locales :input").on("click",function(){
-			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridParticipation?param="+param+"&typeElection="+$("#ss_locales input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin/participationCRUD?typeElection="+$("#ss_locales input:checked").attr("id"), page:1}).trigger("reloadGrid");
+			$("#list").setGridParam({url:base_url+"admin/getGridParticipation?param="+param+"&typeElection="+$("#ss_locales input:checked").attr("id"), editurl:base_url+"admin/participationCRUD?typeElection="+$("#ss_locales input:checked").attr("id"), page:1}).trigger("reloadGrid");
 		});		
 	});
 
@@ -68,7 +68,7 @@ $centres.on("change",function(){
 	if(type=="presidentielle") param+=","+$tours.val();
 	if(niveau=="dep") param+=','+$departements.val();
 	param+='&typeElection='+type;
-	$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridParticipation?param="+param, editurl:"http://www.sigegis.ugb-edu.com/admin/participationCRUD?typeElection="+$("#types_elections input:checked").attr("id"), page:1}).trigger("reloadGrid");
+	$("#list").setGridParam({url:base_url+"admin/getGridParticipation?param="+param, editurl:base_url+"admin/participationCRUD?typeElection="+$("#types_elections input:checked").attr("id"), page:1}).trigger("reloadGrid");
 	
 	if (type!="presidentielle" && type!="legislative") {
 		$("#locale").click();
@@ -79,13 +79,13 @@ $centres.on("change",function(){
 });
 
 $("*[id*='button_e']").on("click",function(){
-	window.location="http://www.sigegis.ugb-edu.com/admin/editParticipations?type="+$(this).attr("id").substring(8)+"&niveau="+niveau+"&year="+$elections.val();
+	window.location=base_url+"admin/editParticipations?type="+$(this).attr("id").substring(8)+"&niveau="+niveau+"&year="+$elections.val();
 });
 $("*[id*='button_centre']").on("click",function(){
-	window.location="http://www.sigegis.ugb-edu.com/admin/editParticipations?type="+type+"&niveau=cen&year="+$elections.val();
+	window.location=base_url+"admin/editParticipations?type="+type+"&niveau=cen&year="+$elections.val();
 });
 $("*[id*='button_departement']").on("click",function(){
-	window.location="http://www.sigegis.ugb-edu.com/admin/editParticipations?type="+type+"&niveau=dep&year="+$elections.val();
+	window.location=base_url+"admin/editParticipations?type="+type+"&niveau=dep&year="+$elections.val();
 });
 	$(".ui-jqgrid-bdiv").removeAttr("style");
 

@@ -4,7 +4,6 @@
  */
 
 $(document).ready(function() {
-	
 	// Mise en forme - Activation des Options
 	
 	$("#line").attr("disabled","disabled");
@@ -14,7 +13,7 @@ $(document).ready(function() {
 	function showPopUp(json){
 		objet = jQuery.parseJSON(json);            						
 		output="<div id='popup'>";
-		output+="<img src='http://www.sigegis.ugb-edu.com/assets/images/candidats/c_"+objet.idPhoto+".jpg' style='float:left;margin:10px;' alt='Photo' />";
+		output+="<img src='"+base_url+"assets/images/candidats/c_"+objet.idPhoto+".jpg' style='float:left;margin:10px;' alt='Photo' />";
 		output+="<b>Prénom: </b>"+objet.prenom+"<br />";
 		output+="<b>Nom: </b>"+objet.nom+"<br />";
 		output+="<b>Date de naissance: </b>"+objet.dateNaissance+"<br />";
@@ -43,6 +42,9 @@ $(document).ready(function() {
 		$("#fenetre *").css(cssObj);
 
 		$(".ui-widget-content").css("background","#fcfcfc");
+		
+		$('.ui-button').css('background',"#db7f30");
+		$('.ui-button-text').css({'color':'#ffffff','font-weight':'bold'});
 	    return false;	
 	}
 	
@@ -59,23 +61,24 @@ $(document).ready(function() {
 		 default:break;
 		}
 		
-		$urlGrid="http://www.sigegis.ugb-edu.com/visualiser/getGrid?niveau="+niveau+"&param="+param+"&typeElection="+type;
+		$urlGrid=base_url+"visualiser/getGrid?niveau="+niveau+"&param="+param+"&typeElection="+type;
 		
 		$paramCharts='param='+param+'&typeElection='+type;
 		if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
 		
 		$("#list").setGridParam({url:$urlGrid,page:1}).trigger("reloadGrid");
-		
+		chart1.showLoading('<div style="margin:auto;margin-top:150px;">En cours de chargement...<br/><img src="../../assets/images/ajax-loader.gif" width="128px" /></div>');
 		$.ajax({        							
-			url: 'http://www.sigegis.ugb-edu.com/visualiser/getBar',    
+			url: base_url+'visualiser/getBar',    
 			data:$paramCharts,        					     
 			success: function(json) {		
 				refreshBarChart(json);																						
 			}    
 		});
 		
+		chart2.showLoading('<div style="margin:auto;margin-top:150px;">En cours de chargement...<br/><img src="../../assets/images/ajax-loader.gif" width="128px" /></div>');
 		$.ajax({        							
-			url: 'http://www.sigegis.ugb-edu.com/visualiser/getPie',    
+			url: base_url+'visualiser/getPie',    
 			data:$paramCharts,    					     
 			success: function(json) {
 				refreshPieChart(json);
@@ -111,6 +114,7 @@ $(document).ready(function() {
 		if ( chart1.series.length > 0 ) {chart1.series[0].setData(series.data,true);} 
 		else	
 			chart1.addSeries(series);
+		chart1.hideLoading();
 	}
 	
 	// Charge les données dans le pie chart
@@ -131,7 +135,8 @@ $(document).ready(function() {
 			for(i=0;i<series.length;i++)
 				chart2.addSeries(series[i+1],false);
 		}	
-		chart2.redraw();															
+		chart2.redraw();	
+		chart2.hideLoading();
 	}
 	
 	// Création de l'objet chart1
@@ -165,7 +170,7 @@ $(document).ready(function() {
 			}
 		},
 		exporting: {
-			url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+			url:base_url+'/assets/js/highcharts/exporting-server/index.php'
 		},
 		legend: {
 			enabled:false
@@ -202,8 +207,9 @@ $(document).ready(function() {
             }
 		},
 		credits: {
-			enabled: false
-		},
+	            text: 'SIGeGIS.COM',
+	            href: 'http://www.sigegis2.ugb-edu.com'
+	    },
 		series: []
 	});
 	
@@ -256,10 +262,11 @@ $(document).ready(function() {
         }	
 		},
 		exporting: {
-			url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+			url:base_url+'assets/js/highcharts/exporting-server/index.php'
 		},
 		credits: {
-			enabled: false
+            text: 'SIGeGIS.COM',
+            href: 'http://www.sigegis2.ugb-edu.com'
 		},
 		series: [{
 			type: 'pie',
@@ -271,13 +278,10 @@ $(document).ready(function() {
 
 if(! $.getUrlVar("type"))	
 {
-	$("#left-sidebar input, #left-sidebar button, #zone_des_filtres select").attr("disabled","disabled");
-	$("#chartdiv1").hide();
-	
-	$("#menu ul li:lt(7):not(:first)").remove();
+	$("#bloc_horizontal_filtres *,#export *").attr("disabled","disabled");
+	$("#bloc_horizontal_filtres,#chartdiv1").hide();
 }
-else {$("#help").remove(); $("#chartdiv1").show();$("#menu ul li:gt(6)").remove();}
-
+else {$("#help").remove();$("#bloc_horizontal_filtres,#chartdiv1").show();}
 	
 if($.getUrlVar("map")=="no") {$("#gbox_list").hide();} else {$("#gbox_list").show();}
 if($.getUrlVar("bar")=="no") {$("#chartdiv1").hide();$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")=="yes") {$("#chartdiv1").show();$("#bar").attr("checked","checked");}
@@ -310,13 +314,13 @@ $("#types_affichage input").on("change",function()
 	}
 
 	if ($(this).attr("id")=="map")
-		window.location="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+$.getUrlVar("type")+mode;
+		window.location=base_url+"visualiser/getMap?type="+$.getUrlVar("type")+mode;
 	else
-	window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+$.getUrlVar("type")+mode;
+	window.location=base_url+"visualiser/resultats?type="+$.getUrlVar("type")+mode;
 	
 	$("#ss_locales :input").on("click",function(){
-		if (mode) window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+this+mode;
-		else window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+this;
+		if (mode) window.location=base_url+"visualiser/resultats?type="+this+mode;
+		else window.location=base_url+"visualiser/resultats?type="+this;
 	});
 });
 
@@ -354,13 +358,13 @@ $("#types_elections input").on( "change",function() {
 			if(niveau) mode+="&niveau="+niveau;
 			
 			if(  this !="regionale" && this!="municipale" && this!="rurale" ) {
-				if (mode) window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+this+mode;
-				else window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+this;				
+				if (mode) window.location=base_url+"visualiser/resultats?type="+this+mode;
+				else window.location=base_url+"visualiser/resultats?type="+this;				
 			}
 			
 			$("#ss_locales :input").on("click",function(){
-				if (mode) window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+$(this).attr("id")+mode;
-				else window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+$(this).attr("id");
+				if (mode) window.location=base_url+"visualiser/resultats?type="+$(this).attr("id")+mode;
+				else window.location=base_url+"visualiser/resultats?type="+$(this).attr("id");
 			});
 		}
 	});
@@ -373,37 +377,16 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 
 	}
 	else
-	if (niveau=="dep")
-	{
-		$("#filtrecollectivites").remove();
-		$("#filtrecentres").remove();
-	}
-	else
-	if (niveau=="reg")
-	{
-		$("#filtredepartements").remove();
-		$("#filtrecollectivites").remove();
-		$("#filtrecentres").remove();
-	}
-	else
-	if (niveau=="pays")
-	{
-		$("#filtreregions").remove();
-		$("#filtredepartements").remove();
-		$("#filtrecollectivites").remove();
-		$("#filtrecentres").remove();
-	}
-	else
-	{
-		$("#filtrepays").remove();$("#filtreregions").remove();	$("#filtredepartements").remove();	$("#filtrecollectivites").remove();	$("#filtrecentres").remove();
-	}
-	
+	if (niveau=="dep"){$("#filtrecollectivites").remove();$("#filtrecentres").remove();}
+	else if (niveau=="reg"){$("#filtredepartements").remove();$("#filtrecollectivites").remove();$("#filtrecentres").remove();}
+	else if (niveau=="pays"){$("#filtreregions").remove();$("#filtredepartements").remove();$("#filtrecollectivites").remove();	$("#filtrecentres").remove();}
+	else{$("#filtrepays").remove();$("#filtreregions").remove();$("#filtredepartements").remove();$("#filtrecollectivites").remove();$("#filtrecentres").remove();}	
 
 	param=$sources.val()+","+$elections.val();
 	
 	if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
 	
-	$url='http://www.sigegis.ugb-edu.com/visualiser/getGrid?niveau='+niveau+'&param='+param+'&typeElection='+$.getUrlVar("type");
+	$url=base_url+'visualiser/getGrid?niveau='+niveau+'&param='+param+'&typeElection='+$.getUrlVar("type");
 	
 	if ( $.getUrlVar("type") && $("#grid")[0].checked ) 
 	$("#list").jqGrid({		
@@ -457,9 +440,9 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		$('#csv').on("click",function(){
 			if (niveau) paramNiveau="&niveau="+niveau;else paramNiveau="";
 			if( $("#grid")[0].checked )
-			window.location="http://www.sigegis.ugb-edu.com/visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord="+$("#list").jqGrid('getGridParam','sortorder')+paramNiveau;
+			window.location=base_url+"visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord="+$("#list").jqGrid('getGridParam','sortorder')+paramNiveau;
 			else
-				window.location="http://www.sigegis.ugb-edu.com/visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord=desc"+paramNiveau;
+				window.location=base_url+"visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord=desc"+paramNiveau;
 		});
 		
 		/**
@@ -531,16 +514,8 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 			}
 			else return;
 		});
-		
-		$('#visualiser').click(function() {
-			window.location="http://www.sigegis.ugb-edu.com/visualiser/resultats?type=presidentielle&niveau=globaux";
-		});
-		
-		$('#analyser').click(function() {
-			window.location="http://www.sigegis.ugb-edu.com/analyser";			
-		});
 				
-		  $('#fenetre').dialog({
+		$('#fenetre').dialog({
 		    autoOpen: false,
 		    bgiframe: true,
 		    resizable: true,
@@ -549,9 +524,10 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		    height: 500,
 		    show: 'fade',
 		    title: 'Présentation du candidat', buttons: { Fermer: function() { $( this ).dialog( "close" ); } }
-		  });		  
-		  $('#menu li a:not(#menu_front a,#menu_exemples a,#menu_apropos a)').each(function(){
+		});
+		
+		$('#menu li a:not(#menu_front a,#menu_apropos a,#menu_analyse a,#menu_resultats a:first)').each(function(){
 				if($(this).text()!=$('#menu a:first').text() && $.getUrlVar("bar"))
 					$(this).attr("href",$(this).attr("href")+"&map="+$.getUrlVar("map")+"&bar="+$.getUrlVar("bar")+"&pie="+$.getUrlVar("pie")+"&grid="+$.getUrlVar("grid"));
-			});
+		});
 });

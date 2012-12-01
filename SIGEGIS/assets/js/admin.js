@@ -51,7 +51,7 @@ $(document).ready(function() {
 				$("#ss_locales :checked").removeAttr("checked");
 			} 
 						
-			$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridResultats?param="+param+"&typeElection="+$("#types_elections input:checked").attr("id"), editurl:"http://www.sigegis.ugb-edu.com/admin/resultatCRUD?typeElection="+type, page:1}).trigger("reloadGrid");
+			$("#list").setGridParam({url:base_url+"admin/getGridResultats?param="+param+"&typeElection="+$("#types_elections input:checked").attr("id"), editurl:base_url+"admin/resultatCRUD?typeElection="+type, page:1}).trigger("reloadGrid");
 
 		});
 	
@@ -68,7 +68,7 @@ $(document).ready(function() {
 		param+='&typeElection='+type;
 		param+="&niveau="+niveau;
 
-		$("#list").setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridResultats?param="+param, editurl:"http://www.sigegis.ugb-edu.com/admin/resultatCRUD?typeElection="+type, page:1}).trigger("reloadGrid");
+		$("#list").setGridParam({url:base_url+"admin/getGridResultats?param="+param, editurl:base_url+"admin/resultatCRUD?typeElection="+type, page:1}).trigger("reloadGrid");
 		
 		if (type!="presidentielle" && type!="legislative") {
 			$("#locale").click();
@@ -77,19 +77,17 @@ $(document).ready(function() {
 		if(type!="presidentielle") $("#filtretours").remove();
 		$("#types_elections input:not('#"+type+"')").attr("disabled","disabled");
 	});
-	
-	$elections.on("change",function(){
-		$centres.change();
-	});
 
 	$("*[id*='button_e']").on("click",function(){
-		window.location="http://www.sigegis.ugb-edu.com/admin/editResultats?type="+$(this).attr("id").substring(8)+"&niveau="+niveau;
+		window.location=base_url+"admin/editResultats?type="+$(this).attr("id").substring(8)+"&niveau="+niveau;
 	});
+	
 	$("*[id*='button_centre']").on("click",function(){
-		window.location="http://www.sigegis.ugb-edu.com/admin/editResultats?type="+type+"&niveau=cen";
+		window.location=base_url+"admin/editResultats?type="+type+"&niveau=cen";
 	});
+	
 	$("*[id*='button_departement']").on("click",function(){
-		window.location="http://www.sigegis.ugb-edu.com/admin/editResultats?type="+type+"&niveau=dep";
+		window.location=base_url+"admin/editResultats?type="+type+"&niveau=dep";
 	});
 	
 	$(".ui-jqgrid-bdiv").removeAttr("style");

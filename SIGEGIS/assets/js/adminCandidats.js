@@ -26,7 +26,7 @@ $(document).ready(function() {
 	    rowNum:20,
 	    rowList:[20,30,50,100,1000],
 	    sortname: 'idCandidat',
-	    editurl:"http://www.sigegis.ugb-edu.com/admin/candidatCRUD",
+	    editurl:base_url+"admin/candidatCRUD",
 	    sortorder: 'asc',	    
 	    viewrecords: true,
 	    gridview: true, 	    
@@ -51,7 +51,7 @@ $(document).ready(function() {
 					beforeInitData: function () {
 				        var cm = grid.jqGrid('getColProp', 'photo');
 				        selRowId = grid.jqGrid('getGridParam', 'selrow');
-				        cm.editoptions.src = 'http://www.sigegis.ugb-edu.com/assets/images/candidats/c_' + selRowId + '.jpg';
+				        cm.editoptions.src = base_url+'assets/images/candidats/c_' + selRowId + '.jpg';
 					}
 		        });
 		}
@@ -76,15 +76,15 @@ $(document).ready(function() {
 			},{closeAfterAdd:true, width:700,onClose: function() {$('#commentaires').ckeditorGet().destroy();}});
 
 	$centres.on("change",function(){
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCandidats?typeElection=presidentielle&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:base_url+"admin/getGridCandidats?typeElection=presidentielle&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 	});
 	
 	$("#allCandidats").on("click",function(){
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCandidats?annee=all",page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:base_url+"admin/getGridCandidats?annee=all",page:1}).trigger("reloadGrid");
 	});
 	
 	$("#notAllCandidats").on("click",function(){
-		grid.setGridParam({url:"http://www.sigegis.ugb-edu.com/admin/getGridCandidats?typeElection=presidentielle&annee="+$elections.val(),page:1}).trigger("reloadGrid");
+		grid.setGridParam({url:base_url+"admin/getGridCandidats?typeElection=presidentielle&annee="+$elections.val(),page:1}).trigger("reloadGrid");
 	});
 	
 

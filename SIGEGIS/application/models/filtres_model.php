@@ -455,7 +455,7 @@ class Filtres_model extends CI_Model{
 		}
 	}
 	
-	function getDecoupagePays(){ // idElection => Tour
+	function getDecoupagePays(){ 
 		$id=$_GET["idPays"];
 		$requete="SELECT anneeDecoupage FROM pays WHERE idPays=$id";
 		$query=$this->db->query($requete);

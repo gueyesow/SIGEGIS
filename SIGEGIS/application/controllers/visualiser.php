@@ -1,16 +1,19 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Contrôleur du module visualiser des résultats 
+ * @author Amadou SOW & Abdou Khadre GUEYE
+ *
+ */
 class Visualiser extends CI_Controller {		
 	private $typeElection;
 	private $niveau;	
 	private $params;
 	
-	private $tableCandidat;
-	
 	public function __construct(){
 		// database et assets_helper sont chargés automatiquement
 		parent::__construct();
-		$this->load->model("visualiser_model","basicModel");
+		$this->load->model("visualiser_model","visualizeModel");
 		$this->load->helper('form');
 		
 		if(!empty($_GET["typeElection"]))	$this->typeElection=$_GET["typeElection"];	else $this->typeElection=null;
@@ -24,7 +27,7 @@ class Visualiser extends CI_Controller {
 
 	public function index()
 	{	
-		$js_scripts["scripts_array"]=array("base","init_filtres","visualiser","tooltips","style");
+		$js_scripts["scripts_array"]=array("base.js","init_filtres.js","visualiser.js","style.js");
 		$top['title'] = 'SIGeGIS';
 		$top['styles'][] = 'theme';
 		$data['head'] = $this->load->view('top',$top,true);
@@ -37,7 +40,7 @@ class Visualiser extends CI_Controller {
 	
 	public function getMap()
 	{
-		$js_scripts["scripts_array"]=array("base","init_filtres","maps","jqsvg/jquery.svg.min","tooltips","style");
+		$js_scripts["scripts_array"]=array("base.js","init_filtres.js","maps.js","jqsvg/jquery.svg.min.js","tooltips.js","style.js");
 		$top['title'] = 'SIGeGIS>Cartographie';
 		$top['styles'][] = 'theme';
 		$data['head'] = $this->load->view('top',$top,true);
@@ -52,18 +55,18 @@ class Visualiser extends CI_Controller {
 	{		
 		$this->load->view('a_propos');
 	}
-	
-	public function exemples()
+		
+	public function credits()
 	{
-		$js_scripts["scripts_array"]=array("base","init_filtres","exemples","tooltips","style");
-		$top['title'] = 'SIGeGIS&gt;Exemples';
+		$js_scripts["scripts_array"]=array("base.js","credits.js","style.js");
+		$top['title'] = 'SIGeGIS';
 		$top['styles'][] = 'theme';
 		$data['head'] = $this->load->view('top',$top,true);
 		$data['menu'] = $this->load->view('menu',$top,true);
 		$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
 		$data['footer'] = $this->load->view('footer',null,true);
 		$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
-		$this->load->view('exemples',$data);
+		$this->load->view('credits',$data);
 	}
 	
 	public function resultats(){
@@ -71,29 +74,30 @@ class Visualiser extends CI_Controller {
 	}
 
 	public function getWinnersLocalites(){
-		$this->basicModel->getWinnersLocalites($this->typeElection,$this->niveau,$this->params);
+		$this->visualizeModel->getWinnersLocalites($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function getBar(){	
-		echo $this->basicModel->getBar($this->typeElection,$this->niveau,$this->params);
+		echo $this->visualizeModel->getBar($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function getPie(){				
-		echo $this->basicModel->getPie($this->typeElection,$this->niveau,$this->params);
+		echo $this->visualizeModel->getPie($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function getGrid(){
-		$this->basicModel->getGrid($this->typeElection,$this->niveau,$this->params);
+		$this->visualizeModel->getGrid($this->typeElection,$this->niveau,$this->params);
 	}
 	
 	public function exportResultatsToCSV(){
-		$this->basicModel->exportResultatsToCSV($this->typeElection,$this->niveau,$this->params);
+		$this->visualizeModel->exportResultatsToCSV($this->typeElection,$this->niveau,$this->params);
 	}
 
 	public function getFichePersonnelleCandidat(){
-		$this->basicModel->getFichePersonnelleCandidat();
+		$this->visualizeModel->getFichePersonnelleCandidat();
 	}
+	
 }
 
-/* End of file main_controller.php */
-/* Location: ./application/controllers/main_controller.php */
+/* End of file visualiser.php */
+/* Location: ./application/controllers/visualiser.php */

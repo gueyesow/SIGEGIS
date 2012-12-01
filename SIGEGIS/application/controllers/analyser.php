@@ -5,8 +5,6 @@ class Analyser extends CI_Controller {
 	private $niveau;	
 	private $params;
 	
-	private $tableCandidat;
-	
 	public function __construct(){
 		// database et assets_helper sont chargés automatiquement
 		parent::__construct();
@@ -23,7 +21,7 @@ class Analyser extends CI_Controller {
 	}
 		
 	public function index(){
-		$js_scripts["scripts_array"]=array("base","init_filtres","analyses","dragAndDrop","updateFilters","tooltips","style");
+		$js_scripts["scripts_array"]=array("base.js","init_filtres.js","analyses.js","dragAndDrop.js","updateFilters.js","style.js");
 		$top['title'] = 'SIGeGIS&gt;Analyses';
 		$top['styles'] = array('theme','analyses');
 		$data['head'] = $this->load->view('top',$top,true);
@@ -39,7 +37,7 @@ class Analyser extends CI_Controller {
 	}
 	
 	public function participation(){	
-		$js_scripts["scripts_array"]=array("base","init_filtres","participation","tooltips","style");
+		$js_scripts["scripts_array"]=array("base.js","init_filtres.js","participation.js","style.js");
 		$top['title'] = 'SIGeGIS&gt;Taux de participation';
 		$top['styles'][] = 'theme';
 		$data['head'] = $this->load->view('top',$top,true);
@@ -90,5 +88,5 @@ class Analyser extends CI_Controller {
 	}
 }
 
-/* End of file main_controller.php */
-/* Location: ./application/controllers/main_controller.php */
+/* End of file analyser.php */
+/* Location: ./application/controllers/analyser.php */

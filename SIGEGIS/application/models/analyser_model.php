@@ -94,9 +94,10 @@ class Analyser_model extends CI_Model{
 	 */
 	public function getBarAnalyserSuivantAnnee($typeElection,$niveau,$params){
 			
-		$barSeries=array();
+		$barSeries=array();$listeAnnees=array();$nomLieu="";
 		
-		if(!empty($params) AND !empty($_GET['listeAnnees']) AND !empty($_GET['listeCandidats'])){
+		if(!empty($params) AND !empty($_GET['listeAnnees']) AND !empty($_GET['listeCandidats']))
+		{
 			
 			$listeAnnees=explode(",",$_GET['listeAnnees']);
 			$listeCandidats=explode(",",$_GET['listeCandidats']);
@@ -150,6 +151,7 @@ class Analyser_model extends CI_Model{
 				$resultats=$this->db->query($requete)->result();									
 					
 				$data=array();
+				$nomLieu=$resultats[0]->nomLieu;
 				
 				foreach ($resultats as $resultat){
 					$data[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$couleur]}");					
@@ -187,15 +189,7 @@ class Analyser_model extends CI_Model{
 		}
 		else  $titre_niveau.="globaux ";
 
-		if ($niveau) $this->sous_titre.=  $resultats[0]->nomLieu;
-
-		/* ------------------------------------	*/
-		/*		    COLLECTE DES DONNEES		*/
-		/* ------------------------------------	*/
-		
-		if(!empty($_GET['unite'])){
-			if ($_GET['unite']=="va") $unite="En valeurs absolues"; else $unite="En valeurs relatives";
-		} else  $unite="En valeurs absolues";
+		if ($niveau) $this->sous_titre.=  $nomLieu;
 
 		/* ------------------------------------	*/
 		/*				   RENDU				*/

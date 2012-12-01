@@ -3,28 +3,10 @@ $("input[id*='valider'],input[id*='validerLocalite'], #connection_form :submit, 
 
 $("#radio,#radio2").buttonset();
 
-$("#ouvrir, #comparer,#reset,.boutonAdmin").css("width","200px");
-$(".boutonAdmin").css("width","80%");
-
-$('#menu li a').hover(
-function() {     
-$(this).animate({'backgroundColor':'rgba(0,0,0,0.5)'},'fast');               
-},   
-function() {   
-	$(this).animate({'backgroundColor' :'rgba(0,0,0,0.2)'},'fast');
-}
-)
-.mousedown(function() {   
-	$(this).stop().animate({'backgroundColor': 'rgba(0,0,0,0.1)'}, 'fast');   
-})
-.mouseup(function() {     
-    $(this).stop().animate({'backgroundColor': 'rgba(0,0,0,0.5)'}, 'fast');   
-    });   
-  
-	$("#zone_des_filtres").addClass("ui-state-default ui-corner-all");
-$(".zone_des_options").addClass("ui-state-default ui-corner-all");
+$(".boutonAdmin").css({"width":"80%","margin":"5px"});
 
 $("#accordion").accordion({ header: "h3" });
+
 $("#accordion2").accordion({ header: "h3" });
 
 //Boutons accueil

@@ -1,9 +1,9 @@
 $(document).ready(function() {
 	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
-	$("#left-sidebar input, #left-sidebar button, #zone_des_filtres select").attr("disabled","disabled");
+	$(":input").attr("disabled","disabled");
 	$("#list").jqGrid({
 		autowidth:true,
-		url:"http://www.sigegis.ugb-edu.com/admin/getGridSources",
+		url:base_url+"admin/getGridSources",
 	    datatype: 'xml',
 	    mtype: 'POST',
 	    colNames:['ID source','Nom de la source'],
@@ -20,7 +20,7 @@ $(document).ready(function() {
 	    	$("#list").editGridRow(id,{closeAfterEdit:true});
 		},
 	    viewrecords: true,
-	    editurl:"http://www.sigegis.ugb-edu.com/admin/sourceCRUD",
+	    editurl:base_url+"admin/sourceCRUD",
 	    gridview: true
 	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true},{closeAfterAdd:true});
 

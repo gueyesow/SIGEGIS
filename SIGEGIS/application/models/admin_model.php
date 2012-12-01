@@ -9,29 +9,20 @@ class Admin_model extends CI_Model{
 private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
 private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
 private	$colors=array("#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300");
-private $typeElection=null;
 private $titreElection="";
 private $typeLocalite="";
-private $la_session;
-private $niveau=null;
 private $candidatOrListe=array("candidat"=>"idCandidat","listescoalitionspartis"=>"idListe");
 private $tableCandidat;
 
 public function __construct(){
 	if(!empty($_GET["typeElection"])) {
-		$this->typeElection=$_GET["typeElection"];	
-		if ($this->typeElection=="presidentielle") $this->tableCandidat="candidat";else $this->tableCandidat="listescoalitionspartis";
-		if ($this->typeElection=="presidentielle") $this->titreElection="présidentielle";
-		elseif ($this->typeElection=="legislative") $this->titreElection="législative";
-		elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
-		else $this->titreElection=$this->typeElection;		
+		$typeElection=$_GET["typeElection"];	
+		if ($typeElection=="presidentielle") $this->tableCandidat="candidat";else $this->tableCandidat="listescoalitionspartis";
+		if ($typeElection=="presidentielle") $this->titreElection="présidentielle";
+		elseif ($typeElection=="legislative") $this->titreElection="législative";
+		elseif ($typeElection=="regionale") $this->titreElection="régionale";
+		else $this->titreElection=$typeElection;		
 	}
-		
-	if(!empty($_GET['niveau'])) $this->niveau=$_GET['niveau'];
-	
-	if(!empty($_GET["typeLocalite"])) 	$this->typeLocalite=$_GET["typeLocalite"];		
-	
-	$this->la_session=$this->session->userdata('logged_in');
 }
 		
 	/**
@@ -39,19 +30,13 @@ public function __construct(){
 	 * @return string
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getGridResultats(){		
+	public function getGridResultats($typeElection,$niveau,$params){		
 		
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
 		
 		if(!$sidx) $sidx =1;
-		
-		if(!empty($_GET['param']))
-		{
-			$parametres=$_GET['param'];
-			$params=explode(",",$parametres);
-			$v=0;
-		
-			$requete="SELECT * FROM {$this->tables[$this->typeElection]} rp  
+
+			$requete="SELECT * FROM {$this->tables[$typeElection]} rp  
 			LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection";
@@ -59,8 +44,8 @@ public function __construct(){
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
 			$colonnesBDD[]="YEAR(election.dateElection)";
-			if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";			
-			if ($this->niveau=="dep") $colonnesBDD[]="rp.idDepartement";
+			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";			
+			if ($niveau=="dep") $colonnesBDD[]="rp.idDepartement";
 			else $colonnesBDD[]="rp.idCentre";
 			
 			for($i=0;$i<sizeof($params);$i++) {
@@ -68,7 +53,7 @@ public function __construct(){
 				else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
 			}
 			
-			$requeteCount="SELECT COUNT(*) as total FROM {$this->tables[$this->typeElection]} rp  
+			$requeteCount="SELECT COUNT(*) as total FROM {$this->tables[$typeElection]} rp  
 			LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection";
@@ -96,7 +81,7 @@ public function __construct(){
 			$requete.=" ORDER BY $sidx $sord LIMIT $start,$limit";
 		
 			$resultats=$this->db->query($requete)->result();
-		}
+		
 
 	
 	header("Content-type: text/xml;charset=utf-8");
@@ -123,34 +108,30 @@ public function __construct(){
 	echo $s;
 	} 
 	
-	public function getGridParticipation(){
+	public function getGridParticipation($typeElection,$niveau,$params){
 	
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
 	
 		if(!$sidx) $sidx =1;
 	
-		if(!empty($_GET['param']))
-		{
-			$parametres=$_GET['param'];
-			$params=explode(",",$parametres);
 			$v=0;
 	
-			$requete="SELECT * FROM {$this->tablesParticipation[$this->typeElection]} rp
+			$requete="SELECT * FROM {$this->tablesParticipation[$typeElection]} rp
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection";
 	
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
 			$colonnesBDD[]="YEAR(election.dateElection)";
-			if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
-			if ($this->niveau=="dep") $colonnesBDD[]="rp.idDepartement";
+			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			if ($niveau=="dep") $colonnesBDD[]="rp.idDepartement";
 	
 			for($i=0;$i<sizeof($params);$i++) {
 			if ($i) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
 			else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
 		}
 	
-		$requeteCount="SELECT COUNT(*) as total FROM {$this->tablesParticipation[$this->typeElection]} rp
+		$requeteCount="SELECT COUNT(*) as total FROM {$this->tablesParticipation[$typeElection]} rp
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN election ON rp.idElection = election.idElection";
 	
@@ -177,8 +158,6 @@ public function __construct(){
 			$requete.=" ORDER BY $sidx $sord LIMIT $start,$limit";
 	
 			$resultats=$this->db->query($requete)->result();
-	}
-	
 	
 	header("Content-type: text/xml;charset=utf-8");
 	
@@ -207,14 +186,14 @@ public function __construct(){
 	} 
 	
 
-	public function getGridElections(){
+	public function getGridElections($typeElection,$niveau,$params){
 	
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
 	
 		if(!$sidx) $sidx =1;
 					
 		$requete="SELECT * FROM election";
-		if ($this->typeElection!="all") $requete.= " WHERE typeElection='$this->typeElection'";		
+		if ($typeElection!="all") $requete.= " WHERE typeElection='$typeElection'";		
 		
 		$totalRows=$this->db->query($requete)->num_rows();
 		
@@ -253,7 +232,7 @@ public function __construct(){
 	echo $s;
 	}
 	
-	public function getGridSources(){
+	public function getGridSources($typeElection,$niveau,$params){
 	
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
 	
@@ -295,7 +274,7 @@ public function __construct(){
 		echo $s;
 	} 
 	
-	public function getGridUsers(){
+	public function getGridUsers($typeElection,$niveau,$params){
 	
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
 	
@@ -340,11 +319,10 @@ public function __construct(){
 		echo $s;
 	}
 	
-	public function getGridCandidats(){
+	public function getGridCandidats($typeElection,$niveau,$params,$annee){
 	
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
-		$annee= $_GET['annee'];
-	
+			
 		if(!$sidx) $sidx =1;
 	
 		if (!empty($annee)){
@@ -353,7 +331,7 @@ public function __construct(){
 			else		
 				$requete="SELECT idCandidat,prenom,nom,dateNaissance,lieuNaissance,partis,commentaires 
 				FROM candidat WHERE idCandidat in (
-				SELECT DISTINCT rp.idCandidat FROM {$this->tables[$this->typeElection]} rp 
+				SELECT DISTINCT rp.idCandidat FROM {$this->tables[$typeElection]} rp 
 				LEFT JOIN candidat ON rp.idCandidat = candidat.idCandidat
 				LEFT JOIN election ON rp.idElection = election.idElection 
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre 
@@ -405,10 +383,9 @@ public function __construct(){
 	/**
 	 * Fournit toutes les listes de partis et de coalitions 
 	 */
-	public function getGridCoalitionsPartis(){
+	public function getGridCoalitionsPartis($typeElection,$niveau,$params,$annee){
 	
-		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
-		$annee= mysql_real_escape_string($_GET['annee']);
+		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];		
 		
 		if(!$sidx) $sidx =1;
 		
@@ -419,7 +396,7 @@ public function __construct(){
 				$requete="SELECT idListe,nomListe,typeListe,partis,commentaires
 				FROM listesCoalitionsPartis WHERE idListe in (
 				SELECT DISTINCT rp.idListe 
-				FROM {$this->tables[$this->typeElection]} rp
+				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN listesCoalitionsPartis ON rp.idCandidat = listesCoalitionsPartis.idListe
 				LEFT JOIN election ON rp.idElection = election.idElection
 				LEFT JOIN centre ON rp.idCentre = centre.idCentre
@@ -465,24 +442,23 @@ public function __construct(){
 		echo $s;
 	} 
 	
-	public function getGridLocalites(){
+	public function getGridLocalites($typeElection,$niveau,$params,$typeLocalite,$annee){
 	
 		$page = $_POST['page'];	$limit = $_POST['rows']; $sidx = $_POST['sidx']; $sord = $_POST['sord'];
-		$annee = $_GET['annee'];
 		
 		if(empty($annee)) return ;
 	
 		if(!$sidx) $sidx =1;
 		
-		$requete="SELECT * FROM $this->typeLocalite";
+		$requete="SELECT * FROM $typeLocalite";
 						
-		if ($this->typeLocalite=="centre")
+		if ($typeLocalite=="centre")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite";
-		if ($this->typeLocalite=="collectivite" OR $this->typeLocalite=="centre")
+		if ($typeLocalite=="collectivite" OR $typeLocalite=="centre")
 			$requete.=" LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($this->typeLocalite=="departement" OR $this->typeLocalite=="collectivite" OR $this->typeLocalite=="centre")
+		if ($typeLocalite=="departement" OR $typeLocalite=="collectivite" OR $typeLocalite=="centre")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($this->typeLocalite=="region" OR $this->typeLocalite=="departement" OR $this->typeLocalite=="collectivite" OR $this->typeLocalite=="centre")
+		if ($typeLocalite=="region" OR $typeLocalite=="departement" OR $typeLocalite=="collectivite" OR $typeLocalite=="centre")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 		
 		$requete.= " WHERE pays.anneeDecoupage=$annee"; 
@@ -512,7 +488,7 @@ public function __construct(){
 
 		foreach ($resultats as $row) {
 			
-			if ($this->typeLocalite=="centre"){
+			if ($typeLocalite=="centre"){
 				$s .= "<row id='".$row->idCentre."'>";
 				$s .= "<cell>". $row->idCentre ."</cell>";
 				$s .= "<cell>". $row->nomCentre ."</cell>";
@@ -520,7 +496,7 @@ public function __construct(){
 				$s .= "</row>";
 			}
 			
-			if ($this->typeLocalite=="collectivite"){
+			if ($typeLocalite=="collectivite"){
 				$s .= "<row id='".$row->idCollectivite."'>";
 				$s .= "<cell>". $row->idCollectivite ."</cell>";
 				$s .= "<cell>". $row->nomCollectivite ."</cell>";
@@ -528,7 +504,7 @@ public function __construct(){
 				$s .= "</row>";
 			}
 			
-			if ($this->typeLocalite=="departement"){
+			if ($typeLocalite=="departement"){
 				$s .= "<row id='".$row->idDepartement."'>";
 				$s .= "<cell>". $row->idDepartement ."</cell>";
 				$s .= "<cell>". $row->nomDepartement ."</cell>";
@@ -536,7 +512,7 @@ public function __construct(){
 				$s .= "</row>";
 			}
 			
-			if ($this->typeLocalite=="region"){
+			if ($typeLocalite=="region"){
 				$s .= "<row id='".$row->idRegion."'>";
 				$s .= "<cell>". $row->idRegion ."</cell>";
 				$s .= "<cell>". $row->nomRegion ."</cell>";
@@ -544,7 +520,7 @@ public function __construct(){
 				$s .= "</row>";
 			}
 			
-			if ($this->typeLocalite=="pays"){
+			if ($typeLocalite=="pays"){
 				$s .= "<row id='".$row->idPays."'>";
 				$s .= "<cell>". $row->idPays ."</cell>";
 				$s .= "<cell>". $row->nomPays ."</cell>";
@@ -557,7 +533,7 @@ public function __construct(){
 		echo $s;
 	}
 	
-	public function resultatCRUD(){
+	public function resultatCRUD($session){
 		
 		$idResultat = $this->input->post('idResultat');
 		$nbVoix = $this->input->post('nbVoix');
@@ -578,19 +554,19 @@ public function __construct(){
 		
 		if($_POST['oper']=='add')
 		{			
-			$this->db->insert($this->tables[$this->typeElection], $data);		
+			$this->db->insert($this->tables[$typeElection], $data);		
 		}
 		if($_POST['oper']=='edit')
 		{									
-			$this->db->update($this->tables[$this->typeElection], $data, array('idResultat' => $idResultat));											
+			$this->db->update($this->tables[$typeElection], $data, array('idResultat' => $idResultat));											
 		}
-		if($_POST['oper']=='del' AND $this->la_session['level']==1)
+		if($_POST['oper']=='del' AND $session['level']==1)
 		{
-			$this->db->delete($this->tables[$this->typeElection], array('idResultat' => $_POST['id']));
+			$this->db->delete($this->tables[$typeElection], array('idResultat' => $_POST['id']));
 		}		
 	}
 	
-	public function participationCRUD(){
+	public function participationCRUD($session){
 	
 		$idParticipation = $this->input->post('idParticipation');
 		$nbInscrits = $this->input->post('nbInscrits');
@@ -615,19 +591,19 @@ public function __construct(){
 	
 		if($_POST['oper']=='add')
 		{
-			$this->db->insert($this->tablesParticipation[$this->typeElection], $data);
+			$this->db->insert($this->tablesParticipation[$typeElection], $data);
 		}
 		if($_POST['oper']=='edit')
 		{
-			$this->db->update($this->tablesParticipation[$this->typeElection], $data, array('idParticipation' => $idParticipation));
+			$this->db->update($this->tablesParticipation[$typeElection], $data, array('idParticipation' => $idParticipation));
 		}
-		if($_POST['oper']=='del' AND $this->la_session['level']==1)
+		if($_POST['oper']=='del' AND $session['level']==1)
 		{
-			$this->db->delete($this->tablesParticipation[$this->typeElection], array('idParticipation' => $_POST['id']));
+			$this->db->delete($this->tablesParticipation[$typeElection], array('idParticipation' => $_POST['id']));
 		}
 	}
 	
-	public function electionCRUD(){
+	public function electionCRUD($session){
 	
 		$idElection = $this->input->post('idElection');
 		$dateElection = $this->input->post('dateElection');
@@ -652,13 +628,13 @@ public function __construct(){
 		{			
 			$this->db->update("election", $data, array('idElection' => $idElection));	
 		}
-		if($_POST['oper']=='del' AND $this->la_session['level']==1)
+		if($_POST['oper']=='del' AND $session['level']==1)
 		{
 			$this->db->delete("election", array('idElection' => $_POST['id']));
 		}
 	}
 	
-	public function sourceCRUD(){
+	public function sourceCRUD($session){
 	
 		$idSource = $this->input->post('idSource');
 		$nomSource = $this->input->post('nomSource');		
@@ -675,13 +651,13 @@ public function __construct(){
 		{
 			$this->db->update("source", $data, array('idSource' => $idSource));
 		}
-		if($_POST['oper']=='del' AND $this->la_session['level']==1)
+		if($_POST['oper']=='del' AND $session['level']==1)
 		{
 			$this->db->delete("source", array('idSource' => $_POST['id']));
 		}
 	}
 	
-	public function userCRUD(){
+	public function userCRUD($session){
 	
 		$id = $this->input->post('id');
 		$username = $this->input->post('username');
@@ -705,12 +681,12 @@ public function __construct(){
 			else $data['password']=$oldPassword;
 			$this->db->update("users", $data, array('id' => $id));			
 		}
-		if($_POST['oper']=='del' AND $this->la_session['level']==1)
+		if($_POST['oper']=='del' AND $session['level']==1)
 		{
 			$this->db->delete("users", array('id' => $_POST['id']));
 		}
 	}
-	public function localiteCRUD(){
+	public function localiteCRUD($session){
 		$localite=null;
 		if (!empty($_GET["typeLocalite"])) $localite=$_GET["typeLocalite"];
 	
@@ -738,13 +714,13 @@ public function __construct(){
 		{
 			$this->db->update($localite, $data, array($niveau[$localite][0] => $id));
 		}
-		if($_POST['oper']=='del' AND $this->la_session['level']==1)
+		if($_POST['oper']=='del' AND $session['level']==1)
 		{
 			$this->db->delete($localite, array($niveau[$localite][0] => $_POST['id']));
 		}
 	}
 	
-	public function candidatCRUD(){
+	public function candidatCRUD($session){
 		$idCandidat = $this->input->post('idCandidat');
 		$prenom = $this->input->post('prenom');
 		$nom = $this->input->post('nom');
@@ -773,13 +749,13 @@ public function __construct(){
 		{			
 			$this->db->update("candidat", $data, array('idCandidat' => $idCandidat));
 		}
-		if($_POST['oper']=='del' AND $this->la_session['level']==1)
+		if($_POST['oper']=='del' AND $session['level']==1)
 		{
 			$this->db->delete("candidat", array('idCandidat' => $_POST['id']));
 		}
 	}
 	
-	public function listeCRUD(){
+	public function listeCRUD($session){
 		$idListe = $this->input->post('idListe');
 		$nomListe = $this->input->post('nomListe');
 		$typeListe = $this->input->post('typeListe');
@@ -801,9 +777,16 @@ public function __construct(){
 		{	
 			$this->db->update("listesCoalitionsPartis", $data, array('idListe' => $idListe));	
 		}
-		if($_POST['oper']=='del' AND $this->la_session['level']==1)
+		if($_POST['oper']=='del' AND $session['level']==1)
 		{
 			$this->db->delete("listesCoalitionsPartis", array('idListe' => $_POST['id']));
 		}
+	}
+	
+	public function importCSV($filename,$tablename){
+		
+		$requete="LOAD DATA INFILE '$filename' INTO TABLE $tablename";
+		
+		$this->db->query($requete);
 	}
 }

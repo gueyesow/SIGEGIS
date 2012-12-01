@@ -6,16 +6,18 @@
 // Rappel: chart1 <=> Bar et chart2 <=> Line | "save" à true indique que l'on compare deux élections
 
 // Crée le grid si ce n'est pas déjà fait et y charge des données qui sont reçues à partir du lien "url"
+var balise;
+var baliseLine;
 
 function putGrid(url){	
 		
-	if (request1OrRequest2=="comparer") {balise="#list2";pager="#pager2";$("#theGrid2").show();}
-	else {balise="#list";pager="#pager";$("#theGrid1").show();}
+	if (request1OrRequest2=="comparer") {baliseGrid="#list2";pager="#pager2";$("#theGrid2").show();}
+	else {baliseGrid="#list";pager="#pager";$("#theGrid1").show();}
 	
 		
-	if ($(balise).text()!="") $(balise).setGridParam({url: url,page:1}).trigger("reloadGrid");
+	if ($(baliseGrid).text()!="") $(baliseGrid).setGridParam({url: url,page:1}).trigger("reloadGrid");
 	else{
-		$(balise).jqGrid({		
+		$(baliseGrid).jqGrid({		
 			autowidth:true,
 			url: url,
 		    datatype: 'xml',
@@ -23,9 +25,9 @@ function putGrid(url){
 		    colNames:['Nom du candidat','Lieu de vote','Année','Nombre de voix'],
 		    colModel :[ 
 		      {name:'nomCandidat', index:'nomCandidat'},
-		      {name:'lieuDeVote', index:'lieuDeVote', width:80},
-		      {name:'annee', index:'annee', width:80},
-		      {name:'nbVoix', index:'nbVoix', width:80, formatter:'number', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}}  
+		      {name:'lieuDeVote', index:'lieuDeVote'},
+		      {name:'annee', index:'annee'},
+		      {name:'nbVoix', index:'nbVoix', formatter:'number', formatoptions:{thousandsSeparator: " ", decimalPlaces: 0}}  
 		    ],
 		    pager: pager,
 		    rowNum:20,
@@ -37,6 +39,7 @@ function putGrid(url){
 		if(!$("#grid")[0].checked || $("#grid")[0].disabled) {$("#theGrid1").hide("animated");if(save) $("#theGrid2").hide("animated");} 
 	}	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
+	if (!$("#grid")[0].checked) $("#theGrid1").hide();
 }
 
 /*
@@ -47,24 +50,47 @@ function putGrid(url){
 function refreshChart(theChart,json){
 	
 	var i=0;
+
+	if(json.length)
+	{
+		
+		var series=JSON.parse(json);
+		
+		if(series[1].length)
+		{				
 	
-	var series=JSON.parse(json);			
-	
-	if (save) $("#titleGrid2").text(series[0].titre); else $("#titleGrid1").text(series[0].titre);
-	theChart.setTitle({text: series[0].titre},{text: series[0].sous_titre});
-	theChart.xAxis[0].setCategories(series[0].categories);
-	if ( theChart.series.length > 0 ) {
-		a_supprimer=theChart.series.length;
-		for(i=0;i<a_supprimer;i++) {				
-			theChart.series[0].remove();							
+			if (save) $("#titleGrid2").text(series[0].titre); else $("#titleGrid1").text(series[0].titre);
+			
+			theChart.setTitle({text: series[0].titre},{text: series[0].sous_titre});
+			theChart.xAxis[0].setCategories(series[0].categories);
+			
+			if ( theChart.series.length > 0 ) {
+				a_supprimer=theChart.series.length;
+				for(i=0;i<a_supprimer;i++) {				
+					theChart.series[0].remove();							
+				}		
+			}
+			
+			for(i=0;i<series[1].length;i++){
+				$(".ui-state-error").remove();
+				theChart.addSeries(series[1][i],false);
+			}
+			
+			theChart.redraw();
+			theChart.hideLoading();
+		}
+		else {
+			$(".ui-state-error").remove();
+			$("#"+balise).before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Une erreur s\'est produite durant l\'éxécution de la requête. Veuillez vérifier les paramètres choisis.<br></p></div><br />');
+			return;
 		}
 	}
-					
-	for(i=0;i<series[1].length;i++){				
-		theChart.addSeries(series[1][i],false);
+	else
+	{
+		$(".ui-state-error").remove();
+		$("#"+balise).before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Une erreur s\'est produite durant l\'éxécution de la requête. Veuillez vérifier les paramètres choisis.<br></p></div><br />');
+		return;
 	}
-	
-	theChart.redraw();
 }
 
 
@@ -121,7 +147,6 @@ $(".move").button();
 //-------------------------------------------------//
 $("#valider").on("click",function(event) {
 	lastPressedButton="valider";
-	//if (request1OrRequest2=="comparer") lastPressedButton2=lastPressedButton;	else lastPressedButton1=lastPressedButton;
 	
 	$("#dialog_zone_des_options").dialog('close');
 	
@@ -155,9 +180,11 @@ $("#valider").on("click",function(event) {
 	
 	putBar(balise);
 	putLine(baliseLine);
+	chart1.showLoading('<div style="margin:auto;margin-top:150px;">En cours de chargement...<br/><img src="../../assets/images/ajax-loader.gif" width="128px" /></div>');
+	chart2.showLoading('<div style="margin:auto;margin-top:150px;">En cours de chargement...<br/><img src="../../assets/images/ajax-loader.gif" width="128px" /></div>');
 	
 	$.ajax({        							
-		url: 'http://www.sigegis.ugb-edu.com/analyser/getBarAnalyserSuivantAnnee',    
+		url: base_url+'analyser/getBarAnalyserSuivantAnnee',    
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
 			refreshChart(chart1,json);
@@ -165,7 +192,7 @@ $("#valider").on("click",function(event) {
 		}    
 	});
 	
-	putGrid("http://www.sigegis.ugb-edu.com/analyser/getGridAnalyserSuivantAnnee?niveau=dep&param="+paramBis+"&typeElection="+typeElection);
+	putGrid(base_url+"analyser/getGridAnalyserSuivantAnnee?niveau=dep&param="+paramBis+"&typeElection="+typeElection);
 	
 });
 
@@ -174,8 +201,6 @@ $("#valider").on("click",function(event) {
 //-------------------------------------------------//
 $("#validerLocalite").on("click",function(event) {
 	lastPressedButton="validerLocalite";
-	
-	//if (request1OrRequest2=="comparer") lastPressedButton2=lastPressedButton;	else lastPressedButton1=lastPressedButton;
 	
 	$("#dialog_zone_des_options").dialog('close');
 	
@@ -213,7 +238,7 @@ $("#validerLocalite").on("click",function(event) {
 	putLine(baliseLine);
 	
 	$.ajax({        							
-		url: 'http://www.sigegis.ugb-edu.com/analyser/getBarAnalyserSuivantLocalite',    
+		url: base_url+'analyser/getBarAnalyserSuivantLocalite',    
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
 			refreshChart(chart1,json);	
@@ -221,7 +246,7 @@ $("#validerLocalite").on("click",function(event) {
 		}    
 	});
 	
-	putGrid("http://www.sigegis.ugb-edu.com/analyser/getGridAnalyserSuivantLocalite?param="+paramBis+"&typeElection="+typeElection);
+	putGrid(base_url+"analyser/getGridAnalyserSuivantLocalite?param="+paramBis+"&typeElection="+typeElection);
 });
 
 
@@ -259,6 +284,11 @@ $("#ouvrir").on("click",function(){
 	baliseLine="chartdiv3";
 });
 
+$("#simple").on("click",function(){
+	save=false;
+	$("#theGrid2,#chartdiv2,#chartdiv4,#simple").hide("animated");
+});
+
 $("#reset").on("click",function(){
 	window.location.reload();
 });
@@ -273,5 +303,6 @@ $("#comparer").on("click",function(){
 	$("#dialog_zone_des_options").dialog('open');
 	balise="chartdiv2";
 	baliseLine="chartdiv4";
+	
+	$("#simple").show("animated");
 });
-

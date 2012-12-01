@@ -1,154 +1,218 @@
-
-body {
-	font: 62.5% "Trebuchet MS", sans-serif;
-	margin: 0px;
-	padding: 2px;
-	}
-
-h1	{
-	color: #1c94c4;
-	margin-top: 0;
-	}
-
-label {
-	font-weight: bold;
-	font-size: 12px;
-	}
-	
-#ui-datepicker-div{
-	width: 300px;
-	}
-
-table {
-	
-	border-collapse: collapse;
-	margin: auto;
-	}	
-
-fieldset {
-	margin: 8px 0 8px 0;
-	}
-
-
-/****************************************************************************************************/
-/*										Menus de navigation											*/
-/****************************************************************************************************/
-
-
-#menu ul{
-	margin: 10px 0;padding: 0;
-	}
-
-#menu li {
-	display: inline;
-	list-style: none;
-	margin: 5px;
-	}
-
-#menu li a {
-	font-weight: bold;
-	/* Border Radius */
-	-webkit-border-radius: 15px;
-	-moz-border-radius: 15px;
-	border-radius: 15px;
-	/* Border Shadow */
-	-webkit-box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.6);
-	-moz-box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.6);
-	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.6);
-	color: #ffffff;
-	background: rgba(0, 0, 0, 0.6); //
-	background: rgba(28, 148, 196, 0.9);
-	display: inline-block;
-	padding: 5px 10px;
-	outline: none;
-	text-decoration: none;
-	font-size: 1.2em;
-	}
-
-#menu li a:hover {
-	background: rgba(0, 0, 0, 0.2);
-	}
-
-#menu li a:active {
-	background: rgba(0, 0, 0, 0.1);
-	-webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-	-moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-	}
-
-#menu li .actif { 
-	background: rgba(210, 71, 83, 0.8); 
-	color: white;
-	-webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-	-moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-	}
-
-/****************************************************************************************************/
-/*											Corps de la page											*/
-/****************************************************************************************************/
-
-#wrapper{
-	width: 98%;
-	min-width:1024px;
-	margin: auto;
-	}
-
-#wrapper-table{
-	width: 100%;
-}
-
-#wrapper-table a{
-	margin: 5px;
-}
-
-#wrapper-table #left-sidebar {
-	vertical-align: top;
-	width: 23%;
-	}
-	
-#wrapper-table #left-sidebar button:not(#poidsElectoralRegions){
-	width: 5em;
-	}
-
-#wrapper-table #left-sidebar button img{
-	width:100%
-	}
-
-#wrapper-table #content{
-	vertical-align: top;
-	padding-left: 25px;
-	}
-	
-#wrapper-table #content #theGrid, #wrapper-table #content #theGrid2 {
-	width: 100%;
-	margin-bottom: 30px;
-	}
-	
-#footer {
-	background: lightgray;
-	text-align: center;
-	font-weight: bold;
-	border: 1px solid gray;
-	margin-top: 58px;
-	}
-
-#footer img{	
+fieldset{
 	border: none;
 	}
 	
-.tooltip {
-	display: none;
-	font-size:12px;
-	font-weight:bold;
-	position: absolute;
-	border: 1px solid #d3c4b2;
-	background-color: #f0f0f0;
-	padding: 6px;
-	-webkit-border-radius: 8px;
-	-moz-border-radius: 8px;
+legend{
+	font-weight: bold;
+	color: #ffffff;
+	}
+
+img{
+	border: none;
+	}
+
+.diagrammes {
+	border: 1px solid lightgray;
+	width: auto;
+	margin-bottom: 30px;
+	}
+#pies_participation{
+	width: 100%;
 	}
 	
+#pies_participation td{
+	width: 50%;
+	}
+
+#pies_participation .diagrammes2 {
+ 	border: 1px solid lightgray;
+	}
+
+body{
+	font: 75.5% "Trebuchet MS", sans-serif;
+	margin: 0px;
+}
+
+#container
+{
+	margin: 0 auto;
+	width: 100%;
+	min-width: 900px;
+	min-height: 750px;
+	height: 100%;
+	background: #FFFFFF;
+}
+
+/* entete en haut : contenant logo et menu horizontal */
+#header
+{
+	float: left;
+	width: 100%;
+	/*background: #333;*/
+	background: #483E37;
+    display: inline-block;
+    padding: 0px;
+    padding-top: 20px;
+    padding-bottom: 40px;
+	height: 80px;
+}
+
+#header h1 { margin: 0; }
+
+
+/*  Menu hozirontal premier niveau */
+
+#menu_top {
+	list-style:none;
+	font-weight:bold;
+	/* Clear floats */	
+	float:right;
+	padding: 0px;
+	background:none;
+	margin-right: 2%;
+	text-align: center;
+}
+
+#menu_top li{
+	float:right;
+	margin-left:0px;
+	width: 180px;
+	position:relative;
+
+}
+
+#menu_top ul {
+	background:#fff; 
+	background:none; 
+	list-style:none;
+	position:absolute;
+	/*left:-9999px; */
+	display: none;
+	z-index: 1;
+}
+
+#menu_top a{
+	display:block;
+	padding:5px 10px;
+	color: #C8BEB7; 
+	text-decoration: none;
+	border-right: 1px solid #917C6F; /*#fff;*/
+	font-size: 18px;
+	font-weight: bolder;
+	font-family:'Yanone Kaffeesatz', "Trebuchet MS", sans-serif;
+}
+
+/*  Menu Deuxième niveau : qui apparait au survol de la souris */
+ 
+#menu_top > li:hover > a, #menu_top > li >a.selected{ 
+	/*background: #917C6F; */
+	border-top: 5px solid #917C6F;
+	border-bottom: 1px solid #917C6F;
+	text-decoration:none;
+	color : #FFFFFF;
+}
+
+
+#menu_top li:hover ul a{
+	background: #917C6F;
+	color : #FFFFFF;
+	text-decoration:none;
+}
+#menu_top li:hover ul li a:hover{ 
+	background:#333;
+	text-decoration:none;
+}
+
+#menu_top ul li {
+	padding-top:0px;
+	float:none;
+	margin-left:0px;
+	width: 180px;
+}
+
+#menu_top ul a{
+	white-space:nowrap; 
+}
+
+#menu_top li:hover ul{ 
+	display: block;	
+	left: -41px;
+	float: left;
+	opacity: 0.95;
+}
+
+
+
+
+/* partie centrale de la page */
+
+#content
+{
+	float: left;
+	width: 75%;
+	min-width: 900px;
+	padding: 20px 0;
+	margin: 0 0 0 1%;
+	margin-left : 285px;
+	background: #fff;
+
+	border-left-color: #A7A09C;
+	border-left-style: dashed;
+	border-left-width: 1px;
+	padding-left: 10px;
+}
+
+#content h1,h2 { 
+	margin: 0; 
+	font-family:'Yanone Kaffeesatz', arial, serif;
+	color: #917C6F;
+
+	}
+
+/* bas de page de Copyright */
+#footer
+{
+	clear: both;
+	/*background: #A7A09C;*/
+	background: #C8BEB7;
+	text-align: right;
+	padding: 10px;
+	height: 1%;
+}
+
+
+/* Panneau des filtres à gauche */
+
+#pannelside {
+	 position: fixed;  
+	 top: 200px; 
+	 left: 0px; 
+	 width: 256px; 
+	/* height: 500px; */
+	/* opacity : 0.95;*/
+}
+
+#pannelside h1 {
+	font-family:'Yanone Kaffeesatz', arial, serif;
+	color: #FFFFFF;
+}
+
+#theGrid,#theGrid1,#theGrid2{margin-bottom: 30px;}
+
+#bloc_horizontal_filtres{
+	margin-bottom: 30px;
+	}
+	
+#csv img,#pdf img,#imprimer img{
+	height: 30px;
+}
+
+#admin_menu {
+	text-align: center;
+	}
+	
+#senmaps {margin:auto;height: 450px; width: 560px;}
+
 .tooltip2 {
 	display: none;
 	font-size:12px;
@@ -160,75 +224,6 @@ fieldset {
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	}
-
-#help p, #help ol li {
-	font-size: 1.3em;	
+#content {
+	min-height: 700px;
 	}
-
-.zone_des_options {
-	font-weight: bold;
-	font-size: 12px;
-	color: black;
-	padding: 5px;
-	border: 1px solid gray;	
-	}
-
-.zone_des_options legend {
-	font-weight: bold;
-	}
-
-.zone_des_options label {
-	font-weight: bold;
-	font-size: 12px;
-	color: black;
-	}
-
-#zone_des_filtres {
-	margin: 15px 5px;
-	}
-
-/****************************************************************************************************/
-/*												Graphiques											*/
-/****************************************************************************************************/
-
-#wrapper-table #content .diagrammes {
-	border: 1px solid lightgray;
-	width: 100%;
-	margin-bottom: 30px;
-	}
-
-#wrapper-table #content #pies_participation{
-	width: 100%;
-	}
-	
-#wrapper-table #content #pies_participation td{
-	width: 50%;
-	}
-
-#pies_participation .diagrammes2 {
- 	border: 1px solid lightgray;
-	}
-	
-	
-/****************************************************************************************************/
-/*											Formulaire connexion 									*/
-/****************************************************************************************************/
-#login_errors{
-	font-size: 14px;
-	background: red;
-	}
-	
-#connection_form table{
-	text-align: left;
-	margin-left: 10px;
-	}
-
-/****************************************************************************************************/
-/*													Maps 											*/
-/****************************************************************************************************/
- #senmaps {margin:auto;height: 650px; width: 760px;}
-
-/****************************************************************************************************/
-/*													Grids 											*/
-/****************************************************************************************************/
-#theGrid1,#theGrid2{margin-bottom: 15px;}

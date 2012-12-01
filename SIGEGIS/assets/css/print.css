@@ -1,12 +1,6 @@
 @CHARSET "utf-8";
-
-body{	
-	font-family:arial,Helvetica,sans-serif;
-	font-size:12px;
-	line-height:18px;
-	}
 	
-#left-sidebar,#menu,#footer,#zone_des_filtres,#pager,#exportButton,#printButton,#alerthd,#alertcnt{
+img,#export,#pannelside,#menu,#footer,#bloc_horizontal_filtres,#pager,#exportButton,#printButton,#alerthd,#alertcnt{
 	display: none;
 	}
 

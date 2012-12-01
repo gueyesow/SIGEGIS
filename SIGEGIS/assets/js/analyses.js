@@ -16,7 +16,7 @@ function putBar(elementConteneur){
 	text: 'Données indisponibles'
 	},
 	subtitle: {
-	text: 'Réexécutez la première requête !'
+	text: 'Réexécutez la requête !'
 	},
 	xAxis: {
 	categories: [],
@@ -37,7 +37,7 @@ function putBar(elementConteneur){
 	}
 	},
 	exporting: {
-	url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+	url: base_url+'assets/js/highcharts/exporting-server/index.php'
 	},
 	legend: {
 	layout: 'vertical',
@@ -63,7 +63,8 @@ function putBar(elementConteneur){
 	}
 	},
 	credits: {
-	enabled: false
+        text: 'SIGeGIS.COM',
+        href: 'http://www.sigegis2.ugb-edu.com'
 	},
 	series:[]
 	});		
@@ -82,7 +83,7 @@ function putBar(elementConteneur){
 		text: 'Données indisponibles'
 		},
 		subtitle: {
-		text: 'Réexécutez la seconde requête !'
+		text: 'Réexécutez la requête !'
 		},
 		xAxis: {
 		categories: [],
@@ -103,7 +104,7 @@ function putBar(elementConteneur){
 		}
 		},
 		exporting: {
-		url:'http://www.sigegis.ugb-edu.com/assets/js/highcharts/exporting-server/index.php'
+		url: base_url+'assets/js/highcharts/exporting-server/index.php'
 		},
 		legend: {
 		layout: 'vertical',
@@ -128,7 +129,8 @@ function putBar(elementConteneur){
 		}
 		},
 		credits: {
-			enabled: false
+            text: 'SIGeGIS.COM',
+            href: 'http://www.sigegis2.ugb-edu.com'
 		},
 		series:[]
 		});
@@ -138,8 +140,6 @@ $(document).ready(function() {
 	
 	// Mise en forme - Activation des Options
 	
-	$("#menu ul li:gt(0)").remove();
-	
 	$(".zone_des_options *, #comparer").attr("disabled","disabled");
 	
 	if(!$("#grid")[0].checked || $("#grid")[0].disabled) {$("#theGrid1,#theGrid2").hide("animated");}
@@ -147,6 +147,8 @@ $(document).ready(function() {
 	if(!$("#bar")[0].checked || $("#bar")[0].disabled) {$("#chartdiv1,#chartdiv2").hide("animated");}
 	
 	if(!$("#line")[0].checked || $("#line")[0].disabled) {$("#chartdiv3,#chartdiv4").hide("animated");}
+	
+	if(!save) {$("#simple").hide("animated");}
 	
 	putBar("chartdiv1");
 	putLine("chartdiv3");
@@ -179,7 +181,6 @@ $(document).ready(function() {
 		else {
 			$("#theGrid1").show("animated");
 			if(save) $("#theGrid2").show("animated");
-			//if (numberOfClickForGrid==0) {$("#"+lastPressedButton).click();numberOfClickForGrid++;}
 		}
  	});
 		

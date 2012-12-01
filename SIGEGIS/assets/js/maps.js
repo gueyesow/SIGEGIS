@@ -1,8 +1,8 @@
 $(function () {
 	// Mise en forme - Activation des Options
 	
-	$("#menu li:not(:first,#menu_reg,#menu_dep,#menu_maps)").hide();
-	$("#zone_des_filtres *[id*=filtre]:gt(2)").hide();	
+	$("#menu_globaux,#menu_pays,#menu_cen").remove();
+	$("#bloc_horizontal_filtres *[id*=filtre]:gt(2)").hide();	
 	$("#line,:checkbox:not(#map)").attr("disabled","disabled");
 	$("#map").attr("checked","checked");
 
@@ -18,7 +18,7 @@ $(function () {
 		
 		if(!$.getUrlVar("year")) mode+="&year="+$elections.val();
 		else mode+="&year="+$.getUrlVar("year");
-		window.location.href="http://www.sigegis.ugb-edu.com/visualiser/resultats?type="+$.getUrlVar("type")+mode;
+		window.location.href=base_url+"visualiser/resultats?type="+$.getUrlVar("type")+mode;
 	});
 
 	
@@ -28,7 +28,7 @@ $(function () {
 		if (svg) $('#senmaps').svg('destroy');
 		$('#senmaps').svg();
 		svg = $('#senmaps').svg('get');
-		if (year_decoupage) svg.load('http://www.sigegis.ugb-edu.com/assets/images/snmaps/'+niveau+'_'+year_decoupage+'.svg',{onLoad: loadDone});
+		if (year_decoupage) svg.load(base_url+'assets/images/snmaps/'+niveau+'_'+year_decoupage+'.svg',{onLoad: loadDone});
 		else return false;
 	}
 
@@ -40,7 +40,7 @@ $(function () {
 		$("[id^=D],[id^=R]").hover(function(e){			
 			a=$(this);
 			$.ajax({        							
-				url: 'http://www.sigegis.ugb-edu.com/visualiser/getNomLocalite/'+$(this).attr("id")+'/'+$.getUrlVar('niveau'),           					     
+				url: base_url+'filtres/getNomLocalite/'+$(this).attr("id")+'/'+$.getUrlVar('niveau'),           					     
 				success: function(json) {
 					$('<p class="tooltip2"></p>')
 					.html(json+"<br /><b>Voix :</b>"+$(a).attr("resultat")+"<br /><b>% :</b>"+$(a).attr("pourcentage"))
@@ -70,7 +70,7 @@ $(function () {
 		if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
 
 		$.ajax({        							
-			url: 'http://www.sigegis.ugb-edu.com/filtres/getCandidatsAnnee',    
+			url: base_url+'filtres/getCandidatsAnnee',    
 			data:$paramCharts,        					     
 			success: function(json) {		
 				data=JSON.parse(json);
@@ -90,7 +90,7 @@ $(function () {
 				if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
 
 				$.ajax({        							
-					url: 'http://www.sigegis.ugb-edu.com/visualiser/getWinnersLocalites',    
+					url: base_url+'visualiser/getWinnersLocalites',    
 					data:$paramCharts,        					     
 					success: function(json) {
 						
@@ -145,13 +145,13 @@ $("#types_elections input").on("change",function() {
 			if(niveau) mode+="&niveau="+niveau;
 			
 			if(  this !="regionale" && this!="municipale" && this!="rurale" ) {
-				if (mode) window.location.href="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+this+mode;
-				else window.location.href="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+this;				
+				if (mode) window.location.href=base_url+"visualiser/getMap?type="+this+mode;
+				else window.location.href=base_url+"visualiser/getMap?type="+this;				
 			}
 			
 			$("#ss_locales :input").on("click",function(){
-				if (mode) window.location.href="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+$(this).attr("id")+mode;
-				else window.location.href="http://www.sigegis.ugb-edu.com/visualiser/getMap?type="+$(this).attr("id");
+				if (mode) window.location.href=base_url+"visualiser/getMap?type="+$(this).attr("id")+mode;
+				else window.location.href=base_url+"visualiser/getMap?type="+$(this).attr("id");
 			});
 		}
 	});
@@ -166,7 +166,7 @@ if (type != "presidentielle") $("#filtretours").remove();
 	$pays.on("change",function(){
 		$.ajax({        	
 		method:'GET',						
-		url: 'http://www.sigegis.ugb-edu.com/filtres/getDecoupagePays',
+		url: base_url+'filtres/getDecoupagePays',
 		data:'idPays='+$(this).val(),           					     
 		success: function(data) {
 			create_map(data);											

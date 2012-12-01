@@ -1,18 +1,18 @@
 # Emp�che la visualisation de l'arborescence, n'a rien � voir avec le masquage du � index.php �.
 Options -Indexes
 
-# Active le module de r��criture d'URL.
+# Active le module de réécriture d'URL.
 RewriteEngine on
 
-#Fixe les r�gles de r��criture d'URL. Ici, nous utilisons une liste blanche.
-
-# Toutes les URL qui ne correspondent pas � ces masques sont
-#r��crites.
+#Fixe les règles de réécriture d'URL. Ici, nous utilisons une liste blanche.
+# Toutes les URL qui ne correspondent pas à ces masques sont téécrites
 
 #RewriteCond $1 !^(index\.php|assets/|robots\.txt)
-RewriteCond $1 !^(index\.php|assets/|robots\.txt|css|png|jpg|PNG)
 
-# Toutes les autres URL vont �tre redirig�es vers le fichier index.php.
+RewriteCond $1 !^(index\.php|assets/|robots\.txt|css|png|jpg)
+
+# Toutes les autres URL vont �tre redirigées vers le fichier index.php.
 
 RewriteRule ^(.*)$ index.php/$1 [L]
+
 #RewriteRule ^(.*)$ maintenance.php [L]

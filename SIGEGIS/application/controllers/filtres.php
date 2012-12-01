@@ -1,16 +1,19 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Contrôleur des filtres 
+ * @author Amadou SOW & Abdou Khadre GUEYE 
+ *
+ */
 class Filtres extends CI_Controller {		
 	private $typeElection;
 	private $niveau;	
 	private $params;
 	
-	private $tableCandidat;
-	
 	public function __construct(){
 		// database et assets_helper sont chargés automatiquement
 		parent::__construct();
-		$this->load->model("filtres_model","filteringModel");
+		$this->load->model("filtres_model","filtersModel");
 		
 		if(!empty($_GET["typeElection"]))	$this->typeElection=$_GET["typeElection"];	else $this->typeElection=null;
 		
@@ -22,63 +25,63 @@ class Filtres extends CI_Controller {
 	}
 	
 	public function getNomLocalite($idRegion="",$niveau=""){
-		$this->filteringModel->getNomLocalite($idRegion,$niveau);
+		$this->filtersModel->getNomLocalite($idRegion,$niveau);
 	}
 
 	public function getCandidats(){
-		$this->filteringModel->getCandidats();
+		$this->filtersModel->getCandidats();
 	}
 
 	public function getCandidatsArray(){
-		$this->filteringModel->getCandidatsArray();
+		$this->filtersModel->getCandidatsArray();
 	}
 
 	public function getSources(){
-		$this->filteringModel->getSources();
+		$this->filtersModel->getSources();
 	}
 
 	public function getDatesElections(){
-		$this->filteringModel->getDatesElections();
+		$this->filtersModel->getDatesElections();
 	}
 
 	public function getCentres(){
-		$this->filteringModel->getCentres();
+		$this->filtersModel->getCentres();
 	}
 
 	public function getCollectivites(){
-		$this->filteringModel->getCollectivites();
+		$this->filtersModel->getCollectivites();
 	}
 
 	public function getDepartements(){
-		$this->filteringModel->getDepartements();
+		$this->filtersModel->getDepartements();
 	}
 
 	public function getRegions(){
-		$this->filteringModel->getRegions();
+		$this->filtersModel->getRegions();
 	}
 
 	public function getPays(){
-		$this->filteringModel->getPays();
+		$this->filtersModel->getPays();
 	}
 
 	public function getTours(){
-		$this->filteringModel->getTours();
+		$this->filtersModel->getTours();
 	}
 
 	public function getCandidatsAnnee(){
-		$this->filteringModel->getCandidatsAnnee();
+		$this->filtersModel->getCandidatsAnnee();
 	}
 	
 	public function getCandidatsLocalite(){
-		$this->filteringModel->getCandidatsLocalite();
+		$this->filtersModel->getCandidatsLocalite();
 	}
 	
 	public function getDecoupages(){
-		$this->filteringModel->getDecoupages();
+		$this->filtersModel->getDecoupages();
 	}
 	
 	public function getDecoupagePays(){
-		$this->filteringModel->getDecoupagePays();
+		$this->filtersModel->getDecoupagePays();
 	}
 	
 }
