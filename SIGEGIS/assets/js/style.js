@@ -1,5 +1,5 @@
 
-$("input[id*='valider'],input[id*='validerLocalite'], #connection_form :submit, .boutonAdmin").button();
+$("input[id*='valider'],input[id*='validerLocalite'], #connection_form :submit, .boutonAdmin, .boutonsimple").button();
 
 $("#radio,#radio2").buttonset();
 

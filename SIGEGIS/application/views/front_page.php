@@ -31,6 +31,8 @@
 	
 
 	<div id="content">
+		
+		<h1 id="titre"></h1>
 					
 		<div  id="bloc_horizontal_filtres"class="ui-widget-content">
 			<!-- data-placeholder="Choissisez une source" style="width:180px;"  class="chzn-select"  -->
@@ -42,9 +44,7 @@
 				?>
 			</form>
 				
-		</div> <!-- fin bloc_horizontal_filtres -->
-		
-		<h1 id="titre"></h1>
+		</div> <!-- fin bloc_horizontal_filtres -->		
 					
 		<div id="help">
 			<h1>Bienvenue</h1>

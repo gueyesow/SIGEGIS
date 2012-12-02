@@ -18,9 +18,7 @@
 <?php echo $head;?>
 <style type="text/css">
 body{background: url('../../assets/images/logo_ugb.png') no-repeat 90% 1%;}
-#credits,#credits td{margin-left:5px;font-size: 14px;border: 1px solid lightgray;padding: 8px;border-collapse: collapse;}
-#credits {width: 60%;margin:0;padding: 0px;}
-#credits tr > td:FIRST-CHILD{background-color: #483E37; color: #ffffff;font-weight: normal;width: 180px;}
+
 #content {
 min-height: 700px;
 }

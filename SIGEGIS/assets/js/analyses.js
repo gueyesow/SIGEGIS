@@ -74,6 +74,7 @@ function putBar(elementConteneur){
 	 * Diagramme N°2: courbes
 	 */
 	function putLine(elementConteneur){
+	$("#chartdiv3").show(); // Afficher le conteneur pour que le diagramme puisse s'afficher correctement 
 	chart2 = new Highcharts.Chart({
 		chart: {
 		renderTo: elementConteneur,
@@ -134,6 +135,7 @@ function putBar(elementConteneur){
 		},
 		series:[]
 		});
+	if (!$("#line")[0].checked) $("#chartdiv3,#chartdiv4").hide();
 	}	
 	
 $(document).ready(function() {		

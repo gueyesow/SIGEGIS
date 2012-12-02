@@ -1,7 +1,6 @@
 $(document).ready(function() {
 	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
-	$("#types_affichage input").attr("disabled","disabled");
-	if(!type) $("#zone_des_filtres select").attr("disabled","disabled");
+	$("#pannelside *").attr("disabled","disabled");
 	
 	$("#"+type).attr("checked","checked");
 	

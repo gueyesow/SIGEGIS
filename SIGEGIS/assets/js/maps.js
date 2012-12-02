@@ -28,7 +28,7 @@ $(function () {
 		if (svg) $('#senmaps').svg('destroy');
 		$('#senmaps').svg();
 		svg = $('#senmaps').svg('get');
-		if (year_decoupage) svg.load(base_url+'assets/images/snmaps/'+niveau+'_'+year_decoupage+'.svg',{onLoad: loadDone});
+		if (year_decoupage) svg.load(base_url+'assets/images/snmaps/'+niveau+'_'+year_decoupage+'.svg',{changeSize: true,onLoad: loadDone});
 		else return false;
 	}
 
@@ -37,27 +37,16 @@ $(function () {
 		refreshAll();
 		$('svg:not(g,path)').hover(function(e){$('.tooltip2').remove();});
 		
-		$("[id^=D],[id^=R]").hover(function(e){			
+		$("[id^=D],[id^=R]").hover(function(e){					
 			a=$(this);
-			$.ajax({        							
-				url: base_url+'filtres/getNomLocalite/'+$(this).attr("id")+'/'+$.getUrlVar('niveau'),           					     
-				success: function(json) {
-					$('<p class="tooltip2"></p>')
-					.html(json+"<br /><b>Voix :</b>"+$(a).attr("resultat")+"<br /><b>% :</b>"+$(a).attr("pourcentage"))
-					.appendTo('body')
-					.css('top', (e.pageY - 10) + 'px')
-					.css('left', (e.pageX + 20) + 'px')
-					.fadeIn('slow');										
-				}    
-			});			
-		}, function() {
-			// Hover out code
-			$('.tooltip2').remove();
-		}).mousemove(function(e) {
-			// Mouse move code
-			$('.tooltip2')
+			$('<p class="tooltip2"></p>')
+			.html($(a).attr("nomlieu")+"<br />"+$(a).attr("nomcandidat")+"<br />Voix :"+$(a).attr("resultat")+"<br />% :"+$(a).attr("pourcentage"))
+			.appendTo('body')
 			.css('top', (e.pageY - 10) + 'px')
-			.css('left', (e.pageX + 20) + 'px');
+			.css('left', (e.pageX + 20) + 'px').show();										
+		}, function() {
+			// Hover out
+			$('.tooltip2').remove();
 		});
 		
 	}
@@ -99,6 +88,8 @@ $(function () {
 											
 						$.each(data, function(value) {									
 							$("#"+data[value].idLieu).css("fill",tab[data[value].id]);
+							$("#"+data[value].idLieu).attr("nomcandidat",data[value].name);
+							$("#"+data[value].idLieu).attr("nomlieu",data[value].nomlieu);
 							$("#"+data[value].idLieu).attr("resultat",data[value].voix);	
 							$("#"+data[value].idLieu).attr("pourcentage",data[value].percent.toFixed(2));
 						});											

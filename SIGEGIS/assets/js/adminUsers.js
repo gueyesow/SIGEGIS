@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
-	$("#left-sidebar *,#zone_des_filtres *").attr("disabled","disabled");
+	$("#pannelside *").attr("disabled","disabled");
 	$("#list").jqGrid({
 		autowidth:true,
 		url:base_url+"admin/getGridUsers",
@@ -20,12 +20,12 @@ $(document).ready(function() {
 	    sortname: 'id',
 	    sortorder: 'asc',	    
 	    ondblClickRow: function(id) 	{
-	    	$("#list").editGridRow(id,{closeAfterEdit:true});
+	    	$("#list").editGridRow(id,{closeAfterEdit:true, width:400});
 		},
 		editurl:base_url+"admin/userCRUD",
 	    viewrecords: true,
 	    gridview: true
-	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true, width:300},{closeAfterAdd:true});
+	}).navGrid("#pager",{edit:true,add:true,del:true,search:true},{closeAfterEdit:true, width:400},{closeAfterAdd:true});
 	
 	$("#types_elections input").on("click",function(){
 		

@@ -10,7 +10,7 @@ var balise;
 var baliseLine;
 
 function putGrid(url){	
-		
+	// Rappel: Afficher le conteneur pour que le diagramme puisse s'afficher correctement
 	if (request1OrRequest2=="comparer") {baliseGrid="#list2";pager="#pager2";$("#theGrid2").show();}
 	else {baliseGrid="#list";pager="#pager";$("#theGrid1").show();}
 	
@@ -36,10 +36,10 @@ function putGrid(url){
 		    gridview: true,
 		}).navGrid(pager,{edit:false,add:false,del:false,search:false});
 				
-		if(!$("#grid")[0].checked || $("#grid")[0].disabled) {$("#theGrid1").hide("animated");if(save) $("#theGrid2").hide("animated");} 
+		if(!$("#grid")[0].checked || $("#grid")[0].disabled) {$("#theGrid1,#theGrid2").hide("animated");} 
 	}	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
-	if (!$("#grid")[0].checked) $("#theGrid1").hide();
+	if (!$("#grid")[0].checked) $("#theGrid1,#theGrid2").hide();
 }
 
 /*
@@ -159,6 +159,7 @@ $("#valider").on("click",function(event) {
 	
 	if ($("#bar")[0].checked) {$("#chartdiv1").show();if (save) $("#chartdiv2").show();}
 	if ($("#grid")[0].checked) {$("#theGrid1").show();if (save) $("#theGrid2").show();}
+	if ($("#line")[0].checked) {$("#chartdiv3").show();if (save) $("#chartdiv4").show();}
 	$("#help").hide();
 	
 	$("#choixmultipleB").children().each(function() {
@@ -188,7 +189,8 @@ $("#valider").on("click",function(event) {
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
 			refreshChart(chart1,json);
-			if($("#line")[0].checked) refreshChart(chart2,json);
+			//if($("#line")[0].checked) refreshChart(chart2,json);
+			refreshChart(chart2,json);
 		}    
 	});
 	
@@ -215,6 +217,7 @@ $("#validerLocalite").on("click",function(event) {
 
 	if ($("#bar")[0].checked) {$("#chartdiv1").show();if (save) $("#chartdiv2").show();}
 	if ($("#grid")[0].checked) {$("#theGrid1").show();if (save) $("#theGrid2").show();}
+	if ($("#line")[0].checked) {$("#chartdiv3").show();if (save) $("#chartdiv4").show();}
 	$("#help").hide();
 	
 	$("#choixMultipleLocalitesB").children().each(function() {
@@ -241,8 +244,11 @@ $("#validerLocalite").on("click",function(event) {
 		url: base_url+'analyser/getBarAnalyserSuivantLocalite',    
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
-			refreshChart(chart1,json);	
-			if($("#line")[0].checked) refreshChart(chart2,json);
+			refreshChart(chart1,json);
+			// Il faut cocher courbes avant d'executer la requete
+			//if($("#line")[0].checked) refreshChart(chart2,json);
+			// Executer directement 
+			refreshChart(chart2,json);
 		}    
 	});
 	
@@ -297,8 +303,9 @@ $("#comparer").on("click",function(){
 	save=true;
 	request1OrRequest2=$(this).attr("id");
 	
-	if($("#line")[0].checked) $("#chartdiv4").show();
+	//if($("#line")[0].checked) $("#chartdiv4").show();
 	$("#chartdiv2").show(); 
+	$("#chartdiv4").show();
 	
 	$("#dialog_zone_des_options").dialog('open');
 	balise="chartdiv2";

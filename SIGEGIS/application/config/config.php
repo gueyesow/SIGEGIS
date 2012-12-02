@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://www.sigegis.ugb-edu.com/';
+$config['base_url']	= 'http://sigegis.ugb-edu.com/';
 
 /*
  |--------------------------------------------------------------------------

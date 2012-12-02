@@ -47,12 +47,10 @@ class Admin extends CI_Controller {
 	   	$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
 	    $session_data = $this->session->userdata('logged_in');
 	    $data['username'] = $session_data['username'];
-	    $this->load->helper('form');
 	    $this->load->view('admin_page', $data);
 		}
 		else
 		{
-			$this->load->helper('form');
 			//If no session, redirect to login page
 			redirect('admin/login', 'refresh');
 		}
@@ -250,7 +248,6 @@ class Admin extends CI_Controller {
 	  */
 	 function login()
 	 {
-	 	$this->load->helper(array('form', 'url'));
 	 	$js_scripts["scripts_array"]=array("base.js","style.js");
 	 	$top['title'] = 'SIGeGIS&gt;Connexion';
 	 	$top['styles'][] = 'theme';
@@ -368,6 +365,15 @@ class Admin extends CI_Controller {
 	 	{
 	 		$data = array('upload_data' => $this->upload->data());
 	 
+	 		$js_scripts["scripts_array"]=array("base.js","style.js");
+	 		$top['title'] = 'SIGeGIS>Upload effectué avec succès';
+	 		$top['styles'][] = 'theme';
+	 		$data['head'] = $this->load->view('top',$top,true);
+	 		$data['menu'] = $this->load->view('menu',$top,true);
+	 		$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
+	 		$data['footer'] = $this->load->view('footer',null,true);
+	 		$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+	 		$data['error'] = ' ';
 	 		$this->load->view('admin/upload_success', $data);
 	 	}
 	 }

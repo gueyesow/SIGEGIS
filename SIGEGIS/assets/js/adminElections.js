@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$("#left-sidebar button").attr("disabled","disabled");
+	
 	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
 	$("#list").jqGrid({
 		autowidth:true,			

@@ -273,7 +273,7 @@ class Visualiser_model extends CI_Model{
 		
 		foreach ($resultats as $resultat){
 			if ($resultat->nomLieu!="ETRANGER")
-				$data[]=array("name"=>$resultat->nomCandidat,"id"=>$resultat->idCandidat,"percent"=>(100*($resultat->nbVoix/$resultatsTOTAL[$i++]->nbVoix)), "voix"=>$resultat->nbVoix,"idLieu"=>$resultat->idLieu);
+				$data[]=array("name"=>$resultat->nomCandidat,"id"=>$resultat->idCandidat,"percent"=>(100*($resultat->nbVoix/$resultatsTOTAL[$i++]->nbVoix)), "voix"=>$resultat->nbVoix,"idLieu"=>$resultat->idLieu,"nomlieu"=>$resultat->nomLieu);
 			else $i++;
 		}
 		echo json_encode($data);

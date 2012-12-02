@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-	$("#types_affichage input").attr("disabled","disabled");
+	$("#pannelside *").attr("disabled","disabled");
 	$("#"+type).attr("checked","checked");
 	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
 	

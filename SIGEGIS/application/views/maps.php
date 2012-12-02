@@ -46,9 +46,9 @@
 		</div> <!-- fin bloc_horizontal_filtres -->
 
 		<table>
-		<tr><td>
-		<div id="winners"></div></td><td>
-		<div id="senmaps"></div> </td></tr></table>
+		<tr><td><div id="winners"></div></td>
+		<td><div id="senmaps" style="margin-left: 20px;"></div> </td></tr>
+		</table>
 		</div>			
 	
 		<?php echo $options_menu;?>			

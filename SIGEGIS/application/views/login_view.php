@@ -32,8 +32,10 @@
 	<h1 id="titre"></h1>
 	
 	<h1>Connexion</h1>
-	<p id="login_errors"><?php echo validation_errors(); ?></p>
-	<?php echo form_open('admin/verifylogin',array("id"=>"connection_form")); ?>
+	
+	<div id="login_errors"><?php echo validation_errors('<p class="ui-state-error" style="margin:10px 0 10px 0;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>','</p>'); ?></div>
+	
+	<?php echo form_open('admin/verifylogin',array("id"=>"connection_form","class"=>"ui-widget-content","style"=>"width:400px;padding:10px;margin-top:10px;")); ?>
 		<table>
 			<tr><td>
 			<label for="username">Identifiant:</label></td><td>
@@ -52,7 +54,6 @@
 </div> <!-- Fin de content  -->
 
 <!--panel de choix des -->
-
 
 <?php echo $scripts;?>
 </body>

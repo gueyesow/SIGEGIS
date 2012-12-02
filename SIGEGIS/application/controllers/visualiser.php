@@ -28,7 +28,7 @@ class Visualiser extends CI_Controller {
 	public function index()
 	{	
 		$js_scripts["scripts_array"]=array("base.js","init_filtres.js","visualiser.js","style.js");
-		$top['title'] = 'SIGeGIS';
+		$top['title'] = 'SIGeGIS, la plateforme pour les elections au Sénégal';
 		$top['styles'][] = 'theme';
 		$data['head'] = $this->load->view('top',$top,true);
 		$data['menu'] = $this->load->view('menu',$top,true);

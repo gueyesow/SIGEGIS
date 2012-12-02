@@ -57,11 +57,16 @@ var types_election=["presidentielle","legislative","locale","regionale","municip
 var titres={"presidentielle":"présidentielle","legislative":"législative","municipale":"municipale","regionale":"régionale","rurale":"rurale"};
 var types_affichage=["map","bar","pie","grid"];
 var svg;
-var base_url='http://www.sigegis.ugb-edu.com/';
 var niveau=$.getUrlVar("niveau");
 var type=$.getUrlVar("type");
 var typeElection="presidentielle"; // Attention !!!
 var colors=["#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#00ccc6","#bd9695","#ffff51","#ed66a3","#96b200","#ff1951","#b251b7","#4c1eb7","#ff6300","#4572a7","#af5552","#89a057","#9982b4","#abc1e6","#5e8bc0","#bd9695","#ee9953","#ed66a3","#96b200","#b2b5b7","#b251b7","#4c1eb7","#ff6300"];
+
+//----------------------------------------------------------------------//
+// Cette variable est primordiale pour le bon fonctionnement des scripts /	
+//----------------------------------------------------------------------//
+var base_url='http://sigegis.ugb-edu.com/';
+//----------------------------------------------------------------------//
 
 // ---------------------------------------- //
 // 				Partie analyses				//

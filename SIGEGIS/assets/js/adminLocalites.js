@@ -2,7 +2,7 @@ $anneeDecoupage=$("#anneeDecoupage");
 
 $(document).ready(function() {
 	$("#menu ul li:not(#menu_front,#menu_admin,#menu_decon)").hide();
-	$("#left-sidebar *").attr("disabled","disabled");
+	$("#pannelside *").attr("disabled","disabled");
 	 
 	label={
 			"idPays":"ID pays","nomPays":"Nom du pays","anneeDecoupage":"Découpage administratif",
