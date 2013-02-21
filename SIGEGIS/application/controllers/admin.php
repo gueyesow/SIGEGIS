@@ -45,9 +45,9 @@ class Admin extends CI_Controller {
 	   	$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
 	   	$data['footer'] = $this->load->view('footer',null,true);
 	   	$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
-	    $session_data = $this->session->userdata('logged_in');
-	    $data['username'] = $session_data['username'];
-	    $this->load->view('admin_page', $data);
+	   	$session_data = $this->session->userdata('logged_in');
+	   	$data['username'] = $session_data['username'];
+	   	$this->load->view('admin_page', $data);
 		}
 		else
 		{
