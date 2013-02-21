@@ -560,7 +560,7 @@ public function __construct(){
 		{									
 			$this->db->update($this->tables[$typeElection], $data, array('idResultat' => $idResultat));											
 		}
-		if($_POST['oper']=='del' AND $session['level']==1)
+		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
 			$this->db->delete($this->tables[$typeElection], array('idResultat' => $_POST['id']));
 		}		
@@ -597,7 +597,7 @@ public function __construct(){
 		{
 			$this->db->update($this->tablesParticipation[$typeElection], $data, array('idParticipation' => $idParticipation));
 		}
-		if($_POST['oper']=='del' AND $session['level']==1)
+		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
 			$this->db->delete($this->tablesParticipation[$typeElection], array('idParticipation' => $_POST['id']));
 		}
@@ -628,7 +628,7 @@ public function __construct(){
 		{			
 			$this->db->update("election", $data, array('idElection' => $idElection));	
 		}
-		if($_POST['oper']=='del' AND $session['level']==1)
+		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
 			$this->db->delete("election", array('idElection' => $_POST['id']));
 		}
@@ -651,7 +651,7 @@ public function __construct(){
 		{
 			$this->db->update("source", $data, array('idSource' => $idSource));
 		}
-		if($_POST['oper']=='del' AND $session['level']==1)
+		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
 			$this->db->delete("source", array('idSource' => $_POST['id']));
 		}
@@ -670,18 +670,18 @@ public function __construct(){
 				'level' => $level
 		);				
 	
-		if($_POST['oper']=='add')
+		if($_POST['oper']=='add' AND $session['level'] == ADMIN)
 		{
 			$data['password']=$this->encrypt->sha1($newPassword);
 			$this->db->insert("users", $data);
 		}
-		if($_POST['oper']=='edit')
+		if($_POST['oper']=='edit' AND $session['level'] == ADMIN)
 		{
 			if(!empty($newPassword)) $data['password']=$this->encrypt->sha1($newPassword);
 			else $data['password']=$oldPassword;
 			$this->db->update("users", $data, array('id' => $id));			
 		}
-		if($_POST['oper']=='del' AND $session['level']==1)
+		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
 			$this->db->delete("users", array('id' => $_POST['id']));
 		}
@@ -714,7 +714,7 @@ public function __construct(){
 		{
 			$this->db->update($localite, $data, array($niveau[$localite][0] => $id));
 		}
-		if($_POST['oper']=='del' AND $session['level']==1)
+		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
 			$this->db->delete($localite, array($niveau[$localite][0] => $_POST['id']));
 		}
@@ -749,7 +749,7 @@ public function __construct(){
 		{			
 			$this->db->update("candidat", $data, array('idCandidat' => $idCandidat));
 		}
-		if($_POST['oper']=='del' AND $session['level']==1)
+		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
 			$this->db->delete("candidat", array('idCandidat' => $_POST['id']));
 		}
@@ -777,12 +777,17 @@ public function __construct(){
 		{	
 			$this->db->update("listesCoalitionsPartis", $data, array('idListe' => $idListe));	
 		}
-		if($_POST['oper']=='del' AND $session['level']==1)
+		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
 			$this->db->delete("listesCoalitionsPartis", array('idListe' => $_POST['id']));
 		}
 	}
 	
+	/**
+	 * @todo Gérer les imporations CSV
+	 * @param unknown_type $filename
+	 * @param unknown_type $tablename
+	 */
 	public function importCSV($filename,$tablename){
 		
 		$requete="LOAD DATA INFILE '$filename' INTO TABLE $tablename";

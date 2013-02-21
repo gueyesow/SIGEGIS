@@ -1,9 +1,9 @@
 <div id="pannelside">
-		<div  style="background : url('<?php echo img_url("p_haut.png");?>') no-repeat; background-position-x: 0px; background-position-y: 0px; width: 285px; padding-left : 15px; padding-top:25px;padding-bottom:26px; margin-left : 5px; margin-bottom:-1px;" >
+		<div id="partie_haut_menu" style="background : url('<?php echo img_url("p_haut.png");?>') no-repeat;" >
 			<h1> Choisissez vos filtres</h1>	
 		</div>
-		<div style=" background : url('<?php echo img_url("p_milieu.png");?>') repeat-y; background-position-x: 0px; background-position-y: -5px; width: 285px;  color : #FFFFFF;margin-left : 5px; margin-bottom:0px;margin-top:0px;" >
-					<div class="zone_des_options" style="width:243px;padding-left:10px;padding-bottom : 10px;padding-bottom : 5px;">
+		<div id="partie_milieu_menu" style="background : url('<?php echo img_url("p_milieu.png");?>') repeat-y;" >
+					<div class="zone_des_options">
 							<form action="">
 								<fieldset id="types_elections">
 									<legend>Type d'élection à représenter</legend>
@@ -33,7 +33,7 @@
 		</div>
 		<!-- Partie basse de du menu -->
 
-		<div id="partie_bas_menu" style="background : url('<?php echo img_url("p_bas.png");?>') no-repeat; background-position-x: 0px;  width: 285px; height: 60px;margin-left : 5px;"></div>
+		<div id="partie_bas_menu" style="background : url('<?php echo img_url("p_bas.png");?>') no-repeat;"></div>
 
 		<!-- Bouton menu -->
 		<div id="openclose" style=" position:absolute; top : 6px; left : 250px;">

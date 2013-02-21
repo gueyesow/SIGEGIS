@@ -13,21 +13,9 @@ img{
 
 .diagrammes {
 	border: 1px solid lightgray;
-	width: auto;
 	margin-bottom: 30px;
 	}
-#pies_participation{
-	width: 100%;
-	}
 	
-#pies_participation td{
-	width: 50%;
-	}
-
-#pies_participation .diagrammes2 {
- 	border: 1px solid lightgray;
-	}
-
 body{
 	font: 75.5% "Trebuchet MS", sans-serif;
 	margin: 0px;
@@ -35,13 +23,11 @@ body{
 
 #container
 {
-	margin: 0 auto;
-	width: 100%;
+	margin: 0;
 	min-width: 900px;
 	min-height: 750px;
-	height: 100%;
 	background: #FFFFFF;
-}
+	}
 
 /* entete en haut : contenant logo et menu horizontal */
 #header
@@ -55,7 +41,7 @@ body{
     padding-top: 20px;
     padding-bottom: 40px;
 	height: 80px;
-}
+	}
 
 #header h1 { margin: 0; }
 
@@ -71,15 +57,14 @@ body{
 	background:none;
 	margin-right: 2%;
 	text-align: center;
-}
+	}
 
 #menu_top li{
 	float:right;
 	margin-left:0px;
 	width: 180px;
 	position:relative;
-
-}
+	}
 
 #menu_top ul {
 	background:#fff; 
@@ -89,7 +74,7 @@ body{
 	/*left:-9999px; */
 	display: none;
 	z-index: 1;
-}
+	}
 
 #menu_top a{
 	display:block;
@@ -100,7 +85,7 @@ body{
 	font-size: 18px;
 	font-weight: bolder;
 	font-family:'Yanone Kaffeesatz', "Trebuchet MS", sans-serif;
-}
+	}
 
 /*  Menu Deuxième niveau : qui apparait au survol de la souris */
  
@@ -110,63 +95,61 @@ body{
 	border-bottom: 1px solid #917C6F;
 	text-decoration:none;
 	color : #FFFFFF;
-}
+	}
 
 
 #menu_top li:hover ul a{
 	background: #917C6F;
 	color : #FFFFFF;
 	text-decoration:none;
-}
+	}
+	
 #menu_top li:hover ul li a:hover{ 
 	background:#333;
 	text-decoration:none;
-}
+	}
 
 #menu_top ul li {
 	padding-top:0px;
 	float:none;
 	margin-left:0px;
 	width: 180px;
-}
+	}
 
 #menu_top ul a{
 	white-space:nowrap; 
-}
+	}
 
 #menu_top li:hover ul{ 
 	display: block;	
 	left: -41px;
 	float: left;
 	opacity: 0.95;
-}
-
-
-
+	}
 
 /* partie centrale de la page */
 
 #content
 {
-	float: left;
-	width: 75%;
-	min-width: 900px;
+	float: right;
+	margin:0;
 	padding: 20px 0;
-	margin: 0 0 0 1%;
-	margin-left : 285px;
+	width: 78%;
+	right:10px;
 	background: #fff;
 
 	border-left-color: #A7A09C;
 	border-left-style: dashed;
 	border-left-width: 1px;
 	padding-left: 10px;
-}
+	padding-right: 10px;
+	min-height: 700px;
+	}
 
 #content h1,h2 { 
 	margin: 0; 
 	font-family:'Yanone Kaffeesatz', arial, serif;
 	color: #917C6F;
-
 	}
 
 /* bas de page de Copyright */
@@ -178,7 +161,7 @@ body{
 	text-align: right;
 	padding: 10px;
 	height: 1%;
-}
+	}
 
 
 /* Panneau des filtres à gauche */
@@ -187,15 +170,49 @@ body{
 	 position: fixed;  
 	 top: 200px; 
 	 left: 0px; 
-	 width: 256px; 
+	 /*width: 256px;*/
+	 
 	/* height: 500px; */
 	/* opacity : 0.95;*/
-}
+	}
 
 #pannelside h1 {
 	font-family:'Yanone Kaffeesatz', arial, serif;
 	color: #FFFFFF;
-}
+	}
+	
+#pannelside #zone_des_options{
+	width:285px;
+	padding-left:10px;
+	padding-bottom : 10px;
+	padding-bottom : 5px;"
+	}
+
+#pannelside #partie_bas_menu{
+	background-position-x: 0px;
+ 	width:285px;
+ 	height: 60px;
+ 	margin-left : 5px;
+ }
+ #pannelside #partie_haut_menu{
+	background-position-x: 0px;
+	background-position-y: 0px;
+	width:285px;
+	padding-left : 15px; 
+	padding-top:25px;
+	padding-bottom:26px; 
+	margin-left : 5px; 
+	margin-bottom:-1px;
+ 	}
+ #pannelside #partie_milieu_menu{
+	background-position-x: 0px; 
+	background-position-y: -5px; 
+	width:285px;
+	color : #FFFFFF;
+	margin-left : 5px; 
+	margin-bottom:0px;
+	margin-top:0px;
+ 	}
 
 #theGrid,#theGrid1,#theGrid2{margin-bottom: 30px;}
 
@@ -206,7 +223,7 @@ body{
 	
 #csv img,#pdf img,#imprimer img{
 	height: 30px;
-}
+	}
 
 #admin_menu {
 	text-align: center;
@@ -224,15 +241,10 @@ body{
 	padding: 6px;
 	}
 
-
 .move {
 	margin: 0px 2px 5px 2px;
 	}
 	
-#content {
-	min-height: 700px;
-	}
-	
 #credits,#credits td{margin-left:5px;font-size: 14px;border: 1px solid lightgray;padding: 8px;border-collapse: collapse;}
-#credits {width: 60%;margin:0;padding: 0px;}
+#credits {width: 600px;margin:0;padding: 0px;}
 #credits tr > td:FIRST-CHILD{background-color: #483E37; color: #ffffff;font-weight: normal;width: 180px;}

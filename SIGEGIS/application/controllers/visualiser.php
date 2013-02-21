@@ -6,9 +6,9 @@
  *
  */
 class Visualiser extends CI_Controller {		
-	private $typeElection;
-	private $niveau;	
-	private $params;
+	private $typeElection; // nom de l'election 
+	private $niveau;	// niveau d'agregation des donnees 
+	private $params; // autres parametres pouvant contenir les valeurs des listes deroulantes   
 	
 	public function __construct(){
 		// database et assets_helper sont chargés automatiquement
@@ -27,7 +27,7 @@ class Visualiser extends CI_Controller {
 
 	public function index()
 	{	
-		$js_scripts["scripts_array"]=array("base.js","init_filtres.js","visualiser.js","style.js");
+		$js_scripts["scripts_array"]=array("base","init_filtres","visualiser","style");
 		$top['title'] = 'SIGeGIS, la plateforme pour les elections au Sénégal';
 		$top['styles'][] = 'theme';
 		$data['head'] = $this->load->view('top',$top,true);
@@ -40,7 +40,7 @@ class Visualiser extends CI_Controller {
 	
 	public function getMap()
 	{
-		$js_scripts["scripts_array"]=array("base.js","init_filtres.js","maps.js","jqsvg/jquery.svg.min.js","tooltips.js","style.js");
+		$js_scripts["scripts_array"]=array("base","init_filtres","maps","jqsvg/jquery.svg.min","tooltips","style");
 		$top['title'] = 'SIGeGIS>Cartographie';
 		$top['styles'][] = 'theme';
 		$data['head'] = $this->load->view('top',$top,true);
@@ -51,14 +51,22 @@ class Visualiser extends CI_Controller {
 		$this->load->view('maps',$data);
 	}
 	
-	public function apropos()
-	{		
-		$this->load->view('a_propos');
+	public function exemples()
+	{
+		$js_scripts["scripts_array"]=array("base","init_filtres","exemples","tooltips","style");
+		$top['title'] = 'SIGeGIS&gt;Exemples';
+		$top['styles'][] = 'theme';
+		$data['head'] = $this->load->view('top',$top,true);
+		$data['menu'] = $this->load->view('menu',$top,true);
+		$data['options_menu'] = $this->load->view('menu_des_options',$top,true);
+		$data['footer'] = $this->load->view('footer',null,true);
+		$data['scripts'] = $this->load->view('bottom',$js_scripts,true);
+		$this->load->view('exemples',$data);
 	}
 		
 	public function credits()
 	{
-		$js_scripts["scripts_array"]=array("base.js","credits.js","style.js");
+		$js_scripts["scripts_array"]=array("base","credits","style");
 		$top['title'] = 'SIGeGIS';
 		$top['styles'][] = 'theme';
 		$data['head'] = $this->load->view('top',$top,true);

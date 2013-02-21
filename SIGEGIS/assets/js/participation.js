@@ -4,6 +4,8 @@
  */
 
 $(document).ready(function() {
+$("#menu li a").removeClass("selected");
+$("#menu_stats>a").addClass("selected");
 
 $("#grid").attr("checked","checked");
 
@@ -217,7 +219,7 @@ if($.getUrlVar("grid")=="no") {$("#theGrid").hide();$("#grid").removeAttr("check
 
 $("#chartdiv2").hide();
 
-$("#pie, #line").attr("disabled","disabled");
+$("#pie, #line,#map").attr("disabled","disabled");
 
 $("#types_affichage input").on("change",function() 
 {

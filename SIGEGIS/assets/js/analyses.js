@@ -3,9 +3,10 @@
  * Description: Gestion de la partie analyse  
  */
 
-/**
+/*
  * Diagramme N°1: diagramme par défaut (colonnes)
  */
+
 function putBar(elementConteneur){
 	chart1 = new Highcharts.Chart({
 	chart: {
@@ -64,16 +65,16 @@ function putBar(elementConteneur){
 	},
 	credits: {
         text: 'SIGeGIS.COM',
-        href: 'http://www.sigegis2.ugb-edu.com'
+        href: base_url
 	},
 	series:[]
 	});		
-	}
+} // End of putBar()
 
-	/*
-	 * Diagramme N°2: courbes
-	 */
-	function putLine(elementConteneur){
+/*
+ * Diagramme N°2: courbes
+ */
+function putLine(elementConteneur){
 	$("#chartdiv3").show(); // Afficher le conteneur pour que le diagramme puisse s'afficher correctement 
 	chart2 = new Highcharts.Chart({
 		chart: {
@@ -131,16 +132,18 @@ function putBar(elementConteneur){
 		},
 		credits: {
             text: 'SIGeGIS.COM',
-            href: 'http://www.sigegis2.ugb-edu.com'
+            href: base_url
 		},
 		series:[]
 		});
 	if (!$("#line")[0].checked) $("#chartdiv3,#chartdiv4").hide();
-	}	
+} // End of putLine()
 	
 $(document).ready(function() {		
 	
 	// Mise en forme - Activation des Options
+	$("#menu li a").removeClass("selected");
+	$("#menu_analyse>a").addClass("selected");
 	
 	$(".zone_des_options *, #comparer").attr("disabled","disabled");
 	
@@ -157,9 +160,7 @@ $(document).ready(function() {
 	
 	/**
 	 * CHOIX DU MODE DE REPRESENTATION DES DONNEES
-	 */
-	var numberOfClickForLine=0;
-	var numberOfClickForGrid=0;	
+	 */	
 	
 	$("#types_affichage input").on("change",function() {
 		
@@ -174,7 +175,6 @@ $(document).ready(function() {
 		else {
 			$("#chartdiv3").show("animated"); 
 			if(save) $("#chartdiv4").show("animated");  
-			//if (numberOfClickForLine==0) {$("#"+lastPressedButton).click();numberOfClickForLine++;}
 		}
 		
 		if(!$("#grid")[0].checked) {
@@ -199,18 +199,21 @@ $(document).ready(function() {
 				"<input id='regionale' type='radio' name='radio2' /><label for='regionale'>Régionales</label><br />"+
 				"<input id='rurale' type='radio' name='radio2' /><label for='rurale'>Rurales</label></fieldset>");	
 
-		if ($("#locale")[0].checked){
+		if ($("#locale")[0].checked)
+		{
 			$("#ss_locales").show("animated");
 			$("#ss_locales :checked").removeAttr("checked");
-		} else $("#ss_locales").hide("animated");
+		} 
+		else $("#ss_locales").hide("animated");
+		
 		//------------------ RELOAD ALL --------------------//
-		$("#ana_decoupage,#ana_decoupage_localite").change();
+		$("#decoupage_annee,#decoupage_localite").change();
 		$("*[id*='choix']").empty();
 		Annees();
 		$("select[name*=niveauAgregation]").change();
 		$pays.change();
 		$("#ss_locales :input").on("click",function(){
-			typeElection=$(this).attr("id");$("#ana_decoupage,#ana_decoupage_localite").change();
+			typeElection=$(this).attr("id");$("#decoupage_annee,#decoupage_localite").change();
 		});
 		//------------------ 	END   	--------------------//
 		if(!$("#presidentielle")[0].checked) $("#filtretours,#filtreana_tour").hide(); else $("#tours,#ana_tour").show();

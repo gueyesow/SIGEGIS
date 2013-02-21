@@ -44,7 +44,7 @@ min-height: 700px;
 		<h3>SIGeGIS</h3><br />
 		<table id="credits">
 			<tr>
-				<td>Manager :</td><td>Maïssa Mbaye</td>
+				<td>Technical Manager :</td><td>Maïssa Mbaye</td>
 			</tr>
 			<tr>
 				<td>Developper Team</td><td></td>

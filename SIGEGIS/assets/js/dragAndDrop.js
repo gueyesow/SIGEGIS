@@ -1,13 +1,20 @@
-/**
+/*
  * Auteurs: Amadou SOW & Abdou Khadre GUEYE | DESS 2ITIC
- * Description: Gestion des filtres de la partie analyse 
+ * Description: Gestion des filtres et des interactions pour l'utilitaire de comparaison
+ * Cette partie comporte 2 fonction:
+ * 1. putGrid(url) qui gere les grid
+ * 2. refreshChart(theChart,json) qui gere les diagrammes en colonnes 
  */
 
 // Rappel: chart1 <=> Bar et chart2 <=> Line | "save" à true indique que l'on compare deux élections
 
-// Crée le grid si ce n'est pas déjà fait et y charge des données qui sont reçues à partir du lien "url"
-var balise;
-var baliseLine;
+// LES BOUTONS DE LA PARTIE ANALYSER LES RESULTATS SONT DANS CE FICHIER 
+// TODO Réaménager le code si nécessaire
+
+var baliseBar; // L'ID du conteneur pour le diagramme en colonnes 
+var baliseLine; // L'ID du conteneur pour le diagramme circulaire 
+
+//Crée le grid si ce n'est pas déjà fait et y charge des données qui sont reçues à partir du lien "url"
 
 function putGrid(url){	
 	// Rappel: Afficher le conteneur pour que le diagramme puisse s'afficher correctement
@@ -39,6 +46,8 @@ function putGrid(url){
 		if(!$("#grid")[0].checked || $("#grid")[0].disabled) {$("#theGrid1,#theGrid2").hide("animated");} 
 	}	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
+	
+	// Si l'option grid n'est pas choisie, cacher les grids
 	if (!$("#grid")[0].checked) $("#theGrid1,#theGrid2").hide();
 }
 
@@ -58,7 +67,6 @@ function refreshChart(theChart,json){
 		
 		if(series[1].length)
 		{				
-	
 			if (save) $("#titleGrid2").text(series[0].titre); else $("#titleGrid1").text(series[0].titre);
 			
 			theChart.setTitle({text: series[0].titre},{text: series[0].sous_titre});
@@ -81,14 +89,14 @@ function refreshChart(theChart,json){
 		}
 		else {
 			$(".ui-state-error").remove();
-			$("#"+balise).before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Une erreur s\'est produite durant l\'éxécution de la requête. Veuillez vérifier les paramètres choisis.<br></p></div><br />');
+			$("#"+baliseBar).before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Une erreur s\'est produite durant l\'éxécution de la requête. Veuillez vérifier les paramètres choisis.<br></p></div><br />');
 			return;
 		}
 	}
 	else
 	{
 		$(".ui-state-error").remove();
-		$("#"+balise).before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Une erreur s\'est produite durant l\'éxécution de la requête. Veuillez vérifier les paramètres choisis.<br></p></div><br />');
+		$("#"+baliseBar).before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Une erreur s\'est produite durant l\'éxécution de la requête. Veuillez vérifier les paramètres choisis.<br></p></div><br />');
 		return;
 	}
 }
@@ -142,11 +150,11 @@ $("#MoveRightCandidatLocalite,#MoveLeftCandidatLocalite").on("click",function(ev
 
 $(".move").button();
 
-//-------------------------------------------------//
-//	Bouton VALIDER de l'analyse suivant une année  //
-//-------------------------------------------------//
-$("#valider").on("click",function(event) {
-	lastPressedButton="valider";
+// ----------------------------------------------- //
+// Bouton VALIDER de l'analyse suivant les années  //
+// ----------------------------------------------- //
+$("#validerAnnees").on("click",function(event) {
+	lastPressedButton="validerAnnees";
 	
 	$("#dialog_zone_des_options").dialog('close');
 	
@@ -179,7 +187,7 @@ $("#valider").on("click",function(event) {
 	if ($("select[name=niveauAgregation1]").val()=="departement") {paramBis+="&niveau=dep";}
 	if ($("select[name=niveauAgregation1]").val()=="centre") { paramBis+="&niveau=cen";}
 	
-	putBar(balise);
+	putBar(baliseBar);
 	putLine(baliseLine);
 	chart1.showLoading('<div style="margin:auto;margin-top:150px;">En cours de chargement...<br/><img src="../../assets/images/ajax-loader.gif" width="128px" /></div>');
 	chart2.showLoading('<div style="margin:auto;margin-top:150px;">En cours de chargement...<br/><img src="../../assets/images/ajax-loader.gif" width="128px" /></div>');
@@ -198,11 +206,11 @@ $("#valider").on("click",function(event) {
 	
 });
 
-//-------------------------------------------------//
-//Bouton VALIDER de l'analyse suivant une localité  //
-//-------------------------------------------------//
-$("#validerLocalite").on("click",function(event) {
-	lastPressedButton="validerLocalite";
+// ------------------------------------------------ //
+// Bouton VALIDER de l'analyse suivant les localités //
+// ------------------------------------------------ //
+$("#validerLocalites").on("click",function(event) {
+	lastPressedButton="validerLocalites";
 	
 	$("#dialog_zone_des_options").dialog('close');
 	
@@ -237,17 +245,14 @@ $("#validerLocalite").on("click",function(event) {
 	if ($("select[name=niveauAgregation2]").val()=="departement") {paramBis+="&niveau=dep";}
 	if ($("select[name=niveauAgregation2]").val()=="centre") { paramBis+="&niveau=cen";}
 		
-	putBar(balise);
+	putBar(baliseBar);
 	putLine(baliseLine);
 	
 	$.ajax({        							
 		url: base_url+'analyser/getBarAnalyserSuivantLocalite',    
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
-			refreshChart(chart1,json);
-			// Il faut cocher courbes avant d'executer la requete
-			//if($("#line")[0].checked) refreshChart(chart2,json);
-			// Executer directement 
+			refreshChart(chart1,json); 
 			refreshChart(chart2,json);
 		}    
 	});
@@ -259,14 +264,12 @@ $("#validerLocalite").on("click",function(event) {
 // Efface les champs de sélection multiple 
 $("#choixmultipleB,#choixCandidatB,#choixCandidatLocaliteA,#choixCandidatLocaliteB").children().each(function(){$(this).removeAttr("selected");});
 
-$("#accordion_item2 select[id*='ana']").on("change",function(){
-	$("#choixMultipleLocalitesB,#choixCandidatLocaliteA,#choixCandidatLocaliteB").empty();
-	$pays.change();
-});
-
 $("#dialog_zone_des_options").dialog({
 	autoOpen: false,
 	width: 800,
+	//open: function(event, ui) { 
+		//$("#localite").change();
+	//},
 	buttons: {
 		"Fermer": function() {
 			$(this).dialog("close");
@@ -278,7 +281,7 @@ $("#dialog_zone_des_options").dialog({
 	beforeClose: function(event, ui) { $("#ouvrir").show(); }
 });
 
-
+// Ouvrir le popup de l'utilitaire de comparaison (Par defaut, il s'agit d'une simple interface permettant de faire des requetes) 
 $("#ouvrir").on("click",function(){
 	request1OrRequest2=$(this).attr("id");
 	$("#dialog_zone_des_options").dialog('open');
@@ -286,29 +289,31 @@ $("#ouvrir").on("click",function(){
 	$(".zone_des_options *:not(#pie,#map)").removeAttr("disabled");
 	$("#comparer").removeAttr("disabled");
 	typeElection=$(".zone_des_options input:checked:not(#locale)").attr("id");
-	balise="chartdiv1";
+	baliseBar="chartdiv1";
 	baliseLine="chartdiv3";
 });
 
+// Quitter le mode comparaison
 $("#simple").on("click",function(){
 	save=false;
 	$("#theGrid2,#chartdiv2,#chartdiv4,#simple").hide("animated");
 });
 
+// Reprendre tout a zero
 $("#reset").on("click",function(){
 	window.location.reload();
 });
 
+// Activer le mode comparaison 
 $("#comparer").on("click",function(){
 	save=true;
 	request1OrRequest2=$(this).attr("id");
 	
-	//if($("#line")[0].checked) $("#chartdiv4").show();
 	$("#chartdiv2").show(); 
 	$("#chartdiv4").show();
 	
 	$("#dialog_zone_des_options").dialog('open');
-	balise="chartdiv2";
+	baliseBar="chartdiv2";
 	baliseLine="chartdiv4";
 	
 	$("#simple").show("animated");

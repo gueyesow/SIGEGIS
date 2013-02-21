@@ -37,6 +37,7 @@
 				<button id="comparer" class="boutons" title="Ensemble d'outils permettant d'effectuer des analyses">Comparer ces résultats à ...</button>
 				<button id="simple" class="boutons" title="Annuler la comparaison">Quitter le mode comparaison</button>
 				<button id="reset" class="boutons" title="Réinitialiser">Réinitialiser</button>
+				<a href="<?php echo site_url("visualiser/exemples");?>" class="boutonhelp">Exemples</a>
 		</div> <!-- fin bloc_horizontal_filtres -->
 
 
@@ -55,13 +56,13 @@
 					
 					<!-- Premier bloc du menu accordéon -->
 					<div>
-						<h3><a href="#">Analyser suivant la localité</a></h3>
+						<h3><a href="#">Analyser suivant les années</a></h3>
 						<div id="accordion_item1">
 							<form  style="clear:both;" method="post" action="">															
 									<fieldset>			
 									<div class="filtres_accordions1" style="width:100%">						
 										<?php 
-										echo form_dropdown("ana_decoupage","ana_decoupage",$styles,"Découpages");
+										echo form_dropdown("decoupage_annee","decoupage_annee",$styles,"Découpages");
 										
 										$options = array(
 												'pays'  => 'Pays',
@@ -80,7 +81,7 @@
 										?>
 									</div>
 										
-										<table class="swapList">
+										<table id="swapListAnnees" class="swapList">
 											<tr><td colspan="3"><b>Choisir les années</b></td></tr>
 											<tr>											
 												<td><select id="choixmultipleA" multiple="multiple"></select></td>
@@ -95,7 +96,7 @@
 										</table>
 	
 										<b>Choisir les candidats (10 Max.)</b><br>
-										<table class="swapList">
+										<table id="swapListCandidatsAnnees" class="swapList">
 											<tr>
 												<td>
 													<select id="choixCandidatA" multiple="multiple"></select>
@@ -109,7 +110,7 @@
 												</td>
 											</tr>
 										</table>
-										<input id="valider" type="button" value="Valider" style="float:right;" />
+										<input id="validerAnnees" type="button" value="Valider" style="float:right;" />
 									</fieldset>
 									</form>
 									</div>
@@ -117,13 +118,13 @@
 								
 								<!-- Deuxième bloc du menu accordéon -->
 								<div>
-									<h3><a href="#">Analyser suivant l'année</a></h3>
+									<h3><a href="#">Analyser suivant les localités</a></h3>
 									<div id="accordion_item2">
 									<form style="clear:both;" method="post" action="">
 									<fieldset>
 									<div class="filtres_accordions2">
 										<?php 
-										echo form_dropdown("ana_decoupage_localite","ana_decoupage_localite",$styles,"Découpages");
+										echo form_dropdown("decoupage_localite","decoupage_localite",$styles,"Découpages");
 	
 										$options = array(
 												'pays'  => 'Pays',
@@ -131,7 +132,7 @@
 												'departement'   => 'Département',
 												'centre' => 'Centre',
 										);
-										echo form_dropdown2("niveauAgregation2","niveauAgregation2",$styles,$options,"Type de localité");
+										echo form_dropdown2("niveauAgregation2","niveauAgregation2",$styles,$options,"Agréger par");
 										?>
 										
 										<?php
@@ -161,7 +162,7 @@
 											</tr>
 										</table>
 										
-										<table class="swapList">
+										<table id="swapListCandidatsLocality" class="swapList">
 											<tr><td colspan="3"><b>Choisir les candidats (10 Max.)</b></td></tr>
 											<tr>
 												<td>
@@ -176,7 +177,7 @@
 												</td>
 											</tr>
 										</table>
-										<input id="validerLocalite" type="button" value="Valider" style="float:right;"/>
+										<input id="validerLocalites" type="button" value="Valider" style="float:right;"/>
 									</fieldset>
 									</form>
 									</div>

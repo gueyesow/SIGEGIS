@@ -3,14 +3,11 @@
 		dataType: 'json',      
 		success: function(json) {
 			$sources.empty();
-			//$sources.append('<option value=""></option>');
 			$.each(json, function(index, value) {         
 				$sources.append('<option value="'+ index +'">'+ value +'</option>');     
 			});
 			$sources.get(0).selectedIndex = 0;        //Permet de selectionner le premier
-			//$sources.trigger("liszt:updated");
 			$elections.change();	
-			//$elections.trigger("liszt:updated");
 		}       
 	});
 	
@@ -21,9 +18,10 @@
 		data:'typeElection='+typeElection,
 		dataType: 'json',      
 		success: function(json) {
+			if(!json) {$("select:last").change();return;}
 			niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
 			$elections.empty();
-			//$elections.append('<option value=""></option>');
+
 			$.each(json, function(index, value) {         
 				$elections.append('<option value="'+ index +'">'+ value +'</option>');     
 			});
@@ -32,8 +30,6 @@
 			else $("#elections option:last").attr("selected","selected");
 
 			$elections.change();
-			//$elections.chosen().change();
-			//$elections.trigger("liszt:updated");
 			
 			if(type) {if (titre=="presidentielle") $titre="";}
 			
@@ -43,15 +39,13 @@
 			else if(niveau=="pays") {nomNiveau="par pays";}
 			else if (niveau=="globaux") nomNiveau="globaux";
 			
-			if (! $("#ana_decoupage").length && type) $("#titre").append("Election "+titres[type]+" "+$elections.val()+": résultats "+nomNiveau);			
+			if (! $("#decoupage_annee").length && type) $("#titre").append("Election "+titres[type]+" "+$elections.val()+": résultats "+nomNiveau);			
 		}       
 	});
 	
 	$sources.on('change', function() // DECLENCHE TOURS 
 	{
 		$elections.change();
-		//$elections.chosen().change();
-		//$elections.trigger("liszt:updated");
 	});
 	
 	$elections.on('change', function() // DECLENCHE TOURS 
@@ -65,16 +59,14 @@
 				dataType: 'json',      
 				success: function(json) {
 					$tours.empty();
-					//$tours.append('<option value=""></option>');
+
 					$.each(json, function(index, value) {         
 						$tours.append('<option value="'+ index +'">'+ value +'</option>');							
 					});
 					
 					$tours.change();
-					//$tours.chosen().change();
-					//$tours.trigger("liszt:updated");
 					
-					if (! $("#ana_decoupage").length && type) $("#titre").text("Election "+titres[type]+" "+$elections.val()+": résultats "+nomNiveau);
+					if (! $("#decoupage_annee").length && type) $("#titre").text("Election "+titres[type]+" "+$elections.val()+": résultats "+nomNiveau);
 					
 					if ($("#poidsElectoralRegions").length>0) $("#titre").text("Election "+titres[type]+" "+$elections.val()+": taux de participation");
 					
@@ -109,21 +101,20 @@
 		} // SI PRESIDENTIELLE SINON
 		
 		if(!$("#presidentielle")[0].checked){
-			val1 = $elections.val();
+			val = $elections.val();
 			
-			if(val1 != '') {               
+			if(val != '') {               
 				$.ajax({            
 					url: base_url+'filtres/getPays',
-					data: 'paramAnnee='+ val1,
+					data: 'paramAnnee='+ val,
 					dataType: 'json',      
 					success: function(json) {      
 						$pays.empty();
-						//$pays.append('<option value=""></option>');
+
 						$.each(json, function(index, value) {         
 							$pays.append('<option value="'+ index +'">'+ value +'</option>');     
 						});
 						$pays.change();
-						//$pays.trigger("liszt:updated");
 					}           
 				});       
 			}    
@@ -134,12 +125,12 @@
 	$tours.on('change', function()   // DECLENCHE PAYS
 	{
 		niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
-		var val1 = $elections.val();
+		var val = $elections.val();
 
-		if(val1 != '') {               
+		if(val != '') {               
 			$.ajax({            
 				url: base_url+'filtres/getPays',
-				data: 'paramAnnee='+ val1,
+				data: 'paramAnnee='+ val,
 				dataType: 'json',      
 				success: function(json) {      
 					$pays.empty();
@@ -157,12 +148,12 @@
 	$pays.on('change', function() // DECLENCHE REGIONS   
 	{
 		niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
-		var val1 = $(this).val();     
-		if(val1 != '') {           
+		var val = $(this).val();     
+		if(val != '') {           
 			           
 			$.ajax({            
 				url: base_url+'filtres/getRegions',            			         			
-				data: 'idPays='+ val1,   
+				data: 'idPays='+ val,   
 				dataType: 'json',      
 				success: function(json) {
 					$regions.empty();
@@ -173,12 +164,11 @@
 						if ($("select[name=niveauAgregation2]").val() == "region") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');								
 					});
 					$regions.change();       
-					//$regions.trigger("liszt:updated");
+
 					if ($("select[name=niveauAgregation2]").val() == "pays") {
 						$pays.children().each(function() {         
 							$("#choixMultipleLocalitesA").append('<option value="'+ $(this).val() +'">'+ $(this).text() +'</option>');								
 						});
-						//$pays.trigger("liszt:updated");
 					}
 				}           
 			});       
@@ -188,23 +178,21 @@
 	$regions.on('change', function() // DECLENCHE DEPARTEMENTS  
 	{
 		niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
-		var val1 = $(this).val();      
-		if(val1 != '') {            					           
+		var val = $(this).val();      
+		if(val != '') {            					           
 			$.ajax({            
 				url: base_url+'filtres/getDepartements',            			         			
-				data: 'idRegion='+ val1,   
+				data: 'idRegion='+ val,   
 				dataType: 'json',      
 				success: function(json) 
 				{
 					$departements.empty();
-					//$departements.append('<option value=""></option>');
 					if ($("select[name=niveauAgregation2]").val() == "departement") $("#choixMultipleLocalitesA").empty();
 					$.each(json, function(index, value) {         
 					$departements.append('<option value="'+ index +'">'+ value +'</option>');
 					if ($("select[name=niveauAgregation2]").val() == "departement") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
 					});
 					$departements.change();
-					//$departements.trigger("liszt:updated");
 				}           
 			});       
 		}    
@@ -213,20 +201,19 @@
 	$departements.on('change', function() // DECLENCHE COLLECTIVITES 
 	{
 		niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
-		var val2 = $(this).val();    
-		if(val2 != '') {					            					           
+		var val = $(this).val();    
+		if(val != '') {					            					           
 			$.ajax({            
 				url: base_url+'filtres/getCollectivites',            			         			
-				data: 'idDepartement='+ val2,      
+				data: 'idDepartement='+ val,      
 				dataType: 'json',      
 				success: function(json) {      
 					$collectivites.empty();
-					//$collectivites.append('<option value=""></option>');
+
 					$.each(json, function(index, value) {         
 						$collectivites.append('<option value="'+ index +'">'+ value +'</option>');     
 					});         
 					$collectivites.change();
-					//$collectivites.trigger("liszt:updated");
 				}           
 			});       
 		}    
@@ -235,22 +222,20 @@
 	$collectivites.on('change', function()  // DECLENCHE CENTRES 
 	{
 		niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
-		var val3 = $(this).val();   
-		if(val3 != '') {					            					           
+		var val = $(this).val();   
+		if(val != '') {					            					           
 			$.ajax({            
 				url: base_url+'filtres/getCentres',            			         			
-				data: 'idCollectivite='+ val3,      
+				data: 'idCollectivite='+ val,      
 				dataType: 'json',      
 				success: function(json) {      
 					$centres.empty();
-					//$centres.append('<option value=""></option>');
 					if ($("select[name=niveauAgregation2]").val() == "centre") $("#choixMultipleLocalitesA").empty();
 					$.each(json, function(index, value) {         
 						$centres.append('<option value="'+ index +'">'+ value +'</option>');
 						if ($("select[name=niveauAgregation2]").val() == "centre") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
 					});
 					$centres.change(); // Permet de specifier un changement (:selected)
-					//$centres.trigger("liszt:updated");
 				}           
 			});       
 		}    

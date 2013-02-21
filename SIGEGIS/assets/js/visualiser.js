@@ -5,7 +5,7 @@
 
 $(document).ready(function() {
 	// Mise en forme - Activation des Options
-	
+		
 	$("#line").attr("disabled","disabled");
 
 	// Charge les données dans le bar chart
@@ -35,7 +35,7 @@ $(document).ready(function() {
 		var cssObj = {
 			      'border' : 'none',
 			      'font-style' : 'Trebuchet MS',
-			      'font-size' : '12px' //,'color' : '#384f59'
+			      'font-size' : '12px'
 		};
 		
 
@@ -87,6 +87,7 @@ $(document).ready(function() {
 	}
 	 
 	function refreshBarChart(json){
+		
 		var series = {            
 	            name: 'Résultats',
 	            data: []
@@ -111,9 +112,17 @@ $(document).ready(function() {
 		chart1.xAxis[0].setCategories(categories);					
 		chart1.setTitle({text: $titre},{text: $sous_titre});
 								
-		if ( chart1.series.length > 0 ) {chart1.series[0].setData(series.data,true);} 
-		else	
-			chart1.addSeries(series);
+		if ( chart1.series.length > 0 ) {
+			if(series.data.length) {$(".ui-state-error").remove();if ($("#bar")[0].checked) $("#chartdiv1").show();}
+			else if($("#bar")[0].checked) $("#chartdiv1").before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Les données concernant cette élection sont indisponibles.</p></div><br />').hide();
+			chart1.series[0].setData(series.data,true);
+		} 
+		else
+		{	
+			if(series.data.length) {$(".ui-state-error").remove();if ($("#bar")[0].checked) $("#chartdiv1").show();}
+			else if($("#bar")[0].checked) $("#chartdiv1").before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Les données concernant cette élection sont indisponibles.</p></div><br />').hide();
+			chart1.addSeries(series);						
+		}
 		chart1.hideLoading();
 	}
 	
@@ -126,12 +135,17 @@ $(document).ready(function() {
 		$sous_titre=series[0].sous_titre;
 		if(niveau!="globaux") $sous_titre+=" | ";
 		$sous_titre+="Source: "+$("#sources :selected").text();
-		chart2.setTitle({text: series[0].titre},{text: $sous_titre});		
-		if ( chart2.series.length > 0 ) {			
+		chart2.setTitle({text: series[0].titre},{text: $sous_titre});
+		
+		if ( chart2.series.length > 0 ) {
+			if(series[1].data.length) {$(".ui-state-error").remove(); if ($("#pie")[0].checked) $("#chartdiv2").show();}
+			else if($("#pie")[0].checked) $("#chartdiv2").before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Les données concernant cette élection sont indisponibles.</p></div><br />').hide();
 			for(i=0;i<chart2.series.length;i++) {chart2.series[i].setData(series[i+1].data,false);}			
 		}		
 		else	
 		{
+			if(series[1].data.length) {$(".ui-state-error").remove();if ($("#pie")[0].checked) $("#chartdiv2").show();}
+			else if($("#pie")[0].checked) $("#chartdiv2").before('<div class="ui-state-error"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Les données concernant cette élection sont indisponibles.</p></div><br />').hide();
 			for(i=0;i<series.length;i++)
 				chart2.addSeries(series[i+1],false);
 		}	
@@ -208,7 +222,7 @@ $(document).ready(function() {
 		},
 		credits: {
 	            text: 'SIGeGIS.COM',
-	            href: 'http://www.sigegis2.ugb-edu.com'
+	            href: base_url
 	    },
 		series: []
 	});
@@ -266,7 +280,7 @@ $(document).ready(function() {
 		},
 		credits: {
             text: 'SIGeGIS.COM',
-            href: 'http://www.sigegis2.ugb-edu.com'
+            href: base_url
 		},
 		series: [{
 			type: 'pie',
@@ -278,10 +292,15 @@ $(document).ready(function() {
 
 if(! $.getUrlVar("type"))	
 {
-	$("#bloc_horizontal_filtres *,#export *").attr("disabled","disabled");
+	$("#pannelside *,#export *").attr("disabled","disabled");
 	$("#bloc_horizontal_filtres,#chartdiv1").hide();
 }
-else {$("#help").remove();$("#bloc_horizontal_filtres,#chartdiv1").show();}
+else {
+	$("#help").remove();
+	$("#bloc_horizontal_filtres,#chartdiv1").show();
+	$("#menu li a").removeClass("selected");
+	$("#menu_resultats>a").addClass("selected");
+}
 	
 if($.getUrlVar("map")=="no") {$("#gbox_list").hide();} else {$("#gbox_list").show();}
 if($.getUrlVar("bar")=="no") {$("#chartdiv1").hide();$("#bar").removeAttr("checked");} else  if($.getUrlVar("bar")=="yes") {$("#chartdiv1").show();$("#bar").attr("checked","checked");}

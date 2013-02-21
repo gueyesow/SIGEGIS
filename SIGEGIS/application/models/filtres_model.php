@@ -1,71 +1,64 @@
 <?php
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+/**
+ * Traite toutes les informations relatives aux filtres
+ * @author Amadou SOW & Abdou Khadre GUEYE
+ *
+ */
 class Filtres_model extends CI_Model{
-	private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales");
-	private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales");
-	private $candidatOrListe=array("candidat"=>"idCandidat","listescoalitionspartis"=>"idListe");
-	private $tableCandidat;
-	private $typeElection;
-	private $niveau;
 	
-	public function __construct(){
-		if(!empty($_GET["typeElection"])) {
-			$this->typeElection=$_GET["typeElection"];
-			if ($this->typeElection=="presidentielle") $this->tableCandidat="candidat";else $this->tableCandidat="listescoalitionspartis";
-			if ($this->typeElection=="presidentielle") $this->titreElection="présidentielle";
-			elseif ($this->typeElection=="legislative") $this->titreElection="législative";
-			elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
-			else $this->titreElection=$this->typeElection;
-		}
+	private $tables=array("presidentielle"=>"resultatspresidentielles","legislative"=>"resultatslegislatives","municipale"=>"resultatsmunicipales","regionale"=>"resultatsregionales","rurale"=>"resultatsrurales"); // tables des resultats
+	private $tablesParticipation=array("presidentielle"=>"participationpresidentielles","legislative"=>"participationlegislatives","municipale"=>"participationmunicipales","regionale"=>"participationregionales","rurale"=>"participationrurales"); // tables des statistiques
+	private $candidatOrListe=array("candidat"=>"idCandidat","listescoalitionspartis"=>"idListe"); // tables des candidats et des listes
 	
-		if(!empty($_GET['niveau'])) $this->niveau=$_GET['niveau'];
-	}
-
-	function getCandidatsAnnee(){
-		if(!empty($_GET["typeElection"])) $typeElection=$_GET["typeElection"];
-		else return;
-		
-		$annees = NULL;
-		$annees=$_GET["annees"];	// "2007,2012"
-
-		if($annees != NULL){
+	/**
+	 * Retourne la liste des candidats suivant les parametres fournis.<br />
+	 * <b>Partie:</b> Analyse suivant les années.
+	 * @param string $typeElection le type de l'election en question
+	 * @param string $niveau le niveau d'agregation des donnees
+	 * @param array $params les autres parametres
+	 * @param string $annees la liste des annees d'elections selectionnees par l'utilisateur (separees par des virgules)
+	 * @param string $tableCandidat le nom de la table des candidats a la presidentielle ou celle des listes de partis
+	 * @return string|boolean
+	 */
+	function getCandidatsAnnee($typeElection,$niveau,$params,$annees,$tableCandidat){
+				
+		if($annees){
 			$arrayAnnees=explode(",",$annees);
 		}
 
-		if ( !empty($_GET['param']) AND !empty($_GET["annees"]) AND !empty($_GET["niveau"])) {
+		if ( !empty($params) AND !empty($annees) AND !empty($niveau)) {
 			
 			$requete="SELECT rp.idCandidat, ";
 			
-			if($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
+			if($typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 			else $requete.="nomListe";
 			
 			$requete.=" as nomCandidat
 			FROM {$this->tables[$typeElection]} rp
-			LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
+			LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 
-			if ($_GET["niveau"]=="dep" OR $_GET["niveau"]=="reg" OR $_GET["niveau"]=="pays")
+			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
 				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($_GET["niveau"]=="reg" OR $_GET["niveau"]=="pays")
+			if ($niveau=="reg" OR $niveau=="pays")
 				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($_GET["niveau"]=="pays")
+			if ($niveau=="pays")
 				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 			
-			$parametres=$_GET['param'];
-			$params=explode(",",$parametres);
 			$v=0;
 			
-			if ($_GET["niveau"]=="cen") $idLocalite="centre.idCentre";
-			elseif ($_GET["niveau"]=="dep") $idLocalite="departement.idDepartement";
-			elseif ($_GET["niveau"]=="reg") $idLocalite="region.idRegion";
-			elseif ($_GET["niveau"]=="pays") $idLocalite="pays.idPays";
+			if ($niveau=="cen") $idLocalite="centre.idCentre";
+			elseif ($niveau=="dep") $idLocalite="departement.idDepartement";
+			elseif ($niveau=="reg") $idLocalite="region.idRegion";
+			elseif ($niveau=="pays") $idLocalite="pays.idPays";
 			else $idLocalite=null;
 				
 			$colonnesBDD[]="rp.idSource";
-			if ($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			if ($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 			if ($idLocalite) $colonnesBDD[]=$idLocalite;
 
 			for($i=0;$i<sizeof($params);$i++) {
@@ -98,41 +91,47 @@ class Filtres_model extends CI_Model{
 		} return FALSE;
 	}
 
-	function getCandidatsLocalite(){
-		$localites = NULL;
-		$localites=$_GET["localites"];	// "R1,R2,R3"
+	/**
+	 * Retourne la liste des candidats suivant les paramètres reçus.<br />
+	 * <b>Partie:</b> Analyse suivant les localités.
+	 * @param string $typeElection le type de l'election en question
+	 * @param string $niveau le niveau d'agregation des donnees
+	 * @param array $params les autres parametres
+	 * @param string $localites la liste des localites (separees par des virgules)
+	 * @param string $tableCandidat le nom de la table des candidats a la presidentielle ou celle des listes de partis
+	 * @return string|boolean
+	 */
+	function getCandidatsLocalite($typeElection,$niveau,$params,$localites,$tableCandidat){
 			
-		if($localites != NULL){
+		if($localites){
 			$arrayLocalites=explode(",",$localites);
 		}
 
-		if ( !empty($_GET['param']) AND !empty($_GET["localites"]) AND !empty($_GET["niveau"])) {
-
-			$parametres=$_GET['param'];
-			$params=explode(",",$parametres);
+		if ( !empty($params) AND !empty($localites) AND !empty($niveau)) {
+			
 			$v=0;						
 			
 			$requete="SELECT rp.idCandidat, ";
-			if($this->typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
+			if($typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 			else $requete.="nomListe";
 			$requete.=" as nomCandidat
-			FROM {$this->tables[$this->typeElection]} rp
-			LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
+			FROM {$this->tables[$typeElection]} rp
+			LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection
 			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 
-			if ($_GET["niveau"]=="dep" OR $_GET["niveau"]=="reg" OR $_GET["niveau"]=="pays")
+			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
 				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($_GET["niveau"]=="reg" OR $_GET["niveau"]=="pays")
+			if ($niveau=="reg" OR $niveau=="pays")
 				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($_GET["niveau"]=="pays")
+			if ($niveau=="pays")
 				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";			
 
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
-			if ($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
+			if ($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 			$colonnesBDD[]="YEAR(election.dateElection)";
 			$colonnesBDD[]="election.typeElection";
 
@@ -141,10 +140,10 @@ class Filtres_model extends CI_Model{
 				else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
 			}
 				
-			if ($_GET["niveau"]=="cen") $idLocalite="centre.idCentre";
-			elseif ($_GET["niveau"]=="dep") $idLocalite="departement.idDepartement";
-			elseif ($_GET["niveau"]=="reg") $idLocalite="region.idRegion";
-			elseif ($_GET["niveau"]=="pays") $idLocalite="pays.idPays";
+			if ($niveau=="cen") $idLocalite="centre.idCentre";
+			elseif ($niveau=="dep") $idLocalite="departement.idDepartement";
+			elseif ($niveau=="reg") $idLocalite="region.idRegion";
+			elseif ($niveau=="pays") $idLocalite="pays.idPays";
 				
 			for($i=0;$i<sizeof($arrayLocalites);$i++) {
 				if(!$i) $requete.=" AND ($idLocalite ='".$arrayLocalites[$i]."'";
@@ -171,13 +170,19 @@ class Filtres_model extends CI_Model{
 		} return FALSE;
 	}
 
-	function getDatesElections(){
+	/**
+	 * Retourne les annees d'elections ayant eu lieu suivant le même decoupage admnistratif
+	 * @param string $typeElection le type de l'election en question
+	 * @param int $anneeDecoupage l'anne du decoupage
+	 * @return string|boolean
+	 */
+	function getDatesElections($typeElection,$anneeDecoupage){
 		$requete="SELECT DISTINCT YEAR(dateElection) as annee FROM election";
-		if(!empty($_GET["typeElection"]))
-			$requete.=" WHERE typeElection='".$_GET["typeElection"]."'";
+		if(!empty($typeElection))
+			$requete.=" WHERE typeElection='".$typeElection."'";
 		
-		if(!empty($_GET["anneeDecoupage"]))
-			$requete.=" AND anneeDecoupage=".$_GET["anneeDecoupage"];
+		if(!empty($anneeDecoupage))
+			$requete.=" AND anneeDecoupage=".$anneeDecoupage;
 
 		$requete.=" ORDER BY dateElection asc";
 		$query=$this->db->query($requete);
@@ -195,13 +200,17 @@ class Filtres_model extends CI_Model{
 		}
 	}
 	
-	function getDatesElectionsAnalyse(){
+	/**
+	 * Retourne les annees d'elections
+	 * @return string|boolean
+	 */
+	/*function getDatesElectionsAnalyse(){
 		$requete="SELECT YEAR(dateElection) as annee FROM election";
-		if(!empty($_GET["typeElection"]))
-			$requete.=" WHERE typeElection='".$_GET["typeElection"]."'";
+		if(!empty($typeElection))
+			$requete.=" WHERE typeElection='".$typeElection."'";
 		
-		if(!empty($_GET["anneeDecoupage"]))
-			$requete.=" AND anneeDecoupage=".$_GET["anneeDecoupage"];
+		if(!empty($anneeDecoupage))
+			$requete.=" AND anneeDecoupage=".$anneeDecoupage;
 	
 		$requete.=" ORDER BY dateElection asc";
 		$query=$this->db->query($requete);
@@ -214,19 +223,17 @@ class Filtres_model extends CI_Model{
 			}
 			echo json_encode($elections);
 		}
-		else{
+		else
 			return FALSE;
-		}
-	}
+	}*/
 
-	function getCentres(){
-
-		$idCollectivite = NULL;
-		$anneeDecoupage=NULL;
-		if (!empty($_GET["idCollectivite"])) $idCollectivite=$_GET["idCollectivite"];
-
-		if (!empty($_GET["anneeDecoupage"])) $anneeDecoupage=$_GET["anneeDecoupage"];
-
+	/**
+	 * Retourne les centres d'une collectivite locale
+	 * @param string $idCollectivite l'ID de la collectivite du centre en question
+	 * @param int $anneeDecoupage annee decoupage
+	 * @return string | boolean
+	 */
+	function getCentres($idCollectivite,$anneeDecoupage){
 		$this->db->select('idCentre, nomCentre');
 		$this->db->join('collectivite', 'centre.idCollectivite = collectivite.idCollectivite', 'left');
 		$this->db->join('departement', 'collectivite.idDepartement = departement.idDepartement', 'left');
@@ -245,19 +252,17 @@ class Filtres_model extends CI_Model{
 			echo json_encode($centres);
 		}
 		else
-		{
 			return FALSE;
-		}
 	}
 
-	function getCollectivites(){
+	/**
+	 * Retourne les collectivites d'un departement
+	 * @param string $idDepartement l'ID du departement de la collectivite en question
+	 * @param int $anneeDecoupage annee decoupage
+	 * @return string | boolean
+	 */
+	function getCollectivites($idDepartement,$anneeDecoupage){
 			
-		$idDepartement = NULL;
-		$anneeDecoupage=NULL;
-		if (!empty($_GET["idDepartement"])) $idDepartement=$_GET["idDepartement"];
-
-		if (!empty($_GET["anneeDecoupage"])) $anneeDecoupage=$_GET["anneeDecoupage"];
-
 		$this->db->select('idCollectivite, nomCollectivite');
 		$this->db->join('departement', 'collectivite.idDepartement = departement.idDepartement', 'left');
 		$this->db->join('region', 'departement.idRegion = region.idRegion', 'left');
@@ -278,18 +283,17 @@ class Filtres_model extends CI_Model{
 			echo json_encode($collectivites);
 		}
 		else
-		{
 			return FALSE;
-		}
 	}
 
-	function getDepartements(){
-		$idRegion = NULL;
-		$anneeDecoupage=NULL;
-		if (!empty($_GET["idRegion"])) $idRegion=$_GET["idRegion"];
-
-		if (!empty($_GET["anneeDecoupage"])) $anneeDecoupage=$_GET["anneeDecoupage"];
-
+	/**Retourne les departements d'une region
+	 * 
+	 * @param string $idRegion l'ID de la region du departement en question
+	 * @param int $anneeDecoupage annee de decoupage
+	 * @return boolean
+	 */
+	function getDepartements($idRegion,$anneeDecoupage){
+		
 		$this->db->select('idDepartement, nomDepartement');
 		$this->db->join('region', 'departement.idRegion = region.idRegion', 'left');
 		$this->db->join('pays', 'region.idPays = pays.idPays', 'left');
@@ -316,7 +320,11 @@ class Filtres_model extends CI_Model{
 		}
 	}
 
-	
+	/**
+	 * Retourne le nom du lieu de vote en question
+	 * @param int|string $id
+	 * @param string $niveau le niveau d'agregation
+	 */
 	function getNomLocalite($id,$niveau){	
 		if ($id=="") echo  "Inconnue";
 		if ($niveau=="dep") {$nomLieu="nomDepartement AS nomLieu";$idLieu="idDepartement";$table="departement";}
@@ -328,12 +336,13 @@ class Filtres_model extends CI_Model{
 		foreach ($resultat->result() as $r) echo $r->nomLieu;
 	}
 	
-	function getRegions(){
-		$pays = NULL;
-		$anneeDecoupage=NULL;
-		if (!empty($_GET["idPays"])) $pays=$_GET["idPays"];
-
-		if (!empty($_GET["anneeDecoupage"])) $anneeDecoupage=$_GET["anneeDecoupage"];
+	/**
+	 * Retourne les regions suivant un decoupage administratif et le pays
+	 * @param string $pays
+	 * @param int $anneeDecoupage
+	 * @return sting | boolean
+	 */
+	function getRegions($pays,$anneeDecoupage){
 
 		$this->db->select('idRegion, nomRegion');
 		$this->db->join('pays', 'region.idPays = pays.idPays', 'left');
@@ -360,23 +369,12 @@ class Filtres_model extends CI_Model{
 		}
 	}
 
-	function getPays(){
-
-		$anneeDecoupage=NULL;	$annee=NULL;
-
-		if (!empty($_GET["anneeDecoupage"])) {
-			$anneeDecoupage=$_GET["anneeDecoupage"];
-		}
-		else if (!empty($_GET["paramAnnee"])) {
-			$paramAnnee=$_GET["paramAnnee"];
-			$queryAnneesDecoupage=$this->db->query("SELECT distinct anneeDecoupage FROM election ORDER BY anneeDecoupage")->result();
-			foreach ($queryAnneesDecoupage as $b)
-				$anneesDecoupage[]=$b->anneeDecoupage."<br>";
-			foreach ($anneesDecoupage as $decoupage){
-				if ($paramAnnee>=$decoupage) $anneeDecoupage=$decoupage;
-				else break;
-			}
-		}
+	/**
+	 * Retourne les pays (Senagal ou Etranger)
+	 * @param int $anneeDecoupage l'annee de decoupage
+	 * @return string | boolean
+	 */
+	function getPays($anneeDecoupage){
 
 		$this->db->select('idPays, nomPays');
 
@@ -400,6 +398,10 @@ class Filtres_model extends CI_Model{
 		}
 	}
 
+	/**
+	 * Retourne les sources habilitees a suivre les elections
+	 * @return string | boolean
+	 */
 	function getSources(){
 		$this->db->select('idSource, nomSource');
 
@@ -417,15 +419,11 @@ class Filtres_model extends CI_Model{
 		}
 	}
 
-	function getTours(){ // idElection => Tour
+	function getTours($dateElection){ // idElection => Tour
 		$this->db->select('idElection,dateElection,tour');
 
-		if(!empty($_GET["dateElection"])) {
-				
-			$dateElection=$_GET["dateElection"];
-
-			$this->db->where("YEAR(dateElection)",$dateElection);
-		}
+		if(!empty($dateElection)) $this->db->where("YEAR(dateElection)",$dateElection);
+		
 		$query = $this->db->get('election'); // Table 'regions'
 
 		$tours = array();
@@ -441,6 +439,10 @@ class Filtres_model extends CI_Model{
 		}
 	}
 
+	/**
+	 * Retourne les differents decoupages administratifs (Ex:2002,2008)
+	 * @return String | boolean
+	 */
 	function getDecoupages(){ // idElection => Tour
 		$requete="SELECT distinct anneeDecoupage FROM pays ORDER BY anneeDecoupage";
 		$query=$this->db->query($requete);
@@ -450,16 +452,20 @@ class Filtres_model extends CI_Model{
 				if($decoupage->anneeDecoupage) $decoupages[$decoupage->anneeDecoupage] = "Découpage de ".$decoupage->anneeDecoupage;
 			}
 			echo json_encode($decoupages);
-		}else{
-			return FALSE;
 		}
+		else
+			return FALSE;
 	}
 	
-	function getDecoupagePays(){ 
-		$id=$_GET["idPays"];
-		$requete="SELECT anneeDecoupage FROM pays WHERE idPays=$id";
+	/**
+	 * Est utilisée par la carte (map.js)<br />
+	 * Retourne l'année de découpage d'un lieu donné à partir de son ID
+	 * @return int|boolean
+	 */
+	function getDecoupagePays($idPays){
+		$requete="SELECT anneeDecoupage FROM pays WHERE idPays=$idPays";
 		$query=$this->db->query($requete);
-		
+	
 		if($query->num_rows()){
 			foreach ($query->result() as $decoupage) {
 				echo  $decoupage->anneeDecoupage;

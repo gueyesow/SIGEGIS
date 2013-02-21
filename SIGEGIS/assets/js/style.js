@@ -16,3 +16,9 @@ $(".boutons").button({
     },
     text: true
 });
+$(".boutonhelp").button({
+    icons: {
+        secondary: "ui-icon-help"            
+    },
+    text: true
+});

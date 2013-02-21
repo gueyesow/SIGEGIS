@@ -167,7 +167,7 @@ if (type != "presidentielle") $("#filtretours").remove();
 	
 	$elections.on("change",function(){
 		
-		$('#menu ul li a').each(function(){														
+		$('#menu li a:not(#menu_front a,#menu_apropos a,#menu_analyse a,#menu_resultats a:first)').each(function(){														
 			if( $(this).text()!=$('#menu a:first').text()  && $(this).text()!=$('#menu a:last').text() && $(this).text()!=$('#menu_admin a').text())
 			{
 				if( $(this).attr("href").indexOf("year")==-1 )	$(this).attr("href",$(this).attr("href")+"&year="+$elections.val());

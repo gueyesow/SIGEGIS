@@ -37,7 +37,7 @@ class Admin extends CI_Controller {
 	{
 		if($this->session->userdata('logged_in'))
 		{
-	   	$js_scripts["scripts_array"]=array("base.js","datepicker-fr.js","init_filtres.js","admin.js","style.js");
+	   	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","admin","style");
 	   	$top['title'] = 'SIGeGIS&gt;Administration';
 	   	$top['styles'][] = 'theme';
 	   	$data['head'] = $this->load->view('top',$top,true);
@@ -58,7 +58,7 @@ class Admin extends CI_Controller {
 
 	public function editResultats()
 	{
-		$js_scripts["scripts_array"]=array("base.js","datepicker-fr.js","init_filtres.js","admin.js","style.js");
+		$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","admin","style");
 	 	$top['title'] = 'SIGeGIS&gt;Modifier les résultats d\'une élection';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -71,7 +71,7 @@ class Admin extends CI_Controller {
 	 
 	 public function editParticipations()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","datepicker-fr.js","init_filtres.js","adminParticipations.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminParticipations","style");
 	 	$top['title'] = 'SIGeGIS&gt;Modifier taux de participation';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -84,7 +84,7 @@ class Admin extends CI_Controller {
 	 
 	 public function editElections()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","datepicker-fr.js","init_filtres.js","adminElections.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminElections","style");
 	 	$top['title'] = 'SIGeGIS&gt;Elections';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -97,7 +97,7 @@ class Admin extends CI_Controller {
 	
 	 public function editSources()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","datepicker-fr.js","adminSources.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","datepicker-fr","adminSources","style");
 	 	$top['title'] = 'SIGeGIS&gt;Sources';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -110,7 +110,7 @@ class Admin extends CI_Controller {
 	 
 	 public function editUsers()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","adminUsers.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","adminUsers","style");
 	 	$top['title'] = 'SIGeGIS&gt;Utilisateurs';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -123,7 +123,7 @@ class Admin extends CI_Controller {
 	 
 	 public function editCandidats()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","datepicker-fr.js","init_filtres.js","adminCandidats.js","ckeditor/ckeditor.js","ckeditor/adapters/jquery.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminCandidats","ckeditor/ckeditor","ckeditor/adapters/jquery","style");
 	 	$top['title'] = 'SIGeGIS&gt;Candidats';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -136,7 +136,7 @@ class Admin extends CI_Controller {
 	 
 	 public function editListes()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","datepicker-fr.js","init_filtres.js","adminListes.js","ckeditor/ckeditor.js","ckeditor/adapters/jquery.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","adminListes","ckeditor/ckeditor","ckeditor/adapters/jquery","style");
 	 	$top['title'] = 'SIGeGIS&gt;Listes de partis et de coalitions';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -149,7 +149,7 @@ class Admin extends CI_Controller {
 	 
 	 public function editLocalites()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","datepicker-fr.js","adminLocalites.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","datepicker-fr","adminLocalites","style");
 	 	$top['title'] = 'SIGeGIS&gt;Modifier les localités';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -248,7 +248,7 @@ class Admin extends CI_Controller {
 	  */
 	 function login()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","style");
 	 	$top['title'] = 'SIGeGIS&gt;Connexion';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -268,7 +268,7 @@ class Admin extends CI_Controller {
 	 
 	 	if($this->form_validation->run() == FALSE)
 	 	{
-	 		$js_scripts["scripts_array"]=array("base.js","style.js");
+	 		$js_scripts["scripts_array"]=array("base","style");
 	 		$top['title'] = 'SIGeGIS&gt;Vérification authentification';
 	 		$top['styles'][] = 'theme';
 	 		$data['head'] = $this->load->view('top',$top,true);
@@ -287,7 +287,7 @@ class Admin extends CI_Controller {
 	 }
 	 
 	 /**
-	  * Vérification dans la BDD des identifiants fournis grace au model User
+	  * Vérification dans la BDD des identifiants fournis en utilisant le modele User
 	  * @param string $password
 	  * @return boolean
 	  */
@@ -329,7 +329,7 @@ class Admin extends CI_Controller {
 	 
 	 function upload()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","style");
 	 	$top['title'] = 'SIGeGIS>Uploder des images';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);
@@ -346,7 +346,7 @@ class Admin extends CI_Controller {
 	 	if(!empty($_POST["repertoire"]))	{
 	 		$this->repertoire=$_POST["repertoire"];
 	 		if(!$_FILES['userfile']['size']) redirect("admin/upload");
-	 	} else redirect("admin.js");
+	 	} else redirect("admin");
 	 
 	 	$config['upload_path'] = dirname(BASEPATH)."/assets/images/{$this->repertoire}";
 	 	$config['allowed_types'] = 'jpg|png|gif|svg|xml';
@@ -365,7 +365,7 @@ class Admin extends CI_Controller {
 	 	{
 	 		$data = array('upload_data' => $this->upload->data());
 	 
-	 		$js_scripts["scripts_array"]=array("base.js","style.js");
+	 		$js_scripts["scripts_array"]=array("base","style");
 	 		$top['title'] = 'SIGeGIS>Upload effectué avec succès';
 	 		$top['styles'][] = 'theme';
 	 		$data['head'] = $this->load->view('top',$top,true);
@@ -406,9 +406,12 @@ class Admin extends CI_Controller {
 	 	echo  $output;
 	 }
 	 
+	 /**
+	  * Cette méthode n'est pas complète | EN CHANTIER !!!
+	  */
 	 public function importer()
 	 {
-	 	$js_scripts["scripts_array"]=array("base.js","datepicker-fr.js","init_filtres.js","style.js");
+	 	$js_scripts["scripts_array"]=array("base","datepicker-fr","init_filtres","style");
 	 	$top['title'] = 'SIGeGIS&gt;Importer';
 	 	$top['styles'][] = 'theme';
 	 	$data['head'] = $this->load->view('top',$top,true);

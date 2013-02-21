@@ -28,10 +28,11 @@ class Visualiser_model extends CI_Model{
 		} else $this->typeElection=null;
 	}
 	/**
+	 * Cette methode retourne les titres d'un diagramme (titre et sous-titre)
 	 * @return array Tableau contenant le titre et le sous-titre du diagramme
-	 * @param array $resultats
-	 * @param string $titreElection
-	 * @param string $niveau
+	 * @param array $resultats un jeu de resultats obtenu via une requete ($requete->result())
+	 * @param string $titreElection le titre a affiche sur le diagramme
+	 * @param string $niveau le niveau d'agregation des donnees
 	 * @param string $defaultTitle Le titre par défaut du diagramme
 	 * @param string $defaultSubTitle Le sous-titre par défaut du diagramme
 	 */
@@ -66,14 +67,18 @@ class Visualiser_model extends CI_Model{
 		return array($titre_niveau,$sous_titre);
 	}
 	
+	/**
+	 * Teste si l'election a afficher est une election presidentielle
+	 * @return bool
+	 */
 	public function isPresidentielle(){
 		return ($this->typeElection=="presidentielle")?true:false;
 	} 
 	
 	/**
-	 * Fournit l'attibut de la BDD correspondant au nom de la localité
-	 * @return string
-	 * @param string $niveau
+	 * Fournit l'attribut de la BDD correspondant au nom du lieu de vote
+	 * @return string nom du lieu de vote
+	 * @param string $niveau niveau d'agregation des donnees
 	 * @param string $default L'attribut par défaut (chaine vide)
 	 */
 	public static function nomLieu($niveau,$default=""){
@@ -86,8 +91,9 @@ class Visualiser_model extends CI_Model{
 	}
 	
 	/**
-	 * @param string $niveau
-	 * @param string $default
+	 * Retourne le nom du champ de la BDD correspondant au niveau d'agregation (region,centre,...)
+	 * @param string $niveau niveau d'agregation
+	 * @param string $default valeur par defaut
 	 * @return string L'attribut de la BDD correspondant a un type de localité
 	 */
 	public static function attributLocalite($niveau,$default=""){
@@ -102,7 +108,7 @@ class Visualiser_model extends CI_Model{
 	
 	/**
 	 * 
-	 * @param string $niveau
+	 * @param string $niveau niveau d'agregation
 	 * @param string $default L'attribut par défaut
 	 * @return string L'attribut de la BDD correspondant a un type de localité sans le prefixe de la table
 	 */
@@ -118,9 +124,9 @@ class Visualiser_model extends CI_Model{
 	
 	/**
 	 * Diagramme en bâtons
-	 * @param string $typeElection
-	 * @param string $niveau
-	 * @param array $params
+	 * @param string $typeElection type de l'election
+	 * @param string $niveau niveau d'agregation
+	 * @param array $params parametres issus des listes deroulantes (filtres)
 	 * @return string Objet JSON
 	 */
 	public function getBar($typeElection,$niveau,$params){
@@ -140,77 +146,71 @@ class Visualiser_model extends CI_Model{
 		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
 			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
 			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
+		if ($niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
 			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays" OR $niveau=="globaux")
+		if ($niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 	
-			$colonnesBDD[]="rp.idSource";
-			$colonnesBDD[]="YEAR(election.dateElection)";
-			if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";
-			if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);
-	
-			for($i=0;$i<sizeof($params);$i++) {
+		$colonnesBDD[]="rp.idSource";
+		$colonnesBDD[]="YEAR(election.dateElection)";
+		if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";
+		if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);
+
+		for($i=0;$i<sizeof($params);$i++) {
 			if($v++){
 			if ($colonnesBDD[$i]) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
 			}
 			else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
-	}
+		}
+		
+		$requete.=" GROUP BY rp.idCandidat";
+		
+		$resultats=$this->db->query($requete)->result();
+		
+		//  TITRE DU DIAGRAMME
+		
+		list($this->titre,$this->sous_titre)=self::titre($resultats, $this->titreElection, $niveau);
 	
-	$requete.=" GROUP BY rp.idCandidat";
+		// COLLECTE DES DONNEES
 	
-	$resultats=$this->db->query($requete)->result();
+		$i=0;$j=0;
+		$abscisse=array();$ordonnee=array();
 	
-			/* ----------------------------------------	*/
-			/*			  TITRE DU DIAGRAMME			*/
-			/* ----------------------------------------	*/
-	
-			list($this->titre,$this->sous_titre)=self::titre($resultats, $this->titreElection, $niveau);
-	
-			/* ----------------------------------------	*/
-			/*			COLLECTE DES DONNEES			*/
-			/* ----------------------------------------	*/
-	
-			$i=0;$j=0;
-			$abscisse=array();$ordonnee=array();
-	
-			foreach ($resultats as $resultat){//ici
+		foreach ($resultats as $resultat){
 			$candidat=$resultat->nomCandidat;
 			$a=preg_replace("#(.*)$params[1]:([a-zA-Z0-9 ]*)(.*)#", "$2", $resultat->partis);
 			if ($this->isPresidentielle()) $candidat.="<br /><b>$a</b>";
 			$abscisse[]=$candidat;
 			$ordonnee[]=array("y"=>(int)$resultat->nbVoix,"color"=>"{$this->colors[$i++]}",
-					"url"=>base_url()."visualiser/getFichePersonnelleCandidat?id={$resultat->idCandidat}&typeElection={$typeElection}");
-			}
+				"url"=>base_url()."visualiser/getFichePersonnelleCandidat?id={$resultat->idCandidat}&typeElection={$typeElection}");
+		}
 	
-			if(!empty($_GET['unite'])){
-			if ($_GET['unite']=="va") $unite="En valeurs absolues"; else $unite="En valeurs relatives";
-			} else  $unite="En valeurs absolues";
+		if(!empty($_GET['unite'])){
+		if ($_GET['unite']=="va") $unite="En valeurs absolues"; else $unite="En valeurs relatives";
+		} else  $unite="En valeurs absolues";
 	
-			/* ----------------------------------------	*/
-			//					RENDU					//
-			/* ----------------------------------------	*/
+		// RENDU 
 	
-			$rendu=array();
-			$rendu["titre"]=$this->titre;
-			$rendu["sous_titre"]=$this->sous_titre;
-			$rendu["abscisse"]=$abscisse;
-			$rendu["ordonnee"]=$ordonnee;
-			$rendu["unite"]=$unite;
+		$rendu=array();
+		$rendu["titre"]=$this->titre;
+		$rendu["sous_titre"]=$this->sous_titre;
+		$rendu["abscisse"]=$abscisse;
+		$rendu["ordonnee"]=$ordonnee;
+		$rendu["unite"]=$unite;
 	
-			echo json_encode($rendu);
+		echo json_encode($rendu);
 	
 	} // ...............  Fin de getBar() ...............
 		
 	/**
 	 * Liste les différents vainqueurs dans chaque localité
-	 * @return string Objet JSON
-	 * @param string $typeElection
-	 * @param string $niveau
-	 * @param array $params
-	 * @param string $tour
+	 * @return string Objet JSON la liste au format json
+	 * @param string $typeElection l'election en question
+	 * @param string $niveau niveau d'agregation
+	 * @param array $params parametres des filtres
+	 * @param string $tour le tour de l'election s'il s'agit d'une presidentielle
 	 */
-	public function getWinnersLocalites($typeElection,$niveau,$params,$tour=''){
+	public function getWinnersLocalites($typeElection,$niveau,$params){
 		$v=0;
 		if ($niveau!="reg" && $niveau!="dep") return false;
 		$colonnesBDD[]="rp.idSource";
@@ -327,15 +327,11 @@ class Visualiser_model extends CI_Model{
 
 		$resultats=$this->db->query($requete)->result();
 		
-		/* ----------------------------------------	*/
-		/*			  TITRE DU DIAGRAMME			*/
-		/* ----------------------------------------	*/
+		// TITRE DU DIAGRAMME
 
 		list($this->titre,$this->sous_titre)=self::titre($resultats, $this->titreElection, $niveau);
 
-		/* ----------------------------------------	*/
-		/*			COLLECTE DES DONNEES			*/
-		/* ----------------------------------------	*/
+		// COLLECTE DES DONNEES
 
 		$pieData=array();
 		$i=0;
@@ -356,14 +352,10 @@ class Visualiser_model extends CI_Model{
 	
 	/**
 	 * Cette fonction affiche le code xml du Grid 
-	 * @return string
-	 * @param string $balise Le nom du conteneur Html
-	 */
-	/**
-	 * 
-	 * @param string $typeElection
-	 * @param string $niveau
-	 * @param array $params
+	 * @return string resultat au format XML
+	 * @param string $typeElection type de l'election
+	 * @param string $niveau niveau d'agregation
+	 * @param array $params parametres issus des filtres
 	 */
 	 public function getGrid($typeElection, $niveau, $params){		
 		
@@ -541,7 +533,7 @@ class Visualiser_model extends CI_Model{
 	} // ............... exportResultatsToCSV() ...............	
 	
 	/**
-	 * Partie présentation du candidat
+	 * Retourne les informations sur un candidat
 	 * @return string Objet JSON
 	 */
 	public function getFichePersonnelleCandidat(){

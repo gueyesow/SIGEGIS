@@ -63,8 +63,8 @@
 			
 			<p> 
 			Chosissez l'opération que vous souhaitez effectuer:
-			<a id="visualiser" href="<?php echo base_url("visualiser/resultats?type=presidentielle&niveau=globaux");?>" class="boutons" title="Visualiser les résultats des élections passées">Visualiser des résultats</a>
-			<a id="analyser" href="<?php echo base_url("analyser");?>" class="boutons" title="Ensemble d'outils permettant d'effectuer des comparaisons">Comparer des résultats</a> 
+			<a id="visualiser" href="<?php echo base_url("visualiser/resultats?type=presidentielle&niveau=globaux");?>" class="boutonsimple" title="Visualiser les résultats des élections passées">Visualiser des résultats</a>
+			<a id="analyser" href="<?php echo base_url("analyser");?>" class="boutonsimple" title="Ensemble d'outils permettant d'effectuer des comparaisons">Comparer des résultats</a> 
 			</p>
 		</div>
 

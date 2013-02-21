@@ -22,17 +22,16 @@
 			  <li id="menu_globaux"><a href="<?php echo site_url("visualiser?type=".$typeElection."&amp;niveau=globaux");?>">Globaux</a></li>
 	          <li id="menu_reg"><a href="<?php echo site_url("visualiser?type=".$typeElection."&amp;niveau=reg");?>">Par région</a></li>
 	          <li id="menu_dep"><a href="<?php echo site_url("visualiser?type=".$typeElection."&amp;niveau=dep");?>">Par département</a></li>
-	          <!-- li ><a href="#">Par collectivité</a></li-->
 	          <li id="menu_cen"><a href="<?php echo site_url("visualiser?type=".$typeElection."&amp;niveau=cen");?>">Par Centre de vote</a></li>
 	        </ul>
 		</li>
-		<li>
+		<li id="menu_stats">
 			<a href="<?php echo site_url("analyser/participation?type=".$typeElection."&amp;niveau=globaux");?>">Statistiques</a>
 			<ul >
-			  <li id="menu_globaux"><a href="<?php echo site_url("analyser/participation?type=".$typeElection."&amp;niveau=globaux");?>">Niveau national</a></li>
-	          <li id="menu_reg"><a href="<?php echo site_url("analyser/participation?type=".$typeElection."&amp;niveau=reg");?>">Par région</a></li>
-	          <li id="menu_dep"><a href="<?php echo site_url("analyser/participation?type=".$typeElection."&amp;niveau=dep");?>">Par département</a></li>
-	          <li id="menu_cen"><a href="<?php echo site_url("analyser/participation?type=".$typeElection."&amp;niveau=cen");?>">Par Centre de vote</a></li>
+			  <li id="menu_stats_globaux"><a href="<?php echo site_url("analyser/participation?type=".$typeElection."&amp;niveau=globaux");?>">Niveau national</a></li>
+	          <li id="menu_stats_reg"><a href="<?php echo site_url("analyser/participation?type=".$typeElection."&amp;niveau=reg");?>">Par région</a></li>
+	          <li id="menu_stats_dep"><a href="<?php echo site_url("analyser/participation?type=".$typeElection."&amp;niveau=dep");?>">Par département</a></li>
+	          <li id="menu_stats_cen"><a href="<?php echo site_url("analyser/participation?type=".$typeElection."&amp;niveau=cen");?>">Par Centre de vote</a></li>
 	        </ul>			
 		</li>
 		<li id="menu_analyse">
