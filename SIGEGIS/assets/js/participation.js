@@ -10,8 +10,6 @@ $("#menu_stats>a").addClass("selected");
 $("#grid").attr("checked","checked");
 
 function refreshAll(){
-	niveau=niveau;
-	type=type;
 	
 	param=$sources.val()+","+$elections.val();
 	if(type=="presidentielle") param+=","+$tours.val();
@@ -24,10 +22,11 @@ function refreshAll(){
 	 default:break;
 	}
 	
-	$urlGrid=base_url+'analyser/getGridParticipation?niveau='+niveau+'&param='+param+'&typeElection='+type;
+	$urlGrid=base_url+'analyser/getGridParticipation?niveau='+niveau+'&param='+param+'&typeElection='+type+'&g='+$GRANULARITE[$elections.val()];
 	
 	$paramCharts='param='+param+'&typeElection='+type;
 	if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
+	$paramCharts+='&g='+$GRANULARITE[$elections.val()];
 	
 	$("#list").setGridParam({url:$urlGrid,page:1}).trigger("reloadGrid");
 	chart1.showLoading('<div style="margin:auto;margin-top:150px;">En cours de chargement...<br/><img src="../../assets/images/ajax-loader.gif" width="128px" /></div>');
@@ -43,7 +42,7 @@ function refreshAll(){
 	chart2.showLoading('<div style="margin:auto;margin-top:150px;">En cours de chargement...<br/><img src="../../assets/images/ajax-loader.gif" width="128px" /></div>');
 	$.ajax({        							
 		url: base_url+'analyser/getPoidsElectoralRegions',    
-		data:'annee='+$elections.val()+'&tour='+$tours.val()+'&typeElection='+type,   					     
+		data:'annee='+$elections.val()+'&tour='+$tours.val()+'&typeElection='+type+'&g='+$GRANULARITE[$elections.val()],   					     
 		success: function(json) {
 			 $("#chartdiv2").show();
 			refreshPiePoidsElectoralRegions(json);			
@@ -322,11 +321,11 @@ sortorder: 'desc',
 $(".ui-jqgrid-bdiv").removeAttr("style");
 
 // Un rafraichissement est operé seulement si le niveau actuel correspond au filtre manipulé 
-if (niveau=="cen"){$centres.on("change",function(){refreshAll();});}
-else if (niveau=="dep"){$departements.on("change",function(){refreshAll();});}
-else if (niveau=="reg"){$regions.on("change",function(){refreshAll();});}
-else if (niveau=="pays"){$pays.on("change",function(){refreshAll();});}
-else if(niveau=="globaux")  
+$centres.on("change",function(){if (niveau=="cen") refreshAll();});
+$departements.on("change",function(){if (niveau=="dep") refreshAll();});
+$regions.on("change",function(){if (niveau=="reg") refreshAll();});
+$pays.on("change",function(){if (niveau=="pays") refreshAll();});
+if(niveau=="globaux")  
 {
 	if (type=="presidentielle") $tours.on("change",function(){refreshAll();});
 	else $elections.on("change",function(){refreshAll();});
@@ -337,7 +336,7 @@ $('#imprimer').on("click",function(){
 });
 
 $('#csv').on("click",function(){
-	window.location=base_url+"analyser/exportStatisticsToCSV?param="+param+"&typeElection="+type+"&niveau="+niveau+"&sord="+$("#list").jqGrid('getGridParam','sortorder');
+	window.location=base_url+"analyser/exportStatisticsToCSV?param="+param+"&typeElection="+type+"&niveau="+niveau+'&g='+$GRANULARITE[$elections.val()]+"&sord="+$("#list").jqGrid('getGridParam','sortorder');
 });
 
 /**

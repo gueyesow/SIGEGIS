@@ -21,9 +21,10 @@
 			if(!json) {$("select:last").change();return;}
 			niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
 			$elections.empty();
-
+			
 			$.each(json, function(index, value) {         
-				$elections.append('<option value="'+ index +'">'+ value +'</option>');     
+				$elections.append('<option value="'+ index +'">'+ index +'</option>');
+				$GRANULARITE[index]=value;				
 			});
 			
 			if($.getUrlVar("year")) $("#elections option[value="+$.getUrlVar("year")+"]").attr("selected","selected");
@@ -51,6 +52,12 @@
 	$elections.on('change', function() // DECLENCHE TOURS 
 	{
 		niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
+		
+		if ($GRANULARITE[$elections.val()]=="departement"){ 
+			$("#menu_cen").hide();$("#menu_stats_cen").hide();$("#filtrecollectivites").hide();$("#filtrecentres").hide();
+		} 
+		else {$("#menu_cen").show();$("#menu_stats_cen").show();$("#filtrecollectivites").show();$("#filtrecentres").show();}
+		
 		var val = $(this).val();   
 		if(val != '') {            					           
 			$.ajax({            
@@ -60,9 +67,11 @@
 				success: function(json) {
 					$tours.empty();
 
-					$.each(json, function(index, value) {         
+					$.each(json, function(index, value) {      
 						$tours.append('<option value="'+ index +'">'+ value +'</option>');							
 					});
+					
+					$tours.trigger("liszt:updated");
 					
 					$tours.change();
 					
@@ -96,6 +105,7 @@
 						}
 						
 					});
+										
 				}           
 			});       
 		} // SI PRESIDENTIELLE SINON
@@ -119,6 +129,7 @@
 				});       
 			}    
 			$pays.change();
+			$pays.trigger("liszt:updated");
 		}
 	});		
 	
@@ -139,7 +150,7 @@
 						$pays.append('<option value="'+ index +'">'+ value +'</option>');     
 					});
 					$pays.change();   
-					//$pays.trigger("liszt:updated");
+					$pays.trigger("liszt:updated");
 				}           
 			});       
 		}    
@@ -163,7 +174,8 @@
 						$regions.append('<option value="'+ index +'">'+ value +'</option>');
 						if ($("select[name=niveauAgregation2]").val() == "region") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');								
 					});
-					$regions.change();       
+					$regions.change();
+					$regions.trigger("liszt:updated");
 
 					if ($("select[name=niveauAgregation2]").val() == "pays") {
 						$pays.children().each(function() {         
@@ -192,7 +204,9 @@
 					$departements.append('<option value="'+ index +'">'+ value +'</option>');
 					if ($("select[name=niveauAgregation2]").val() == "departement") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
 					});
+									
 					$departements.change();
+					$departements.trigger("liszt:updated");
 				}           
 			});       
 		}    
@@ -200,23 +214,27 @@
 	
 	$departements.on('change', function() // DECLENCHE COLLECTIVITES 
 	{
-		niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
-		var val = $(this).val();    
-		if(val != '') {					            					           
-			$.ajax({            
-				url: base_url+'filtres/getCollectivites',            			         			
-				data: 'idDepartement='+ val,      
-				dataType: 'json',      
-				success: function(json) {      
-					$collectivites.empty();
-
-					$.each(json, function(index, value) {         
-						$collectivites.append('<option value="'+ index +'">'+ value +'</option>');     
-					});         
-					$collectivites.change();
-				}           
-			});       
-		}    
+		if ($GRANULARITE[$elections.val()]=="centre")
+		{
+			niveau=$.getUrlVar("niveau");type=$.getUrlVar("type");
+			var val = $(this).val();    
+			if(val != '') {					            					           
+				$.ajax({            
+					url: base_url+'filtres/getCollectivites',            			         			
+					data: 'idDepartement='+ val,      
+					dataType: 'json',      
+					success: function(json) {      
+						$collectivites.empty();
+	
+						$.each(json, function(index, value) {         
+							$collectivites.append('<option value="'+ index +'">'+ value +'</option>');     
+						});         
+						$collectivites.change();
+						$collectivites.trigger("liszt:updated");
+					}           
+				});       
+			}
+		} else {if (niveau="cen") {niveau="dep";if (! $("#decoupage_annee").length && type) $("#titre").text("Election "+titres[type]+" "+$elections.val()+": résultats départementaux");}}
 	});
 
 	$collectivites.on('change', function()  // DECLENCHE CENTRES 
@@ -236,6 +254,7 @@
 						if ($("select[name=niveauAgregation2]").val() == "centre") $("#choixMultipleLocalitesA").append('<option value="'+ index +'">'+ value +'</option>');
 					});
 					$centres.change(); // Permet de specifier un changement (:selected)
+					$centres.trigger("liszt:updated");
 				}           
 			});       
 		}    

@@ -10,6 +10,7 @@ class Filtres extends CI_Controller {
 	private $niveau;	// le niveau d'agregation des donnees
 	private $params; // les autre parametres
 	private $tableCandidat; // la table des candidats ou celle des listes de partis et coalitions de partis
+	private $granularite; // Granularite des données d'origine
 	
 	public function __construct(){
 		// database et assets_helper sont chargés automatiquement
@@ -41,6 +42,8 @@ class Filtres extends CI_Controller {
 			elseif ($this->typeElection=="regionale") $this->titreElection="régionale";
 			else $this->titreElection=$this->typeElection;
 		}
+		
+		if(!empty($_GET['g'])) $this->granularite=$_GET['g'];else $this->granularite="centre";
 	}
 	
 	public function getNomLocalite($idRegion="",$niveau=""){
@@ -133,13 +136,13 @@ class Filtres extends CI_Controller {
 	// Retourne la liste des candidats suivant les parametres fournis
 	public function getCandidatsAnnee(){
 		$annees=$_GET["annees"];
-		$this->filtersModel->getCandidatsAnnee($this->typeElection,$this->niveau,$this->params,$annees,$this->tableCandidat);
+		$this->filtersModel->getCandidatsAnnee($this->typeElection,$this->niveau,$this->params,$this->granularite,$annees,$this->tableCandidat);
 	}
 	
 	// Retourne la liste des candidats suivant les parametres fournis
 	public function getCandidatsLocalite(){
 		$localites=$_GET["localites"];
-		$this->filtersModel->getCandidatsLocalite($this->typeElection,$this->niveau,$this->params,$localites,$this->tableCandidat);
+		$this->filtersModel->getCandidatsLocalite($this->typeElection,$this->niveau,$this->params,$this->granularite,$localites,$this->tableCandidat);
 	}
 	
 	// Retourne les differents decoupages administratifs

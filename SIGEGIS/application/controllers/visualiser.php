@@ -8,7 +8,8 @@
 class Visualiser extends CI_Controller {		
 	private $typeElection; // nom de l'election 
 	private $niveau;	// niveau d'agregation des donnees 
-	private $params; // autres parametres pouvant contenir les valeurs des listes deroulantes   
+	private $params; // autres parametres pouvant contenir les valeurs des listes deroulantes
+	private $granularite; // Granularite des données d'origine
 	
 	public function __construct(){
 		// database et assets_helper sont chargés automatiquement
@@ -23,6 +24,8 @@ class Visualiser extends CI_Controller {
 		if(!empty($_GET['param'])) {$parametres=$_GET['param'];}	else $parametres="1,2012,premier_tour,globaux";
 
 		$this->params=explode(",",$parametres);
+		
+		if(!empty($_GET['g'])) $this->granularite=$_GET['g'];else $this->granularite="centre";
 	}
 
 	public function index()
@@ -82,23 +85,23 @@ class Visualiser extends CI_Controller {
 	}
 
 	public function getWinnersLocalites(){
-		$this->visualizeModel->getWinnersLocalites($this->typeElection,$this->niveau,$this->params);
+		$this->visualizeModel->getWinnersLocalites($this->typeElection,$this->niveau,$this->params,$this->granularite);
 	}
 	
 	public function getBar(){	
-		echo $this->visualizeModel->getBar($this->typeElection,$this->niveau,$this->params);
+		echo $this->visualizeModel->getBar($this->typeElection,$this->niveau,$this->params,$this->granularite);
 	}
 	
 	public function getPie(){				
-		echo $this->visualizeModel->getPie($this->typeElection,$this->niveau,$this->params);
+		echo $this->visualizeModel->getPie($this->typeElection,$this->niveau,$this->params,$this->granularite);
 	}
 	
 	public function getGrid(){
-		$this->visualizeModel->getGrid($this->typeElection,$this->niveau,$this->params);
+		$this->visualizeModel->getGrid($this->typeElection,$this->niveau,$this->params,$this->granularite);
 	}
 	
 	public function exportResultatsToCSV(){
-		$this->visualizeModel->exportResultatsToCSV($this->typeElection,$this->niveau,$this->params);
+		$this->visualizeModel->exportResultatsToCSV($this->typeElection,$this->niveau,$this->params,$this->granularite);
 	}
 
 	public function getFichePersonnelleCandidat(){

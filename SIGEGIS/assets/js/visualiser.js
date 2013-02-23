@@ -61,10 +61,11 @@ $(document).ready(function() {
 		 default:break;
 		}
 		
-		$urlGrid=base_url+"visualiser/getGrid?niveau="+niveau+"&param="+param+"&typeElection="+type;
+		$urlGrid=base_url+"visualiser/getGrid?niveau="+niveau+"&param="+param+"&typeElection="+type+'&g='+$GRANULARITE[$elections.val()];
 		
 		$paramCharts='param='+param+'&typeElection='+type;
 		if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
+		$paramCharts+='&g='+$GRANULARITE[$elections.val()];
 		
 		$("#list").setGridParam({url:$urlGrid,page:1}).trigger("reloadGrid");
 		chart1.showLoading('<div style="margin:auto;margin-top:150px;">En cours de chargement...<br/><img src="../../assets/images/ajax-loader.gif" width="128px" /></div>');
@@ -389,23 +390,19 @@ $("#types_elections input").on( "change",function() {
 	});
 });
 		
-if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
-
-	if (niveau=="cen")
-	{
-
-	}
-	else
-	if (niveau=="dep"){$("#filtrecollectivites").remove();$("#filtrecentres").remove();}
+if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();	
+	
+	if (niveau=="cen"){} // ne pas supprimer cette ligne
+	else if (niveau=="dep"){$("#filtrecollectivites").remove();$("#filtrecentres").remove();}
 	else if (niveau=="reg"){$("#filtredepartements").remove();$("#filtrecollectivites").remove();$("#filtrecentres").remove();}
 	else if (niveau=="pays"){$("#filtreregions").remove();$("#filtredepartements").remove();$("#filtrecollectivites").remove();	$("#filtrecentres").remove();}
-	else{$("#filtrepays").remove();$("#filtreregions").remove();$("#filtredepartements").remove();$("#filtrecollectivites").remove();$("#filtrecentres").remove();}	
+	else{$("#filtrepays").remove();$("#filtreregions").remove();$("#filtredepartements").remove();$("#filtrecollectivites").remove();$("#filtrecentres").remove();} // globaux
 
 	param=$sources.val()+","+$elections.val();
 	
 	if($.getUrlVar("type")=="presidentielle") param+=","+$tours.val();
 	
-	$url=base_url+'visualiser/getGrid?niveau='+niveau+'&param='+param+'&typeElection='+$.getUrlVar("type");
+	$url=base_url+'visualiser/getGrid?niveau='+niveau+'&param='+param+'&typeElection='+$.getUrlVar("type")+'&g='+$GRANULARITE[$elections.val()];
 	
 	if ( $.getUrlVar("type") && $("#grid")[0].checked ) 
 	$("#list").jqGrid({		
@@ -429,28 +426,17 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 	}).navGrid("#pager",{edit:false,add:false,del:false,search:false});
 	
 	$(".ui-jqgrid-bdiv").removeAttr("style");
-	
-		if (niveau=="cen") // NIVEAU CENTRE 
-		{		
-			$centres.on("change",function(){refreshAll();});				
-		}
-		else if (niveau=="dep")	// NIVEAU DEPARTEMENT 
-		{		
-			$departements.on("change",function(){refreshAll();});			
-		}
-		else if (niveau=="reg")		// NIVEAU REGION 		
-		{
-			$regions.on("change",function(){refreshAll();});
-		}
-		else if (niveau=="pays")		// NIVEAU REGION 		
-		{
-			$pays.on("change",function(){refreshAll();});
-		}
-		else if(niveau=="globaux")  
-		{
-			if ($.getUrlVar("type")=="presidentielle") $tours.on("change",function(){refreshAll();});
-			else $elections.on("change",function(){refreshAll();});
-		}
+		
+
+	$centres.on("change",function(){if (niveau=="cen") refreshAll();}); // NIVEAU CENTRE 
+	$departements.on("change",function(){if (niveau=="dep") refreshAll();}); // NIVEAU DEPARTEMENT 
+	$regions.on("change",function(){if (niveau=="reg") refreshAll();}); // NIVEAU REGION 		
+	$pays.on("change",function(){if (niveau=="pays") refreshAll();}); // NIVEAU PAYS
+	if(niveau=="globaux")  
+	{
+		if ($.getUrlVar("type")=="presidentielle") $tours.on("change",function(){refreshAll();});
+		else $elections.on("change",function(){refreshAll();});
+	}
 		
 		$('#imprimer').on("click",function(){
 			window.print();
@@ -459,9 +445,9 @@ if ($.getUrlVar("type") != "presidentielle") $("#filtretours").remove();
 		$('#csv').on("click",function(){
 			if (niveau) paramNiveau="&niveau="+niveau;else paramNiveau="";
 			if( $("#grid")[0].checked )
-			window.location=base_url+"visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord="+$("#list").jqGrid('getGridParam','sortorder')+paramNiveau;
+			window.location=base_url+"visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+'&g='+$GRANULARITE[$elections.val()]+"&sord="+$("#list").jqGrid('getGridParam','sortorder')+paramNiveau;
 			else
-				window.location=base_url+"visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+"&sord=desc"+paramNiveau;
+				window.location=base_url+"visualiser/exportResultatsToCSV?param="+param+"&typeElection="+$.getUrlVar("type")+'&g='+$GRANULARITE[$elections.val()]+"&sord=desc"+paramNiveau;
 		});
 		
 		/**

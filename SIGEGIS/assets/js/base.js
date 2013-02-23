@@ -76,3 +76,4 @@ var base_url='http://sigegis.ugb-edu.com/';
 
 var annees=""; // Utile (Analyse suivant annees)
 var parametres_analyse="";	 // Importante
+$GRANULARITE={};

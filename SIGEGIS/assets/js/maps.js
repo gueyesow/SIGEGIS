@@ -77,6 +77,7 @@ $(function () {
 
 				$paramCharts='param='+param+'&typeElection='+type;
 				if (niveau!="globaux") $paramCharts+='&niveau='+niveau;
+				$paramCharts+='&g='+$GRANULARITE[$elections.val()];
 
 				$.ajax({        							
 					url: base_url+'visualiser/getWinnersLocalites',    

@@ -27,6 +27,37 @@ class Visualiser_model extends CI_Model{
 			else $this->titreElection=$this->typeElection;
 		} else $this->typeElection=null;
 	}
+	
+	/**
+	 * Cette fonction retourne la concatenation d'une portion de requete avec la portion des jointures necessaires a la recuperation des données 
+	 * @param string $requete la portion de la requete a concatener avec les jointures LEFT JOIN
+	 * @param string $niveau
+	 * @param string $granularite (centre|departement)
+	 */
+	public function concatLeftJoinTo($requete="",$niveau,$granularite){
+		$requete.=" LEFT JOIN $this->tableCandidat ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
+		LEFT JOIN source ON rp.idSource = source.idSource
+		LEFT JOIN election ON rp.idElection = election.idElection";
+		
+		if ($granularite=="centre"){
+			$requete.=" LEFT JOIN centre ON rp.idCentre = centre.idCentre
+			LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite";
+		
+			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
+				$requete.="	LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
+		}
+		else
+		{
+			$requete.="	LEFT JOIN departement ON rp.idDepartement = departement.idDepartement";
+		}
+		
+		if ($niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
+			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+		if ($niveau=="pays" OR $niveau=="globaux")
+			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+		return $requete;
+	}
+	
 	/**
 	 * Cette methode retourne les titres d'un diagramme (titre et sous-titre)
 	 * @return array Tableau contenant le titre et le sous-titre du diagramme
@@ -129,7 +160,7 @@ class Visualiser_model extends CI_Model{
 	 * @param array $params parametres issus des listes deroulantes (filtres)
 	 * @return string Objet JSON
 	 */
-	public function getBar($typeElection,$niveau,$params){
+	public function getBar($typeElection,$niveau,$params,$granularite){
 		$v=0;
 		$default="'Résultats globaux' as nomLieu, ";
 		$requete="SELECT rp.idCandidat, YEAR(dateElection) as annee, ";
@@ -137,19 +168,10 @@ class Visualiser_model extends CI_Model{
 		if ($this->isPresidentielle()) $requete.="CONCAT(prenom, ' ', nom)";	else $requete.="nomListe";
 	
 		$requete.=" as nomCandidat, ".self::nomLieu($niveau,$default)." nomSource,partis, SUM( nbVoix ) as nbVoix
-		FROM {$this->tables[$typeElection]} rp
-		LEFT JOIN $this->tableCandidat ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
-		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-	
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
-			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
-			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+		FROM {$this->tables[$typeElection]} rp";
+		
+		// Concatenation de la requete en parametre avec les jointures nécessaires
+		$requete=$this->concatLeftJoinTo($requete,$niveau,$granularite);
 	
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
@@ -210,7 +232,7 @@ class Visualiser_model extends CI_Model{
 	 * @param array $params parametres des filtres
 	 * @param string $tour le tour de l'election s'il s'agit d'une presidentielle
 	 */
-	public function getWinnersLocalites($typeElection,$niveau,$params){
+	public function getWinnersLocalites($typeElection,$niveau,$params,$granularite){
 		$v=0;
 		if ($niveau!="reg" && $niveau!="dep") return false;
 		$colonnesBDD[]="rp.idSource";
@@ -220,17 +242,10 @@ class Visualiser_model extends CI_Model{
 
 		//--------------------------
 		$requeteTOTAL="SELECT ".self::attributLocalite($niveau).", SUM( nbVoix ) as nbVoix
-		FROM {$this->tables[$typeElection]} rp
-		LEFT JOIN $this->tableCandidat ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
-		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+		FROM {$this->tables[$typeElection]} rp";
 		
-		if ($niveau=="dep" OR $niveau=="reg")
-			$requeteTOTAL.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg")
-			$requeteTOTAL.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+		// Concatenation de la requete en parametre avec les jointures nécessaires
+		$requeteTOTAL=$this->concatLeftJoinTo($requeteTOTAL,$niveau,$granularite);
 		
 		for($i=0;$i<sizeof($params);$i++) {
 			if( $colonnesBDD[$i] ){
@@ -246,17 +261,10 @@ class Visualiser_model extends CI_Model{
 		$requete="SELECT rp.idCandidat, ".self::attributLocalite($niveau).", YEAR(dateElection) as annee, ";
 		if ($this->isPresidentielle()) $requete.=" CONCAT(prenom, ' ', nom)";	else $requete.=" nomListe";
 		$requete.="  as nomCandidat, ".self::nomLieu($niveau)." nomSource, SUM( nbVoix ) as nbVoix
-		FROM {$this->tables[$typeElection]} rp
-		LEFT JOIN $this->tableCandidat ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
-		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+		FROM {$this->tables[$typeElection]} rp";
 		
-		if ($niveau=="dep" OR $niveau=="reg")
-			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg")
-			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+		// Concatenation de la requete en parametre avec les jointures nécessaires
+		$requete=$this->concatLeftJoinTo($requete,$niveau,$granularite);
 				
 		for($i=0;$i<sizeof($params);$i++) {
 			if( $colonnesBDD[$i] ){
@@ -289,7 +297,7 @@ class Visualiser_model extends CI_Model{
 	 * @param array $params
 	 * @return string Objet JSON
 	 */
-	public function getPie($typeElection,$niveau,$params){			
+	public function getPie($typeElection,$niveau,$params,$granularite){			
 		$v=0;
 
 		$requete="SELECT rp.idCandidat, YEAR(dateElection) as annee, ";
@@ -298,19 +306,10 @@ class Visualiser_model extends CI_Model{
 		else $requete.="nomListe";
 
 		$requete.="  as nomCandidat, ".self::nomLieu($niveau)." nomSource, SUM( nbVoix ) as nbVoix
-		FROM {$this->tables[$typeElection]} rp
-		LEFT JOIN $this->tableCandidat ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
-		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";		
+		FROM {$this->tables[$typeElection]} rp";
+		
+		// Concatenation de la requete en parametre avec les jointures nécessaires
+		$requete=$this->concatLeftJoinTo($requete,$niveau,$granularite);
 		
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
@@ -357,7 +356,7 @@ class Visualiser_model extends CI_Model{
 	 * @param string $niveau niveau d'agregation
 	 * @param array $params parametres issus des filtres
 	 */
-	 public function getGrid($typeElection, $niveau, $params){		
+	 public function getGrid($typeElection, $niveau, $params, $granularite){		
 		
 		$page = $_GET['page']; $limit = $_GET['rows']; $sidx = $_GET['sidx']; $sord = $_GET['sord'];
 	
@@ -369,23 +368,11 @@ class Visualiser_model extends CI_Model{
 		if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";
 		if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);	
 		
-		$requeteTOTAL="SELECT SUM( nbVoix ) ";
-
-		$joinPART=" FROM {$this->tables[$typeElection]} rp
-		LEFT JOIN $this->tableCandidat ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
-		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+		$requeteTOTAL="SELECT SUM( nbVoix ) FROM {$this->tables[$typeElection]} rp";
 		
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$joinPART.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$joinPART.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays" OR $niveau=="globaux")
-			$joinPART.=" LEFT JOIN pays ON region.idPays = pays.idPays";
-
-		$requeteTOTAL.=$joinPART;
+		// Concatenation de la requete en parametre avec les jointures nécessaires
+		$requeteTOTAL=$this->concatLeftJoinTo($requeteTOTAL,$niveau,$granularite);
+		
 		$v=0;
 		
 		for($i=0;$i<sizeof($params);$i++) {
@@ -399,17 +386,28 @@ class Visualiser_model extends CI_Model{
 		
 		$requete="SELECT rp.idCandidat, ";
 		if ($this->isPresidentielle()) $requete.=" CONCAT(prenom, ' ', nom)";	else $requete.=" nomListe";
-		$requete.=" as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
-		$requete.=$joinPART.$wherePART;
+		$requete.=" as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage 
+		FROM {$this->tables[$typeElection]} rp";
+		
+		// Concatenation de la requete en parametre avec les jointures nécessaires
+		$requete=$this->concatLeftJoinTo($requete,$niveau,$granularite);
+		
+		$requete.=$wherePART;
 		
 		$requeteCount="SELECT COUNT(DISTINCT S.idCandidat) as total FROM (SELECT rp.idCandidat, ";
+		
 		if ($this->isPresidentielle()) $requeteCount.=" CONCAT(prenom, ' ', nom)";
-		else $requeteCount.=" nomListe"; $requeteCount.=" as nomCandidat,nomSource
+		else $requeteCount.=" nomListe";
+		 
+		$requeteCount.=" as nomCandidat,nomSource
 		FROM {$this->tables[$typeElection]} rp
 		LEFT JOIN $this->tableCandidat ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$typeElection'";
+		LEFT JOIN election ON rp.idElection = election.idElection";
+		
+		if ($granularite=="centre") $requeteCount.=" LEFT JOIN centre ON rp.idCentre = centre.idCentre"; else $requeteCount.=" LEFT JOIN departement ON rp.idDepartement = departement.idDepartement";
+		 
+		$requeteCount.=" WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$typeElection'";
 	
 		$requeteCount.=" GROUP BY rp.idCandidat) as S";
 	
@@ -457,7 +455,7 @@ class Visualiser_model extends CI_Model{
 	 * @param string $niveau
 	 * @param array $params
 	 */
-	public function exportResultatsToCSV($typeElection,$niveau,$params){
+	public function exportResultatsToCSV($typeElection,$niveau,$params,$granularite){
 	
 		$sord = $_GET['sord']; $v=0;
 			
@@ -466,23 +464,10 @@ class Visualiser_model extends CI_Model{
 		if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";
 		if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);			
 			
-		$requeteTOTAL="SELECT SUM( nbVoix ) ";
-
-		$joinPART=" FROM {$this->tables[$typeElection]} rp
-		LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
-		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+		$requeteTOTAL="SELECT SUM( nbVoix ) FROM {$this->tables[$typeElection]} rp";
 		
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$joinPART.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$joinPART.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays" OR $niveau=="globaux")
-			$joinPART.=" LEFT JOIN pays ON region.idPays = pays.idPays";
-
-		$requeteTOTAL.=$joinPART;
+		// Concatenation de la requete en parametre avec les jointures nécessaires
+		$requeteTOTAL=$this->concatLeftJoinTo($requeteTOTAL,$niveau,$granularite);;
 		
 		$v=0;
 		
@@ -499,8 +484,12 @@ class Visualiser_model extends CI_Model{
 		
 		if ($this->isPresidentielle()) $requete.="CONCAT(prenom, ' ', nom)"; else $requete.="nomListe";
 		
-		$requete.=" as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage";
-		$requete.=$joinPART.$wherePART;
+		$requete.=" as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage FROM {$this->tables[$typeElection]} rp";
+		
+		// Concatenation de la requete en parametre avec les jointures nécessaires
+		$requete=$this->concatLeftJoinTo($requete,$niveau,$granularite);
+		
+		$requete.=$wherePART;
 		
 		$requeteCount="SELECT COUNT(DISTINCT S.idCandidat) as total FROM (SELECT rp.idCandidat, ";
 		
@@ -510,8 +499,9 @@ class Visualiser_model extends CI_Model{
 		FROM {$this->tables[$typeElection]} rp
 		LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre WHERE YEAR(election.dateElection)={$params[1]} AND election.typeElection='$typeElection'";
+		LEFT JOIN election ON rp.idElection = election.idElection";
+		
+		if ($granularite=="centre") $requeteCount.=" LEFT JOIN centre ON rp.idCentre = centre.idCentre"; else $requeteCount.=" LEFT JOIN departement ON rp.idDepartement = departement.idDepartement";
 
 		$requete.=" GROUP BY idCandidat ORDER BY nbVoix $sord";
 

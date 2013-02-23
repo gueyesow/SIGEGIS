@@ -12,6 +12,29 @@ class Filtres_model extends CI_Model{
 	private $candidatOrListe=array("candidat"=>"idCandidat","listescoalitionspartis"=>"idListe"); // tables des candidats et des listes
 	
 	/**
+	 * Cette fonction retourne la concatenation d'une portion de requete avec la portion des jointures necessaires a la recuperation des données
+	 * @param string $requete la portion de la requete a concatener avec les jointures LEFT JOIN
+	 * @param string $niveau
+	 * @param string $granularite (centre|departement)
+	 */
+	public function concatLeftJoinTo($requete,$niveau,$tableCandidat){		
+				
+		$requete.=" LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]} 
+		LEFT JOIN election ON rp.idElection = election.idElection
+		LEFT JOIN source ON rp.idSource = source.idSource
+		LEFT JOIN centre ON rp.idCentre = centre.idCentre
+		LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite";
+	
+		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
+			$requete.="	LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement OR rp.idDepartement = departement.idDepartement ";
+		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
+			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+		if ($niveau=="pays" OR $niveau=="globaux")
+			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+		return $requete;
+	}
+	
+	/**
 	 * Retourne la liste des candidats suivant les parametres fournis.<br />
 	 * <b>Partie:</b> Analyse suivant les années.
 	 * @param string $typeElection le type de l'election en question
@@ -21,7 +44,7 @@ class Filtres_model extends CI_Model{
 	 * @param string $tableCandidat le nom de la table des candidats a la presidentielle ou celle des listes de partis
 	 * @return string|boolean
 	 */
-	function getCandidatsAnnee($typeElection,$niveau,$params,$annees,$tableCandidat){
+	function getCandidatsAnnee($typeElection,$niveau,$params,$granularite,$annees,$tableCandidat){
 				
 		if($annees){
 			$arrayAnnees=explode(",",$annees);
@@ -35,19 +58,9 @@ class Filtres_model extends CI_Model{
 			else $requete.="nomListe";
 			
 			$requete.=" as nomCandidat
-			FROM {$this->tables[$typeElection]} rp
-			LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}
-			LEFT JOIN source ON rp.idSource = source.idSource
-			LEFT JOIN election ON rp.idElection = election.idElection
-			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-
-			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
-				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays")
-				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays")
-				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+			FROM {$this->tables[$typeElection]} rp";
+			
+			$requete=$this->concatLeftJoinTo($requete, $niveau, $tableCandidat);
 			
 			$v=0;
 			
@@ -101,7 +114,7 @@ class Filtres_model extends CI_Model{
 	 * @param string $tableCandidat le nom de la table des candidats a la presidentielle ou celle des listes de partis
 	 * @return string|boolean
 	 */
-	function getCandidatsLocalite($typeElection,$niveau,$params,$localites,$tableCandidat){
+	function getCandidatsLocalite($typeElection,$niveau,$params,$granularite,$localites,$tableCandidat){
 			
 		if($localites){
 			$arrayLocalites=explode(",",$localites);
@@ -115,20 +128,10 @@ class Filtres_model extends CI_Model{
 			if($typeElection=="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 			else $requete.="nomListe";
 			$requete.=" as nomCandidat
-			FROM {$this->tables[$typeElection]} rp
-			LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}
-			LEFT JOIN source ON rp.idSource = source.idSource
-			LEFT JOIN election ON rp.idElection = election.idElection
-			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-
-			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays")
-				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays")
-				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays")
-				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";			
-
+			FROM {$this->tables[$typeElection]} rp";
+			
+			$requete=$this->concatLeftJoinTo($requete, $niveau, $tableCandidat);
+			
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
 			if ($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
@@ -177,7 +180,7 @@ class Filtres_model extends CI_Model{
 	 * @return string|boolean
 	 */
 	function getDatesElections($typeElection,$anneeDecoupage){
-		$requete="SELECT DISTINCT YEAR(dateElection) as annee FROM election";
+		$requete="SELECT DISTINCT YEAR(dateElection) as annee, granularite FROM election";
 		if(!empty($typeElection))
 			$requete.=" WHERE typeElection='".$typeElection."'";
 		
@@ -191,8 +194,9 @@ class Filtres_model extends CI_Model{
 
 		if($query->result()){
 			foreach ($query->result() as $anneeElection) {
-				$elections[$anneeElection->annee] = $anneeElection->annee;
-			}
+				$elections[$anneeElection->annee] = $anneeElection->granularite;
+			}			
+
 			echo json_encode($elections);
 		}
 		else{

@@ -108,10 +108,42 @@ $("#MoveRight,#MoveLeft").on("click",function(event) {
 	var selectFrom = id == "MoveRight" ? "#choixmultipleA" : "#choixmultipleB";
 	var moveTo = id == "MoveRight" ? "#choixmultipleB" : "#choixmultipleA";
 	var selectedItems = $(selectFrom + " :selected").toArray();
+	var $granuliteDepExiste=false;
+
+	// S'il existe des donnees de granularite departement selectionnees alors on supprime le filtre "Centre".
+	$.each(selectedItems,function(index,value) 
+	{
+		if($GRANULARITE[$(this).text()]!="centre" && moveTo=="#choixmultipleB"){
+			$granuliteDepExiste=true;
+			$("#niveauAgregation1 > option:last").hide();
+			$("#niveauAgregation1").val("departement");
+			if ($("#niveauAgregation1").val()=="pays") { methode="getPays";parametres_analyse+="&niveau=pays&anneeDecoupage="+$("#decoupage_annee").val();}
+			else if ($("#niveauAgregation1").val()=="region") { methode="getRegions";parametres_analyse+="&niveau=reg";}
+			else if ($("#niveauAgregation1").val()=="departement") { methode="getDepartements";parametres_analyse+="&niveau=dep";}
+			
+			$url=base_url+"filtres/"+methode+"?typeElection="+typeElection+"&anneeDecoupage="+$("#decoupage_annee").val();
+
+			$.ajax({        							
+				url: $url,    
+				dataType: 'json', 
+				success: function(json) {			
+					$("#localite").empty();			
+					$.each(json, function(index, value) {         
+						$("#localite").append('<option value="'+ index +'">'+ value +'</option>');     
+					});		
+					$("#choixmultipleB").change();
+				}    
+			});			
+			//$(moveTo).append(selectedItems);
+		}
+		else {$("#niveauAgregation1 > option:last").show();}
+	});
+	
 	$(moveTo).append(selectedItems);
 	$(moveTo+ " :selected").removeAttr("selected");
 	selectedItems.remove;
-	$("#choixmultipleB").change();	
+	
+	if(!$granuliteDepExiste) {$("#choixmultipleB").change();$granuliteDepExiste=false;}
 });
 
 //Boutons du SwapList des localités pour l'analyse suivant une localité
@@ -120,6 +152,36 @@ $("#MoveRightLocalite,#MoveLeftLocalite").on("click",function(event) {
 	var selectFrom = id == "MoveRightLocalite" ? "#choixMultipleLocalitesA" : "#choixMultipleLocalitesB";
 	var moveTo = id == "MoveRightLocalite" ? "#choixMultipleLocalitesB" : "#choixMultipleLocalitesA";
 	var selectedItems = $(selectFrom + " :selected").toArray();
+	
+	// S'il existe des donnees de granularite departement selectionnees alors on supprime le filtre "Centre".
+	/*$.each(selectedItems,function(index,value) 
+	{
+		if($GRANULARITE[$elections.val()]!="centre" && moveTo=="#choixMultipleLocalitesB"){
+			$("#niveauAgregation2 > option:last").hide();
+			$("#niveauAgregation2").val("departement");
+			$elections.change();
+			/*if ($("#niveauAgregation2").val()=="pays") { methode="getPays";parametres_analyse+="&niveau=pays&anneeDecoupage="+$("#decoupage_annee").val();}
+			else if ($("#niveauAgregation2").val()=="region") { methode="getRegions";parametres_analyse+="&niveau=reg";}
+			else if ($("#niveauAgregation2").val()=="departement") { methode="getDepartements";parametres_analyse+="&niveau=dep";}
+			
+			$url=base_url+"filtres/"+methode+"?typeElection="+typeElection+"&anneeDecoupage="+$("#decoupage_annee").val();
+
+			$.ajax({        							
+				url: $url,    
+				dataType: 'json', 
+				success: function(json) {			
+					$("#localite").empty();			
+					$.each(json, function(index, value) {         
+						$("#localite").append('<option value="'+ index +'">'+ value +'</option>');     
+					});		
+					$("#choixmultipleB").change();
+				}    
+			});			
+			$(moveTo).append(selectedItems);
+		}
+		else {$("#niveauAgregation1 > option:last").show();$("#choixmultipleB").change();}
+	});*/
+	
 	$(moveTo).append(selectedItems);
 	$(moveTo+ " :selected").removeAttr("selected");
 	selectedItems.remove;
@@ -267,9 +329,6 @@ $("#choixmultipleB,#choixCandidatB,#choixCandidatLocaliteA,#choixCandidatLocalit
 $("#dialog_zone_des_options").dialog({
 	autoOpen: false,
 	width: 800,
-	//open: function(event, ui) { 
-		//$("#localite").change();
-	//},
 	buttons: {
 		"Fermer": function() {
 			$(this).dialog("close");

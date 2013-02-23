@@ -9,6 +9,7 @@ class Analyser extends CI_Controller {
 	private $niveau;	
 	private $params;	
 	private $tableCandidat;
+	private $granularite; // Granularite des données d'origine
 	
 	public function __construct(){
 		// database et assets_helper sont chargés automatiquement
@@ -26,6 +27,8 @@ class Analyser extends CI_Controller {
 		
 		
 		if ($this->typeElection=="presidentielle") $this->tableCandidat="candidat";else $this->tableCandidat="listescoalitionspartis";
+		
+		if(!empty($_GET['g'])) $this->granularite=$_GET['g'];else $this->granularite="centre";
 			
 	}
 	
@@ -51,7 +54,7 @@ class Analyser extends CI_Controller {
 
 	// Exportation des informations sur la participation	
 	public function exportStatisticsToCSV(){
-		$this->analysisModel->exportStatisticsToCSV($this->typeElection,$this->niveau,$this->params);
+		$this->analysisModel->exportStatisticsToCSV($this->typeElection,$this->niveau,$this->params,$this->granularite);
 	}
 	
 	// Page de visualisation des taux de participation
@@ -72,14 +75,14 @@ class Analyser extends CI_Controller {
 	 * Ce graphique est composé de plusieurs diagrammes.
 	 */	
 	public function getComboParticipation(){
-		echo $this->analysisModel->getComboParticipation($this->typeElection,$this->niveau,$this->params);
+		echo $this->analysisModel->getComboParticipation($this->typeElection,$this->niveau,$this->params,$this->granularite);
 	}
 	
 	public function getBarAnalyserSuivantAnnee(){		
 		if (!empty($_GET["listeAnnees"]) && !empty($_GET["listeCandidats"])){
 			$listeAnnees=explode(",",$_GET["listeAnnees"]);
 			$listeCandidats=explode(",",$_GET["listeCandidats"]);
-			echo $this->analysisModel->getBarAnalyserSuivantAnnee($this->typeElection,$this->niveau,$this->params,$listeAnnees,$listeCandidats,$this->tableCandidat);
+			echo $this->analysisModel->getBarAnalyserSuivantAnnee($this->typeElection,$this->niveau,$this->params,$this->granularite,$listeAnnees,$listeCandidats,$this->tableCandidat);
 		}		
 		else return FALSE;
 	}
@@ -88,7 +91,7 @@ class Analyser extends CI_Controller {
 		if(!empty($_GET['listeLocalites']) AND !empty($_GET['listeCandidats'])){		
 			$listeLocalites=explode(",",$_GET['listeLocalites']);
 			$listeCandidats=explode(",",$_GET['listeCandidats']);
-			echo $this->analysisModel->getBarAnalyserSuivantLocalite($this->typeElection,$this->niveau,$this->params,$listeLocalites,$listeCandidats,$this->tableCandidat);
+			echo $this->analysisModel->getBarAnalyserSuivantLocalite($this->typeElection,$this->niveau,$this->params,$this->granularite,$listeLocalites,$listeCandidats,$this->tableCandidat);
 		} else return false;
 	}
 	
@@ -96,18 +99,18 @@ class Analyser extends CI_Controller {
 		if (!empty($_GET['annee']) AND !empty($_GET['tour'])) {
 			$annee=$_GET['annee'];$tour=$_GET['tour'];
 		} else return;
-		echo $this->analysisModel->getPoidsElectoralRegions($this->typeElection,$this->niveau,$annee,$tour);
+		echo $this->analysisModel->getPoidsElectoralRegions($this->typeElection,$this->niveau,$this->granularite,$annee,$tour);
 	}
 	
 	public function getGridParticipation(){
-		$this->analysisModel->getGridParticipation($this->typeElection,$this->niveau,$this->params);
+		$this->analysisModel->getGridParticipation($this->typeElection,$this->niveau,$this->params,$this->granularite);
 	}
 	
 	public function getGridAnalyserSuivantAnnee(){		
 		if (!empty($_GET["listeAnnees"]) AND !empty($_GET["listeCandidats"])){
 			$listeAnnees=$_GET["listeAnnees"];
 			$listeCandidats=$_GET["listeCandidats"];
-			$this->analysisModel->getGridAnalyserSuivantAnnee($this->typeElection,$this->niveau,$this->params,$listeAnnees,$listeCandidats,$this->tableCandidat);
+			$this->analysisModel->getGridAnalyserSuivantAnnee($this->typeElection,$this->niveau,$this->params,$this->granularite,$listeAnnees,$listeCandidats,$this->tableCandidat);
 		}
 		else return FALSE;
 	}
@@ -116,7 +119,7 @@ class Analyser extends CI_Controller {
 		if(!empty($_GET['listeLocalites']) AND !empty($_GET['listeCandidats'])){		
 			$listeLocalites=explode(",",$_GET['listeLocalites']);
 			$listeCandidats=explode(",",$_GET['listeCandidats']);
-			$this->analysisModel->getGridAnalyserSuivantLocalite($this->typeElection,$this->niveau,$this->params,$listeLocalites,$listeCandidats,$this->tableCandidat);
+			$this->analysisModel->getGridAnalyserSuivantLocalite($this->typeElection,$this->niveau,$this->params,$this->granularite,$listeLocalites,$listeCandidats,$this->tableCandidat);
 		} else return false;	
 	}
 }

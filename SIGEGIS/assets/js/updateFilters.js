@@ -22,7 +22,7 @@ function Annees()
 			//if (!json) return false;
 			$("#choixmultipleA").empty();
 			$.each(json, function(index, value) {         
-				$("#choixmultipleA").append('<option value="'+ index +'">'+ value +'</option>');
+				$("#choixmultipleA").append('<option value="'+ index +'">'+ index +'</option>');
 			});
 		}       
 	});
@@ -134,7 +134,7 @@ $("select[name=decoupage_localite]").on("change",function()
 			//if (!json) return false;
 			$elections.empty();
 			$.each(json, function(index, value) {
-				$elections.append('<option value="'+ index +'">'+ value +'</option>');
+				$elections.append('<option value="'+ index +'">'+ index +'</option>');
 			});
 			$elections.change();
 
@@ -202,4 +202,19 @@ $tours.on("change",function()
 $elections.on("change",function()
 {
 	$("select[name=niveauAgregation2]").change();
+});
+
+// SEULEMENT AU CLICK
+$elections.on("click",function()
+{
+	if($GRANULARITE[$elections.val()]!="centre"){
+		$("#niveauAgregation2 > option:last").hide();
+		$("#niveauAgregation2").val("departement");
+	}
+	else {$("#niveauAgregation2 > option:last").show();/*$("#choixmultipleB").change();*/}
+	$("select[name=niveauAgregation2]").change();
+});
+
+$("#localite").on("change",function(){
+	$("#choixmultipleB").change();
 });

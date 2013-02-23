@@ -67,6 +67,62 @@ class Analyser_model extends CI_Model{
 		else $attributLocalite=$default;
 		return $attributLocalite;
 	}
+	
+	/**
+	 * Cette fonction retourne la concatenation d'une portion de requete avec la portion des jointures necessaires a la recuperation des données<br />
+	 * Une jointure se fait sur les colonnes idCentre et idDepartement des tables resultats, centre et departement<br/>	 
+	 * @param string $requete la portion de la requete a concatener avec les jointures LEFT JOIN
+	 * @param string $niveau
+	 * @param string $granularite (centre|departement)
+	 */
+	public function concatLeftJoinTo($requete,$niveau,$tableCandidat=null){		
+				
+		if ($tableCandidat) 
+			$requete.=" LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}"; 
+		$requete .=" LEFT JOIN election ON rp.idElection = election.idElection
+		LEFT JOIN source ON rp.idSource = source.idSource
+		LEFT JOIN centre ON rp.idCentre = centre.idCentre
+		LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite";
+	
+		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
+			$requete.="	LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement OR rp.idDepartement = departement.idDepartement ";
+		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
+			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+		if ($niveau=="pays" OR $niveau=="globaux")
+			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+		return $requete;
+	}
+	
+	// DEUXIEME VERSION DE CONCAT / PLUS RAPIDE
+	// ATTENTION: CHOISIR CETTE METHODE SEULEMENT DANS LE CAS OU TOUTES LES DONNEES DE SIGEGIS SONT
+	// SOIT EXCLUSIVEMENT DE GRANULARITE CENTRE
+	// SOIT EXCLUSIVEMENT DE GRANULARITE DEPARTEMENT
+	// COMPLETER LES APPELS CONCAT AVEC LE PARAMETRE $granularite AU NIVEAU DU PRESENT CODE DANS LE CAS ECHEANT 
+	/*
+	 public function concatLeftJoinTo($requete,$niveau,$tableCandidat=null,$granularite){
+		 if ($tableCandidat) 
+			$requete.=" LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}";
+		$requete.=" LEFT JOIN election ON rp.idElection = election.idElection
+		LEFT JOIN source ON rp.idSource = source.idSource";
+	
+		if ($granularite=="centre"){
+			$requete.=" LEFT JOIN centre ON rp.idCentre = centre.idCentre
+			LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite";
+	
+			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays"OR $niveau=="globaux")
+				$requete.="	LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
+		}
+		else
+		{
+			$requete.="	LEFT JOIN departement ON rp.idDepartement = departement.idDepartement";
+		}
+	
+		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
+			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
+		if ($niveau=="pays" OR $niveau=="globaux")
+			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+		return $requete;
+	}*/
 		
 	/**
 	 * Diagramme en bâtons
@@ -77,7 +133,7 @@ class Analyser_model extends CI_Model{
 	 * @param array $listeCandidats
 	 * @return string Objet JSON
 	 */
-	public function getBarAnalyserSuivantAnnee($typeElection,$niveau,$params,$listeAnnees,$listeCandidats,$tableCandidat){
+	public function getBarAnalyserSuivantAnnee($typeElection,$niveau,$params,$granularite,$listeAnnees,$listeCandidats,$tableCandidat){
 			
 		$barSeries=array();$nomLieu="";
 		
@@ -100,19 +156,9 @@ class Analyser_model extends CI_Model{
 				else $requete.="nomListe";
 
 				$requete.=" as nomCandidat,rp.idCentre ,".self::nomLieu($niveau)." nomSource,  SUM(nbVoix) as nbVoix
-				FROM {$this->tables[$typeElection]} rp
-				LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}
-				LEFT JOIN source ON rp.idSource = source.idSource
-				LEFT JOIN election ON rp.idElection = election.idElection
-				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-					
-				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-					$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-					LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-				if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-					$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-				if ($niveau=="pays" OR $niveau=="globaux")
-					$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+				FROM {$this->tables[$typeElection]} rp";
+				
+				$requete=$this->concatLeftJoinTo($requete, $niveau, $tableCandidat);
 					
 				for($i=0;$i<sizeof($params);$i++) {
 					if($v) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
@@ -189,7 +235,7 @@ class Analyser_model extends CI_Model{
 	 * @param array $listeCandidats
 	 * @return string Code XML	 
 	 */
-	public function getGridAnalyserSuivantAnnee($typeElection,$niveau,$params,$listeAnnees,$listeCandidats,$tableCandidat){
+	public function getGridAnalyserSuivantAnnee($typeElection,$niveau,$params,$granularite,$listeAnnees,$listeCandidats,$tableCandidat){
 
 		$page = $_GET['page']; $limit = $_GET['rows']; $sidx = $_GET['sidx']; $sord = $_GET['sord'];
 
@@ -213,19 +259,9 @@ class Analyser_model extends CI_Model{
 				if ($typeElection="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 				else $requete.="nomListe";
 				$requete.=" as nomCandidat, rp.idCentre,".self::nomLieu($niveau)." nomSource,  SUM(nbVoix) as nbVoix
-				FROM {$this->tables[$typeElection]} rp
-				LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}
-				LEFT JOIN source ON rp.idSource = source.idSource
-				LEFT JOIN election ON rp.idElection = election.idElection
-				LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-
-				if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-					$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-					LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-				if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-					$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-				if ($niveau=="pays" OR $niveau=="globaux")
-					$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+				FROM {$this->tables[$typeElection]} rp";
+				
+				$requete=$this->concatLeftJoinTo($requete, $niveau, $tableCandidat);
 
 				for($i=0;$i<sizeof($params);$i++) {
 					if($v++) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
@@ -288,7 +324,7 @@ class Analyser_model extends CI_Model{
 	 * @param array $params
 	 * @return string Objet JSON
 	 */
-	public function getBarAnalyserSuivantLocalite($typeElection,$niveau,$params,$listeLocalites,$listeCandidats,$tableCandidat){
+	public function getBarAnalyserSuivantLocalite($typeElection,$niveau,$params,$granularite,$listeLocalites,$listeCandidats,$tableCandidat){
 
 		$barSeries=array();
 		$categories=array();
@@ -315,19 +351,9 @@ class Analyser_model extends CI_Model{
 			if ($typeElection="presidentielle") $requete.="CONCAT(prenom, ' ', nom)";
 			else $requete.="nomListe";
 			$requete.=" as nomCandidat, rp.idCentre ,".self::nomLieu($niveau)." nomSource,  SUM(nbVoix) as nbVoix
-			FROM {$this->tables[$typeElection]} rp
-			LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}
-			LEFT JOIN source ON rp.idSource = source.idSource
-			LEFT JOIN election ON rp.idElection = election.idElection
-			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-
-			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays" OR $niveau=="globaux")
-				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+			FROM {$this->tables[$typeElection]} rp";
+			
+			$requete=$this->concatLeftJoinTo($requete, $niveau, $tableCandidat);
 
 			for($i=0;$i<sizeof($params);$i++) {
 				if ($v) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";			
@@ -400,7 +426,7 @@ class Analyser_model extends CI_Model{
 	 * @param $params array tableau contenant successivement l'ID de la source, l'année de l'élection et si nécessaire le tour
 	 * @return string Code XML	 
 	 */
-	public function getGridAnalyserSuivantLocalite($typeElection,$niveau,$params,$listeLocalites,$listeCandidats,$tableCandidat){
+	public function getGridAnalyserSuivantLocalite($typeElection,$niveau,$params,$granularite,$listeLocalites,$listeCandidats,$tableCandidat){
 
 		$page = $_GET['page']; $limit = $_GET['rows']; $sidx = $_GET['sidx']; $sord = $_GET['sord'];
 
@@ -428,19 +454,9 @@ class Analyser_model extends CI_Model{
 			else $requete.="nomListe";
 			
 			$requete.=" as nomCandidat, rp.idCentre,".self::nomLieu($niveau)." nomSource,  SUM(nbVoix) as nbVoix
-			FROM {$this->tables[$typeElection]} rp
-			LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}
-			LEFT JOIN source ON rp.idSource = source.idSource
-			LEFT JOIN election ON rp.idElection = election.idElection
-			LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+			FROM {$this->tables[$typeElection]} rp";
 
-			if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-				$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-				LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-				$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays" OR $niveau=="globaux")
-				$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+			$requete=$this->concatLeftJoinTo($requete, $niveau, $tableCandidat);
 
 			for($i=0;$i<sizeof($params);$i++) {
 				if($v) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";					
@@ -499,7 +515,7 @@ class Analyser_model extends CI_Model{
 	 * @param array $params
 	 * @param string $balise Le nom du conteneur Html
 	 */
-	public function getGridParticipation($typeElection,$niveau,$params){
+	public function getGridParticipation($typeElection,$niveau,$params,$granularite){
 	
 		$page = $_GET['page']; $limit = $_GET['rows']; $sidx = $_GET['sidx']; $sord = $_GET['sord'];
 		$v=0;
@@ -508,32 +524,30 @@ class Analyser_model extends CI_Model{
 	
 		$default="'Participation au niveau national' as nomLieu,";
 	
-		$requete="SELECT rp.idElection, typeElection, YEAR(dateElection) as annee, ".self::nomLieu($niveau,$default)." nomSource,sum(nbInscrits) as inscrits,sum(nbVotants) as votants,sum(nbBulletinsNuls) as nuls,sum(nbExprimes) as exprimes,(sum(nbInscrits)-sum(nbVotants)) as abstention
-		FROM {$this->tablesParticipation[$typeElection]} rp
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+		$requete="SELECT rp.idElection, 
+		typeElection, 
+		YEAR(dateElection) as annee, 
+		".self::nomLieu($niveau,$default)." nomSource,
+		sum(nbInscrits) as inscrits,
+		sum(nbVotants) as votants,
+		sum(nbBulletinsNuls) as nuls,
+		sum(nbExprimes) as exprimes,
+		(sum(nbInscrits)-sum(nbVotants)) as abstention
+		FROM {$this->tablesParticipation[$typeElection]} rp";
 	
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+		$requete=$this->concatLeftJoinTo($requete, $niveau);
 	
-			$colonnesBDD[]="rp.idSource";
-			$colonnesBDD[]="YEAR(election.dateElection)";
-			if ($typeElection="presidentielle") $colonnesBDD[]="election.tour";
-			if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);
-			$colonnesBDD[]="election.typeElection";
-	
-			for($i=0;$i<sizeof($params);$i++) {
-				if($v){
-						if ($colonnesBDD[$i]) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
-				}
-				else {$requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'"; $v++;
+		$colonnesBDD[]="rp.idSource";
+		$colonnesBDD[]="YEAR(election.dateElection)";
+		if ($typeElection="presidentielle") $colonnesBDD[]="election.tour";
+		if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);
+		$colonnesBDD[]="election.typeElection";
+
+		for($i=0;$i<sizeof($params);$i++) {
+			if($v){
+					if ($colonnesBDD[$i]) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
 			}
+			else {$requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'"; $v++;}
 		}
 		
 		$totalRows=1;
@@ -580,23 +594,23 @@ class Analyser_model extends CI_Model{
 	* @param array $params
 	* @return string Objet JSON
 	*/
-	public function getComboParticipation($typeElection,$niveau,$params){
-	
+	public function getComboParticipation($typeElection,$niveau,$params,$granularite){
+
 		$default="'Participation au niveau  national' as nomLieu,";	$v=0;
 
-		$requete="SELECT rp.idElection, typeElection, YEAR(dateElection) as annee, ".self::nomLieu($niveau,$default)." nomSource,sum(nbInscrits) as inscrits,sum(nbVotants) as votants,sum(nbBulletinsNuls) as nuls,sum(nbExprimes) as exprimes,(sum(nbInscrits)-sum(nbVotants)) as abstention
-		FROM {$this->tablesParticipation[$typeElection]} rp
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
-
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-		if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-		if ($niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+		$requete="SELECT rp.idElection, 
+		typeElection, 
+		YEAR(dateElection) as annee, 
+		".self::nomLieu($niveau,$default)." nomSource,
+		sum(nbInscrits) as inscrits,
+		sum(nbVotants) as votants,
+		sum(nbBulletinsNuls) as nuls,
+		sum(nbExprimes) as exprimes,
+		(sum(nbInscrits)-sum(nbVotants)) as abstention
+		FROM {$this->tablesParticipation[$typeElection]} rp";
+		
+		// CONCATENATION 
+		$requete=$this->concatLeftJoinTo($requete, $niveau);
 		
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
@@ -672,20 +686,22 @@ class Analyser_model extends CI_Model{
 	* @param array $params
 	* @return string Objet JSON
 	*/
-	public function getPoidsElectoralRegions($typeElection,$niveau,$annee,$tour){
+	public function getPoidsElectoralRegions($typeElection,$niveau,$granularite,$annee,$tour){
 
 	$requete="SELECT nomRegion, YEAR(dateElection) as annee, SUM( nbInscrits ) as inscrits
 	FROM {$this->tablesParticipation[$typeElection]} rp
-	LEFT JOIN election ON rp.idElection = election.idElection
-	LEFT JOIN centre ON rp.idCentre = centre.idCentre
-	LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-	LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement
-	LEFT JOIN region ON departement.idRegion = region.idRegion
+	LEFT JOIN election ON rp.idElection = election.idElection";
+	if ($granularite=="centre") 
+		$requete.=" LEFT JOIN centre ON rp.idCentre = centre.idCentre
+		LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite 
+		LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
+	else 
+		$requete.=" LEFT JOIN departement ON rp.idDepartement = departement.idDepartement";
+	$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion
 	WHERE YEAR(dateElection)=$annee AND nomRegion<>'ETRANGER' AND election.tour='$tour'
 	GROUP BY region.idRegion ORDER BY nomRegion";
 
 	$resultats=$this->db->query($requete)->result();
-
 	
 	// TITRE DU DIAGRAMME
 	
@@ -717,35 +733,25 @@ class Analyser_model extends CI_Model{
 	 * @param string $niveau
 	 * @param array $params
 	 */
-	public function exportStatisticsToCSV($typeElection,$niveau,$params){
+	public function exportStatisticsToCSV($typeElection,$niveau,$params,$granularite){
 	
 		$default="'Participation au niveau  national' as nomLieu,";	$v=0;
 	
 		$requete="SELECT rp.idElection,YEAR(dateElection) as annee, ".self::nomLieu($niveau,$default)." nomSource,sum(nbInscrits) as inscrits,sum(nbVotants) as votants,sum(nbBulletinsNuls) as nuls,sum(nbExprimes) as exprimes,(sum(nbInscrits)-sum(nbVotants)) as abstention
-		FROM {$this->tablesParticipation[$typeElection]} rp
-		LEFT JOIN election ON rp.idElection = election.idElection
-		LEFT JOIN source ON rp.idSource = source.idSource
-		LEFT JOIN centre ON rp.idCentre = centre.idCentre";
+		FROM {$this->tablesParticipation[$typeElection]} rp";
 	
-		if ($niveau=="dep" OR $niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN collectivite ON centre.idCollectivite = collectivite.idCollectivite
-			LEFT JOIN departement ON collectivite.idDepartement = departement.idDepartement";
-			if ($niveau=="reg" OR $niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN region ON departement.idRegion = region.idRegion";
-			if ($niveau=="pays" OR $niveau=="globaux")
-			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
+		$requete=$this->concatLeftJoinTo($requete, $niveau, $tableCandidat);
 	
-			$colonnesBDD[]="rp.idSource";
-			$colonnesBDD[]="YEAR(election.dateElection)";
-			if ($typeElection="presidentielle") $colonnesBDD[]="election.tour";
-			if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);
-	
-			for($i=0;$i<sizeof($params);$i++) {
-			if($v){
-			if ($colonnesBDD[$i]) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
-			}
-			else {$requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'"; $v++;
-	}
+		$colonnesBDD[]="rp.idSource";
+		$colonnesBDD[]="YEAR(election.dateElection)";
+		if ($typeElection="presidentielle") $colonnesBDD[]="election.tour";
+		if (self::attributLocalite($niveau)) $colonnesBDD[]=self::attributLocalite($niveau);
+
+		for($i=0;$i<sizeof($params);$i++) {
+		if($v){
+		if ($colonnesBDD[$i]) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
+		}
+		else {$requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'"; $v++;}
 	}
 	
 	$resultats=$this->db->query($requete)->result();
