@@ -94,12 +94,12 @@ class Analyser_model extends CI_Model{
 	}
 	
 	// DEUXIEME VERSION DE CONCAT / PLUS RAPIDE
-	// ATTENTION: CHOISIR CETTE METHODE SEULEMENT DANS LE CAS OU TOUTES LES DONNEES DE SIGEGIS SONT
+	// ATTENTION: CHOISIR CETTE METHODE SEULEMENT DANS LE CAS OU TOUTES LES DONNEES SONT
 	// SOIT EXCLUSIVEMENT DE GRANULARITE CENTRE
 	// SOIT EXCLUSIVEMENT DE GRANULARITE DEPARTEMENT
 	// COMPLETER LES APPELS CONCAT AVEC LE PARAMETRE $granularite AU NIVEAU DU PRESENT CODE DANS LE CAS ECHEANT 
-	/*
-	 public function concatLeftJoinTo($requete,$niveau,$tableCandidat=null,$granularite){
+	
+	 public function concatLeftJoinToEXCLU($requete,$niveau,$tableCandidat=null,$granularite){
 		 if ($tableCandidat) 
 			$requete.=" LEFT JOIN {$tableCandidat} ON rp.idCandidat = {$tableCandidat}.{$this->candidatOrListe[$tableCandidat]}";
 		$requete.=" LEFT JOIN election ON rp.idElection = election.idElection
@@ -122,7 +122,7 @@ class Analyser_model extends CI_Model{
 		if ($niveau=="pays" OR $niveau=="globaux")
 			$requete.=" LEFT JOIN pays ON region.idPays = pays.idPays";
 		return $requete;
-	}*/
+	}
 		
 	/**
 	 * Diagramme en bâtons
@@ -535,7 +535,7 @@ class Analyser_model extends CI_Model{
 		(sum(nbInscrits)-sum(nbVotants)) as abstention
 		FROM {$this->tablesParticipation[$typeElection]} rp";
 	
-		$requete=$this->concatLeftJoinTo($requete, $niveau);
+		$requete=$this->concatLeftJoinToEXCLU($requete, $niveau, null, $granularite);
 	
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
@@ -610,7 +610,7 @@ class Analyser_model extends CI_Model{
 		FROM {$this->tablesParticipation[$typeElection]} rp";
 		
 		// CONCATENATION 
-		$requete=$this->concatLeftJoinTo($requete, $niveau);
+		$requete=$this->concatLeftJoinToEXCLU($requete, $niveau, null, $granularite);
 		
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
