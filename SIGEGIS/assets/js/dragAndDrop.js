@@ -108,7 +108,7 @@ $("#MoveRight,#MoveLeft").on("click",function(event) {
 	var selectFrom = id == "MoveRight" ? "#choixmultipleA" : "#choixmultipleB";
 	var moveTo = id == "MoveRight" ? "#choixmultipleB" : "#choixmultipleA";
 	var selectedItems = $(selectFrom + " :selected").toArray();
-	var $granuliteDepExiste=false;
+	$granuliteDepExiste=false;
 
 	// S'il existe des donnees de granularite departement selectionnees alors on supprime le filtre "Centre".
 	$.each(selectedItems,function(index,value) 
@@ -134,7 +134,6 @@ $("#MoveRight,#MoveLeft").on("click",function(event) {
 					$("#choixmultipleB").change();
 				}    
 			});			
-			//$(moveTo).append(selectedItems);
 		}
 		else {$("#niveauAgregation1 > option:last").show();}
 	});
@@ -143,7 +142,7 @@ $("#MoveRight,#MoveLeft").on("click",function(event) {
 	$(moveTo+ " :selected").removeAttr("selected");
 	selectedItems.remove;
 	
-	if(!$granuliteDepExiste) {$("#choixmultipleB").change();$granuliteDepExiste=false;}
+	if(!$granuliteDepExiste) {$("#choixmultipleB").change();}
 });
 
 //Boutons du SwapList des localités pour l'analyse suivant une localité
@@ -151,37 +150,7 @@ $("#MoveRightLocalite,#MoveLeftLocalite").on("click",function(event) {
 	var id = $(event.target).attr("id");
 	var selectFrom = id == "MoveRightLocalite" ? "#choixMultipleLocalitesA" : "#choixMultipleLocalitesB";
 	var moveTo = id == "MoveRightLocalite" ? "#choixMultipleLocalitesB" : "#choixMultipleLocalitesA";
-	var selectedItems = $(selectFrom + " :selected").toArray();
-	
-	// S'il existe des donnees de granularite departement selectionnees alors on supprime le filtre "Centre".
-	/*$.each(selectedItems,function(index,value) 
-	{
-		if($GRANULARITE[$elections.val()]!="centre" && moveTo=="#choixMultipleLocalitesB"){
-			$("#niveauAgregation2 > option:last").hide();
-			$("#niveauAgregation2").val("departement");
-			$elections.change();
-			/*if ($("#niveauAgregation2").val()=="pays") { methode="getPays";parametres_analyse+="&niveau=pays&anneeDecoupage="+$("#decoupage_annee").val();}
-			else if ($("#niveauAgregation2").val()=="region") { methode="getRegions";parametres_analyse+="&niveau=reg";}
-			else if ($("#niveauAgregation2").val()=="departement") { methode="getDepartements";parametres_analyse+="&niveau=dep";}
-			
-			$url=base_url+"filtres/"+methode+"?typeElection="+typeElection+"&anneeDecoupage="+$("#decoupage_annee").val();
-
-			$.ajax({        							
-				url: $url,    
-				dataType: 'json', 
-				success: function(json) {			
-					$("#localite").empty();			
-					$.each(json, function(index, value) {         
-						$("#localite").append('<option value="'+ index +'">'+ value +'</option>');     
-					});		
-					$("#choixmultipleB").change();
-				}    
-			});			
-			$(moveTo).append(selectedItems);
-		}
-		else {$("#niveauAgregation1 > option:last").show();$("#choixmultipleB").change();}
-	});*/
-	
+	var selectedItems = $(selectFrom + " :selected").toArray();	
 	$(moveTo).append(selectedItems);
 	$(moveTo+ " :selected").removeAttr("selected");
 	selectedItems.remove;
@@ -259,7 +228,6 @@ $("#validerAnnees").on("click",function(event) {
 		data:'param='+paramBis+"&typeElection="+typeElection,	     
 		success: function(json) {
 			refreshChart(chart1,json);
-			//if($("#line")[0].checked) refreshChart(chart2,json);
 			refreshChart(chart2,json);
 		}    
 	});

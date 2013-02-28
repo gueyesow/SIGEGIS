@@ -216,7 +216,11 @@ $(document).ready(function() {
 			typeElection=$(this).attr("id");$("#decoupage_annee,#decoupage_localite").change();
 		});
 		//------------------ 	END   	--------------------//
-		if(!$("#presidentielle")[0].checked) $("#filtretours,#filtreana_tour").hide(); else $("#tours,#ana_tour").show();
+		if(!$("#presidentielle")[0].checked) 
+			$("#filtretours,#filtreana_tour").hide(); 
+		else
+			$("#filtretours,#filtreana_tour").show();
+
 	});
 	
 	if (!$("#locale")[0].checked) $("#elections_locales").hide("animated");

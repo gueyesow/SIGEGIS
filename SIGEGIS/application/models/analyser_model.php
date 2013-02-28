@@ -537,6 +537,7 @@ class Analyser_model extends CI_Model{
 	
 		$requete=$this->concatLeftJoinToEXCLU($requete, $niveau, null, $granularite);
 	
+		$colonnesBDD=array();
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
 		if ($typeElection="presidentielle") $colonnesBDD[]="election.tour";
@@ -740,8 +741,9 @@ class Analyser_model extends CI_Model{
 		$requete="SELECT rp.idElection,YEAR(dateElection) as annee, ".self::nomLieu($niveau,$default)." nomSource,sum(nbInscrits) as inscrits,sum(nbVotants) as votants,sum(nbBulletinsNuls) as nuls,sum(nbExprimes) as exprimes,(sum(nbInscrits)-sum(nbVotants)) as abstention
 		FROM {$this->tablesParticipation[$typeElection]} rp";
 	
-		$requete=$this->concatLeftJoinTo($requete, $niveau, $tableCandidat);
+		$requete=$this->concatLeftJoinToEXCLU($requete, $niveau, null, $granularite);
 	
+		$colonnesBDD=array();
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
 		if ($typeElection="presidentielle") $colonnesBDD[]="election.tour";
@@ -756,13 +758,14 @@ class Analyser_model extends CI_Model{
 	
 	$resultats=$this->db->query($requete)->result();
 	
+	$nomDuFichier="SIGeGIS - Statistiques.csv";
 	header("Content-type: text/csv;charset=utf-8");
-	header('Content-disposition: attachment;filename=SIGeGIS - Statistiques.csv');
+	header("Content-disposition: attachment;filename=$nomDuFichier");
 	
 	$s = "Lieu de vote;Inscrits;Votants;Nuls;Suffrages exprimes;Abstention\r\n";
 	
 	foreach ($resultats as $row) {
-	$s .= $row->nomLieu .";";
+	$s .= trim($row->nomLieu) .";";
 	$s .= $row->inscrits .";";
 	$s .= $row->votants .";";
 	$s .= $row->nuls .";";
@@ -771,6 +774,7 @@ class Analyser_model extends CI_Model{
 	}
 	
 	echo $s;
+	exit();
 	} // ............... exportStatisticsToCSV() ...............
 	
 	public static function titre($resultats,$titreElection,$niveau,$defaultTitle="",$defaultSubTitle=""){

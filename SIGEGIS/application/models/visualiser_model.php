@@ -34,7 +34,7 @@ class Visualiser_model extends CI_Model{
 	 * @param string $niveau
 	 * @param string $granularite (centre|departement)
 	 */
-	public function concatLeftJoinTo($requete="",$niveau,$granularite){
+	public function concatLeftJoinTo($requete,$niveau,$granularite){
 		$requete.=" LEFT JOIN $this->tableCandidat ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN election ON rp.idElection = election.idElection";
@@ -173,6 +173,7 @@ class Visualiser_model extends CI_Model{
 		// Concatenation de la requete en parametre avec les jointures nécessaires
 		$requete=$this->concatLeftJoinTo($requete,$niveau,$granularite);
 	
+		$colonnesBDD=array();
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
 		if ($this->isPresidentielle()) $colonnesBDD[]="election.tour";
@@ -311,6 +312,7 @@ class Visualiser_model extends CI_Model{
 		// Concatenation de la requete en parametre avec les jointures nécessaires
 		$requete=$this->concatLeftJoinTo($requete,$niveau,$granularite);
 		
+		$colonnesBDD=array();
 		$colonnesBDD[]="rp.idSource";
 		$colonnesBDD[]="YEAR(election.dateElection)";
 		if($this->typeElection=="presidentielle") $colonnesBDD[]="election.tour";
@@ -484,7 +486,7 @@ class Visualiser_model extends CI_Model{
 		
 		if ($this->isPresidentielle()) $requete.="CONCAT(prenom, ' ', nom)"; else $requete.="nomListe";
 		
-		$requete.=" as nomCandidat,nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage FROM {$this->tables[$typeElection]} rp";
+		$requete.=" as nomCandidat, nomSource, SUM( nbVoix ) as nbVoix, (100*SUM( nbVoix )/($requeteTOTAL)) as pourcentage FROM {$this->tables[$typeElection]} rp";
 		
 		// Concatenation de la requete en parametre avec les jointures nécessaires
 		$requete=$this->concatLeftJoinTo($requete,$niveau,$granularite);
@@ -512,10 +514,10 @@ class Visualiser_model extends CI_Model{
 		$s="Nom du candidat;Voix;% exprimes;Source\r\n";
 		
 		foreach ($resultats as $row) {
-			$s .= $row->nomCandidat .";";
+			$s .= trim($row->nomCandidat) .";";
 			$s .= $row->nbVoix .";";
 			$s .= $row->pourcentage.";";
-			$s .= $row->nomSource;
+			$s .= trim($row->nomSource);
 			$s .= "\r\n";
 		}
 		

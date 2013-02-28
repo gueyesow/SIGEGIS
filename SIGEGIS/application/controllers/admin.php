@@ -205,42 +205,42 @@ class Admin extends CI_Controller {
 	 
 	 public function resultatCRUD()
 	 {
-	 	$this->adminModel->resultatCRUD($this->la_session);
+	 	$this->adminModel->resultatCRUD($this->typeElection,$this->la_session);
 	 }
 	 
 	 public function participationCRUD()
 	 {
-	 	$this->adminModel->participationCRUD($this->la_session);
+	 	$this->adminModel->participationCRUD($this->typeElection,$this->la_session);
 	 }
 	 
 	 public function electionCRUD()
 	 {
-	 	$this->adminModel->electionCRUD($this->la_session);
+	 	$this->adminModel->electionCRUD($this->typeElection,$this->la_session);
 	 }
 	 
 	 public function sourceCRUD()
 	 {
-	 	$this->adminModel->sourceCRUD($this->la_session);
+	 	$this->adminModel->sourceCRUD($this->typeElection,$this->la_session);
 	 }
 	 
 	 public function userCRUD()
 	 {
-	 	$this->adminModel->userCRUD($this->la_session);
+	 	$this->adminModel->userCRUD($this->typeElection,$this->la_session);
 	 }
 	 
 	 public function localiteCRUD()
 	 {
-	 	$this->adminModel->localiteCRUD($this->la_session);
+	 	$this->adminModel->localiteCRUD($this->typeElection,$this->la_session);
 	 }
 	 
 	 public function listeCRUD()
 	 {
-	 	$this->adminModel->listeCRUD($this->la_session);
+	 	$this->adminModel->listeCRUD($this->typeElection,$this->la_session);
 	 }
 	 
 	 public function candidatCRUD()
 	 {
-	 	$this->adminModel->candidatCRUD($this->la_session);
+	 	$this->adminModel->candidatCRUD($this->typeElection,$this->la_session);
 	 }
 	 
 	 /**

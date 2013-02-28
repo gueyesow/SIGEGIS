@@ -322,6 +322,7 @@ $("#types_affichage input").on("change",function()
 	
 	if(niveau) {
 		if ($(this).attr("id")=="map") {
+			if ($GRANULARITE[$elections.val()]!="centre") niveau="dep";
 			if (niveau!="reg" && niveau!="dep") mode+="&niveau=dep";
 			else mode+="&niveau="+niveau;
 		} else mode+="&niveau="+niveau;

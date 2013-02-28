@@ -13,7 +13,6 @@ private $titreElection="";
 private $typeLocalite="";
 private $candidatOrListe=array("candidat"=>"idCandidat","listescoalitionspartis"=>"idListe");
 private $tableCandidat;
-private $typeElection;
 
 public function __construct(){
 	if(!empty($_GET["typeElection"])) {
@@ -22,8 +21,7 @@ public function __construct(){
 		if ($typeElection=="presidentielle") $this->titreElection="présidentielle";
 		elseif ($typeElection=="legislative") $this->titreElection="législative";
 		elseif ($typeElection=="regionale") $this->titreElection="régionale";
-		else $this->titreElection=$typeElection;	
-		$this->typeElection=$typeElection;	
+		else $this->titreElection=$typeElection;		
 	}
 }
 		
@@ -38,7 +36,7 @@ public function __construct(){
 		
 		if(!$sidx) $sidx =1;
 
-			$requete="SELECT * FROM {$this->tables[$this->typeElection]} rp  
+			$requete="SELECT * FROM {$this->tables[$typeElection]} rp  
 			LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection";
@@ -55,7 +53,7 @@ public function __construct(){
 				else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
 			}
 			
-			$requeteCount="SELECT COUNT(*) as total FROM {$this->tables[$this->typeElection]} rp  
+			$requeteCount="SELECT COUNT(*) as total FROM {$this->tables[$typeElection]} rp  
 			LEFT JOIN {$this->tableCandidat} ON rp.idCandidat = {$this->tableCandidat}.{$this->candidatOrListe[$this->tableCandidat]}
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection";
@@ -118,24 +116,29 @@ public function __construct(){
 	
 			$v=0;
 	
-			$requete="SELECT * FROM {$this->tablesParticipation[$this->typeElection]} rp
+			$requete="SELECT * FROM {$this->tablesParticipation[$typeElection]} rp
 			LEFT JOIN source ON rp.idSource = source.idSource
 			LEFT JOIN election ON rp.idElection = election.idElection";
+			if ($niveau=="dep") $requete.=" LEFT JOIN departement ON rp.idDepartement = departement.idDepartement";
+			else $requete.=" LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 	
 			$colonnesBDD=array();
 			$colonnesBDD[]="rp.idSource";
 			$colonnesBDD[]="YEAR(election.dateElection)";
 			if($typeElection=="presidentielle") $colonnesBDD[]="election.tour";
 			if ($niveau=="dep") $colonnesBDD[]="rp.idDepartement";
+			else $colonnesBDD[]="rp.idCentre";
 	
 			for($i=0;$i<sizeof($params);$i++) {
 			if ($i) $requete.=" AND $colonnesBDD[$i]='".$params[$i]."'";
 			else $requete.=" WHERE $colonnesBDD[$i]='".$params[$i]."'";
 		}
 	
-		$requeteCount="SELECT COUNT(*) as total FROM {$this->tablesParticipation[$this->typeElection]} rp
+		$requeteCount="SELECT COUNT(*) as total FROM {$this->tablesParticipation[$typeElection]} rp
 		LEFT JOIN source ON rp.idSource = source.idSource
 		LEFT JOIN election ON rp.idElection = election.idElection";
+		if ($niveau=="dep") $requeteCount.=" LEFT JOIN departement ON rp.idDepartement = departement.idDepartement";
+		else $requeteCount.=" LEFT JOIN centre ON rp.idCentre = centre.idCentre";
 	
 		for($i=0;$i<sizeof($params);$i++) {
 		if ($i) $requeteCount.=" AND $colonnesBDD[$i]='".$params[$i]."'";
@@ -333,7 +336,7 @@ public function __construct(){
 			else		
 				$requete="SELECT idCandidat,prenom,nom,dateNaissance,lieuNaissance,partis,commentaires 
 				FROM candidat WHERE idCandidat in (
-				SELECT DISTINCT rp.idCandidat FROM {$this->tables[$this->typeElection]} rp 
+				SELECT DISTINCT rp.idCandidat FROM {$this->tables[$typeElection]} rp 
 				LEFT JOIN candidat ON rp.idCandidat = candidat.idCandidat
 				LEFT JOIN election ON rp.idElection = election.idElection  
 				WHERE YEAR(election.dateElection)=$annee)";
@@ -397,7 +400,7 @@ public function __construct(){
 				$requete="SELECT idListe,nomListe,typeListe,partis,commentaires
 				FROM listesCoalitionsPartis WHERE idListe in (
 				SELECT DISTINCT rp.idCandidat as idListe 
-				FROM {$this->tables[$this->typeElection]} rp
+				FROM {$this->tables[$typeElection]} rp
 				LEFT JOIN listesCoalitionsPartis ON rp.idCandidat = listesCoalitionsPartis.idListe
 				LEFT JOIN election ON rp.idElection = election.idElection 
 				WHERE YEAR(election.dateElection)=$annee)";
@@ -533,7 +536,7 @@ public function __construct(){
 		echo $s;
 	}
 	
-	public function resultatCRUD($session){
+	public function resultatCRUD($typeElection,$session){
 		
 		$idResultat = $this->input->post('idResultat');
 		$nbVoix = $this->input->post('nbVoix');
@@ -554,19 +557,19 @@ public function __construct(){
 		
 		if($_POST['oper']=='add')
 		{			
-			$this->db->insert($this->tables[$this->typeElection], $data);		
+			$this->db->insert($this->tables[$typeElection], $data);		
 		}
 		if($_POST['oper']=='edit')
 		{									
-			$this->db->update($this->tables[$this->typeElection], $data, array('idResultat' => $idResultat));											
+			$this->db->update($this->tables[$typeElection], $data, array('idResultat' => $idResultat));											
 		}
 		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
-			$this->db->delete($this->tables[$this->typeElection], array('idResultat' => $_POST['id']));
+			$this->db->delete($this->tables[$typeElection], array('idResultat' => $_POST['id']));
 		}		
 	}
 	
-	public function participationCRUD($session){
+	public function participationCRUD($typeElection,$session){
 	
 		$idParticipation = $this->input->post('idParticipation');
 		$nbInscrits = $this->input->post('nbInscrits');
@@ -591,19 +594,19 @@ public function __construct(){
 	
 		if($_POST['oper']=='add')
 		{
-			$this->db->insert($this->tablesParticipation[$this->typeElection], $data);
+			$this->db->insert($this->tablesParticipation[$typeElection], $data);
 		}
 		if($_POST['oper']=='edit')
 		{
-			$this->db->update($this->tablesParticipation[$this->typeElection], $data, array('idParticipation' => $idParticipation));
+			$this->db->update($this->tablesParticipation[$typeElection], $data, array('idParticipation' => $idParticipation));
 		}
 		if($_POST['oper']=='del' AND $session['level'] == ADMIN)
 		{
-			$this->db->delete($this->tablesParticipation[$this->typeElection], array('idParticipation' => $_POST['id']));
+			$this->db->delete($this->tablesParticipation[$typeElection], array('idParticipation' => $_POST['id']));
 		}
 	}
 	
-	public function electionCRUD($session){
+	public function electionCRUD($typeElection,$session){
 	
 		$idElection = $this->input->post('idElection');
 		$dateElection = $this->input->post('dateElection');
@@ -634,7 +637,7 @@ public function __construct(){
 		}
 	}
 	
-	public function sourceCRUD($session){
+	public function sourceCRUD($typeElection,$session){
 	
 		$idSource = $this->input->post('idSource');
 		$nomSource = $this->input->post('nomSource');		
@@ -657,7 +660,7 @@ public function __construct(){
 		}
 	}
 	
-	public function userCRUD($session){
+	public function userCRUD($typeElection,$session){
 	
 		$id = $this->input->post('id');
 		$username = $this->input->post('username');
@@ -686,7 +689,7 @@ public function __construct(){
 			$this->db->delete("users", array('id' => $_POST['id']));
 		}
 	}
-	public function localiteCRUD($session){
+	public function localiteCRUD($typeElection,$session){
 		$localite=null;
 		if (!empty($_GET["typeLocalite"])) $localite=$_GET["typeLocalite"];
 	
@@ -720,7 +723,7 @@ public function __construct(){
 		}
 	}
 	
-	public function candidatCRUD($session){
+	public function candidatCRUD($typeElection,$session){
 		$idCandidat = $this->input->post('idCandidat');
 		$prenom = $this->input->post('prenom');
 		$nom = $this->input->post('nom');
@@ -755,7 +758,7 @@ public function __construct(){
 		}
 	}
 	
-	public function listeCRUD($session){
+	public function listeCRUD($typeElection,$session){
 		$idListe = $this->input->post('idListe');
 		$nomListe = $this->input->post('nomListe');
 		$typeListe = $this->input->post('typeListe');
@@ -785,8 +788,8 @@ public function __construct(){
 	
 	/**
 	 * @todo Gérer les imporations CSV
-	 * @param unknown_type $filename
-	 * @param unknown_type $tablename
+	 * @param string $filename
+	 * @param string $tablename
 	 */
 	public function importCSV($filename,$tablename){
 		
